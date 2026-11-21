@@ -81,7 +81,7 @@
   - turquesa #22E3FF e verde ácido #B6FF3B;
   - texto em creme #FFF7EC.
 - **Fontes:** Anton (títulos), Bebas Neue (rótulos e placar), Permanent Marker (nome do jogo escrito à mão, sob o logo) e Inter (texto).
-- **Logo (21/11, versão final):** "G.T.A" em Pricedown Black, branco com contorno preto e sombra rosa, convertido em contorno (símbolo `#logo-gta` no sprite de `src/body.html`). Logo abaixo, "Geometria, Trigonometria e Álgebra" escrito à mão em Permanent Marker, amarelo e levemente inclinado.
+- **Logo (21/11, versão final):** "GTA" em Pricedown Black, branco com contorno preto e sombra rosa, convertido em contorno (símbolo `#logo-gta` no sprite de `src/body.html`). Logo abaixo, "Geometria, Trigonometria e Álgebra" escrito à mão em Permanent Marker, amarelo e levemente inclinado.
 - **Estilo:** pintura tipo pôster na hora dourada, colagem em painéis, cidade inventada, sem ser de uma região específica (orla, roda-gigante, pista de skate, quadra, obra, food truck). Contornos e sombras chapadas.
 - **Personagem das dicas (aprovado em 21/11): Dani Pixel.** Cria conteúdo de desafios e transmite as missões ao vivo. As dicas vêm como falas da live ("chat, olha só...") e explicam o caminho sem dar a resposta.
 - **Linguagem e personagem:** sem estereótipos nem regionalismos, porque o jogo será aplicado em vários lugares do Brasil.
