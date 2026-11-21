@@ -100,6 +100,18 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     assert(r[2] <= vp.width, `sem rolagem lateral em ${vp.width} px`);
     assert(!errs.length, 'erros de JavaScript: ' + errs.join(' | '));
     console.log(vp.width, 'fluxo ok', r.slice(0, 2));
+
+    // Sem 3 estrelas: o Aeroporto não libera e dá para finalizar a live com a nota normal
+    await p.evaluate(() => { localStorage.clear(); });
+    await p.reload(); await p.waitForTimeout(400);
+    await p.click('#btn-start'); await p.fill('#id-name', 'Bia'); await p.click('#id-form button[type=submit]'); await p.waitForTimeout(200);
+    await p.evaluate(() => { [1, 2, 3].forEach(n => { S.skipped[n] = true; }); [4, 5].forEach(n => { S.done[n] = true; }); save(); show('mapa'); });
+    assert(await p.isDisabled('[data-mission="6"]'), 'com 2 estrelas o Aeroporto continua bloqueado');
+    assert(await p.isVisible('#map-finish'), 'aparece a opção de finalizar a live');
+    await p.click('#map-finish-btn'); await p.waitForTimeout(300);
+    const f = await p.evaluate(() => [screen, totalPoints(), gradeFrom(totalPoints()), document.getElementById('g-list').textContent.includes('não liberada')]);
+    assert(f[0] === 'fim' && f[1] === 200 && f[2] === 5 && f[3], 'finalizar sem o Aeroporto: ' + JSON.stringify(f));
+    console.log(vp.width, 'sem estrelas ok', f);
     await ctx.close();
   }
   await b.close();

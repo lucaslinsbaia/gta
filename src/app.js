@@ -1,5 +1,5 @@
 /* =====================================================================
-   GTA · MISSÕES DO GLICÉRIO — lógica do jogo (JavaScript puro)
+   GTA · EDIÇÃO PORTO ALEGRE — lógica do jogo (JavaScript puro)
    ---------------------------------------------------------------------
    Organização:
      1. Imagens e utilitários
@@ -293,9 +293,15 @@ function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } ca
 
 const finished = n => S.done[n] || S.skipped[n];
 /* Missões 1 a 5 ficam abertas desde o início, em qualquer ordem. A 6 (Aeroporto)
-   só libera quando as cinco anteriores estiverem terminadas (concluídas ou puladas). */
+   só libera com as cinco anteriores terminadas (concluídas ou puladas) E pelo
+   menos 3 estrelas. Sem as estrelas, dá para finalizar a live com a nota normal. */
 const LAST = 6;
-const unlocked = n => n !== LAST || MISSIONS.filter(m => m !== LAST).every(finished);
+const STARS_TO_FLY = 3;   // estrelas necessárias para liberar o Aeroporto
+const othersFinished = () => MISSIONS.filter(m => m !== LAST).every(finished);
+const enoughStars = () => starsFor(totalPoints()) >= STARS_TO_FLY;
+const unlocked = n => n !== LAST || (othersFinished() && enoughStars());
+/** As 5 missões terminaram, mas faltam estrelas: o jogador pode finalizar a live (o Aeroporto vale 0). */
+const stuckBeforeAirport = () => othersFinished() && !enoughStars() && !finished(LAST);
 const allFinished = () => MISSIONS.every(finished);
 
 /* Tempo ativo: conta só com a aba visível, durante o jogo */
@@ -440,7 +446,8 @@ function renderMapa() {
   const first = !MISSIONS.some(finished);
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
   $('map-bubble').textContent = first
-    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Escolhe por onde começar! O Aeroporto só libera no fim, depois das outras cinco.`
+    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Escolhe por onde começar! O Aeroporto só libera no fim: termina as outras cinco com pelo menos ${STARS_TO_FLY} estrelas.`
+    : stuckBeforeAirport() ? `Ih, ${nick()}, faltou estrela pra liberar o Aeroporto: você fez ${starsFor(totalPoints())} e precisava de ${STARS_TO_FLY}. Mas de boa: dá pra finalizar a live e sua nota vale do mesmo jeito.`
     : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão da live. Bora decolar?`
       : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
@@ -450,9 +457,9 @@ function renderMapa() {
     const status = S.done[n] ? `<span class="mcard__status is-done">${icon('check', 'icon icon--sm')} Concluída · ${missionPoints(n)} pts</span>`
       : S.skipped[n] ? `<span class="mcard__status is-skip">${icon('skip', 'icon icon--sm')} Pulada · 0 pts</span>`
         : open ? `<span class="mcard__status is-open">${icon('play', 'icon icon--sm')} ${S.stage[n] || S.errors[n] ? 'Em andamento' : 'Disponível'} · até 100 pts</span>`
-          : `<span class="mcard__status">${icon('lock', 'icon icon--sm')} Termine as outras 5 missões</span>`;
+          : `<span class="mcard__status">${icon('lock', 'icon icon--sm')} ${othersFinished() ? `Precisa de ${STARS_TO_FLY} estrelas · você tem ${starsFor(totalPoints())}` : `Termine as outras 5 e junte ${STARS_TO_FLY} estrelas`}</span>`;
     return `<li><button type="button" class="mcard" data-mission="${n}" ${open ? '' : 'disabled'}
-        aria-label="Missão ${n}: ${M.title}. ${M.topic}. ${open ? (finished(n) ? 'Ver de novo' : 'Jogar') : 'Bloqueada: termine as outras 5 missões para liberar'}">
+        aria-label="Missão ${n}: ${M.title}. ${M.topic}. ${open ? (finished(n) ? 'Ver de novo' : 'Jogar') : `Bloqueada: termine as outras 5 missões e junte ${STARS_TO_FLY} estrelas para liberar`}">
       <span class="mcard__img"><img src="${IMG.card[n]}" alt="">
         <span class="mcard__num">Missão ${n}</span>
         ${open ? '' : `<span class="mcard__lock">${icon('lock')}</span>`}</span>
@@ -463,7 +470,18 @@ function renderMapa() {
         ${status}
       </span></button></li>`;
   }).join('');
+  $('map-finish').hidden = !stuckBeforeAirport();
 }
+
+/* Finalizar sem o Aeroporto: ele vale 0 e a nota é calculada normalmente */
+$('map-finish-btn').addEventListener('click', () => {
+  S.skipped[LAST] = true;
+  S.noAirport = true;
+  S.completed = true;
+  S.finalMs = Math.round(S.activeMs);
+  save();
+  show('fim');
+});
 $('missions').addEventListener('click', event => {
   const btn = event.target.closest('[data-mission]');
   if (!btn || btn.disabled) return;
@@ -811,8 +829,8 @@ function renderFim() {
   $('g-stars').innerHTML = starsHtml(stars);
   $('g-stars').setAttribute('aria-label', `${stars} de 5 estrelas`);
   $('g-level').textContent = `Nível de conhecimento: ${LEVEL[stars]}`;
-  $('g-list').innerHTML = MISSIONS.map(n => `<li><span>${n}. ${MISSION[n].title}</span><strong>${S.skipped[n] ? 'pulada · 0' : missionPoints(n)} pts</strong></li>`).join('');
-  const review = MISSIONS.filter(n => S.skipped[n] || missionPoints(n) < 70);
+  $('g-list').innerHTML = MISSIONS.map(n => `<li><span>${n}. ${MISSION[n].title}</span><strong>${n === LAST && S.noAirport ? 'não liberada · 0' : S.skipped[n] ? 'pulada · 0' : missionPoints(n)} pts</strong></li>`).join('');
+  const review = MISSIONS.filter(n => !(n === LAST && S.noAirport) && (S.skipped[n] || missionPoints(n) < 70));
   $('g-study').hidden = !review.length;
   $('g-study-lead').textContent = 'Essas missões merecem uma revisada:';
   $('g-study-list').innerHTML = review.map(n => `<div class="study"><h3>${MISSION[n].title} · ${MISSION[n].topic}</h3><ul>${STUDY[n]

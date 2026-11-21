@@ -2,10 +2,10 @@
      CABEÇALHO: marca e placar (pontos e nível de conhecimento)
      =================================================================== -->
 <header class="nav">
-  <button type="button" class="brand" id="brand" aria-label="GTA, Missões do Glicério: voltar ao início">
+  <button type="button" class="brand" id="brand" aria-label="GTA, Edição Porto Alegre: voltar ao início">
     <svg class="brand__logo" viewBox="0 0 1653 759" aria-hidden="true" focusable="false"><use href="#logo-gta"/></svg>
     <span>
-      <span class="brand__name">Missões do Glicério</span>
+      <span class="brand__name">Edição Porto Alegre</span>
       <span class="brand__sub" id="nav-sub">Geometria, Trigonometria e Álgebra</span>
     </span>
   </button>
@@ -43,7 +43,7 @@
       <div class="cover__side">
         <p class="eyebrow">Ao vivo agora</p>
         <p class="title-lg">6 desafios matemáticos em Porto Alegre.</p>
-        <p class="lead">Finalize as missões, junte estrelas e consiga chegar até o aeroporto para escapar da cidade.</p>
+        <p class="lead">Finalize as missões e junte estrelas para chegar até o aeroporto e escapar da cidade!</p>
         <div class="actions">
           <button type="button" class="btn btn--gold" id="btn-start">Partiu missão
             <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
@@ -103,6 +103,11 @@
           <img class="avatar" id="map-avatar" alt="">
           <p class="bubble" id="map-bubble"></p>
         </div>
+      </div>
+      <div class="map-finish card" id="map-finish" hidden>
+        <p class="lead">O Aeroporto precisa de pelo menos 3 estrelas. Você pode finalizar a live agora: ele conta como 0 ponto, e sua nota é calculada normalmente com as outras missões.</p>
+        <button type="button" class="btn btn--gold" id="map-finish-btn">Finalizar a live
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></button>
       </div>
       <ol class="missions" id="missions"></ol>
     </div>

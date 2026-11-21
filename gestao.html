@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Gestão · GTA Missões do Glicério</title>
+<title>Gestão · GTA Edição Porto Alegre</title>
 <meta name="description" content="Área de gestão do jogo GTA.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -187,6 +187,8 @@
 
   /* ---------- Mapa ---------- */
   .map-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--s8); align-items: end; margin-bottom: var(--s8); }
+  .map-finish { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s8); box-shadow: 8px 8px 0 var(--yellow); }
+  .map-finish .lead { flex: 1 1 360px; margin: 0; }
   .missions { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s6); }
   .mcard { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0; text-align: left; background: var(--purple); border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 7px 7px 0 var(--pink); cursor: pointer; overflow: hidden; transition: transform 160ms var(--ease), box-shadow 160ms var(--ease); }
   .mcard:hover:not(:disabled) { transform: translate(-3px, -3px); box-shadow: 10px 10px 0 var(--cyan); }
@@ -408,9 +410,9 @@
 </head>
 <body>
 <header class="nav">
-  <a class="brand" href="/" aria-label="GTA, Missões do Glicério: ir para o jogo">
+  <a class="brand" href="/" aria-label="GTA, Edição Porto Alegre: ir para o jogo">
     <svg class="brand__logo" viewBox="0 0 1653 759" aria-hidden="true" focusable="false"><use href="#logo-gta"/></svg>
-    <span><span class="brand__name">Missões do Glicério</span><span class="brand__sub">Área de gestão</span></span>
+    <span><span class="brand__name">Edição Porto Alegre</span><span class="brand__sub">Área de gestão</span></span>
   </a>
   <button type="button" class="link-btn" id="g-logout" hidden>Sair</button>
 </header>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GTA · Missões do Glicério</title>
+<title>GTA · Edição Porto Alegre</title>
 <meta name="description" content="GTA (Geometria, Trigonometria e Álgebra): seis missões de matemática pela cidade, com a Dani Pixel transmitindo tudo ao vivo.">
 <meta name="theme-color" content="#1A0833">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -187,6 +187,8 @@
 
   /* ---------- Mapa ---------- */
   .map-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--s8); align-items: end; margin-bottom: var(--s8); }
+  .map-finish { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s8); box-shadow: 8px 8px 0 var(--yellow); }
+  .map-finish .lead { flex: 1 1 360px; margin: 0; }
   .missions { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s6); }
   .mcard { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0; text-align: left; background: var(--purple); border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 7px 7px 0 var(--pink); cursor: pointer; overflow: hidden; transition: transform 160ms var(--ease), box-shadow 160ms var(--ease); }
   .mcard:hover:not(:disabled) { transform: translate(-3px, -3px); box-shadow: 10px 10px 0 var(--cyan); }
@@ -348,10 +350,10 @@
      CABEÇALHO: marca e placar (pontos e nível de conhecimento)
      =================================================================== -->
 <header class="nav">
-  <button type="button" class="brand" id="brand" aria-label="GTA, Missões do Glicério: voltar ao início">
+  <button type="button" class="brand" id="brand" aria-label="GTA, Edição Porto Alegre: voltar ao início">
     <svg class="brand__logo" viewBox="0 0 1653 759" aria-hidden="true" focusable="false"><use href="#logo-gta"/></svg>
     <span>
-      <span class="brand__name">Missões do Glicério</span>
+      <span class="brand__name">Edição Porto Alegre</span>
       <span class="brand__sub" id="nav-sub">Geometria, Trigonometria e Álgebra</span>
     </span>
   </button>
@@ -389,7 +391,7 @@
       <div class="cover__side">
         <p class="eyebrow">Ao vivo agora</p>
         <p class="title-lg">6 desafios matemáticos em Porto Alegre.</p>
-        <p class="lead">Finalize as missões, junte estrelas e consiga chegar até o aeroporto para escapar da cidade.</p>
+        <p class="lead">Finalize as missões e junte estrelas para chegar até o aeroporto e escapar da cidade!</p>
         <div class="actions">
           <button type="button" class="btn btn--gold" id="btn-start">Partiu missão
             <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
@@ -449,6 +451,11 @@
           <img class="avatar" id="map-avatar" alt="">
           <p class="bubble" id="map-bubble"></p>
         </div>
+      </div>
+      <div class="map-finish card" id="map-finish" hidden>
+        <p class="lead">O Aeroporto precisa de pelo menos 3 estrelas. Você pode finalizar a live agora: ele conta como 0 ponto, e sua nota é calculada normalmente com as outras missões.</p>
+        <button type="button" class="btn btn--gold" id="map-finish-btn">Finalizar a live
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></button>
       </div>
       <ol class="missions" id="missions"></ol>
     </div>
@@ -637,7 +644,7 @@
 
 <script>
 /* =====================================================================
-   GTA · MISSÕES DO GLICÉRIO — lógica do jogo (JavaScript puro)
+   GTA · EDIÇÃO PORTO ALEGRE — lógica do jogo (JavaScript puro)
    ---------------------------------------------------------------------
    Organização:
      1. Imagens e utilitários
@@ -931,9 +938,15 @@ function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } ca
 
 const finished = n => S.done[n] || S.skipped[n];
 /* Missões 1 a 5 ficam abertas desde o início, em qualquer ordem. A 6 (Aeroporto)
-   só libera quando as cinco anteriores estiverem terminadas (concluídas ou puladas). */
+   só libera com as cinco anteriores terminadas (concluídas ou puladas) E pelo
+   menos 3 estrelas. Sem as estrelas, dá para finalizar a live com a nota normal. */
 const LAST = 6;
-const unlocked = n => n !== LAST || MISSIONS.filter(m => m !== LAST).every(finished);
+const STARS_TO_FLY = 3;   // estrelas necessárias para liberar o Aeroporto
+const othersFinished = () => MISSIONS.filter(m => m !== LAST).every(finished);
+const enoughStars = () => starsFor(totalPoints()) >= STARS_TO_FLY;
+const unlocked = n => n !== LAST || (othersFinished() && enoughStars());
+/** As 5 missões terminaram, mas faltam estrelas: o jogador pode finalizar a live (o Aeroporto vale 0). */
+const stuckBeforeAirport = () => othersFinished() && !enoughStars() && !finished(LAST);
 const allFinished = () => MISSIONS.every(finished);
 
 /* Tempo ativo: conta só com a aba visível, durante o jogo */
@@ -1175,7 +1188,8 @@ function renderMapa() {
   const first = !MISSIONS.some(finished);
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
   $('map-bubble').textContent = first
-    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Escolhe por onde começar! O Aeroporto só libera no fim, depois das outras cinco.`
+    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Escolhe por onde começar! O Aeroporto só libera no fim: termina as outras cinco com pelo menos ${STARS_TO_FLY} estrelas.`
+    : stuckBeforeAirport() ? `Ih, ${nick()}, faltou estrela pra liberar o Aeroporto: você fez ${starsFor(totalPoints())} e precisava de ${STARS_TO_FLY}. Mas de boa: dá pra finalizar a live e sua nota vale do mesmo jeito.`
     : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão da live. Bora decolar?`
       : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
@@ -1185,9 +1199,9 @@ function renderMapa() {
     const status = S.done[n] ? `<span class="mcard__status is-done">${icon('check', 'icon icon--sm')} Concluída · ${missionPoints(n)} pts</span>`
       : S.skipped[n] ? `<span class="mcard__status is-skip">${icon('skip', 'icon icon--sm')} Pulada · 0 pts</span>`
         : open ? `<span class="mcard__status is-open">${icon('play', 'icon icon--sm')} ${S.stage[n] || S.errors[n] ? 'Em andamento' : 'Disponível'} · até 100 pts</span>`
-          : `<span class="mcard__status">${icon('lock', 'icon icon--sm')} Termine as outras 5 missões</span>`;
+          : `<span class="mcard__status">${icon('lock', 'icon icon--sm')} ${othersFinished() ? `Precisa de ${STARS_TO_FLY} estrelas · você tem ${starsFor(totalPoints())}` : `Termine as outras 5 e junte ${STARS_TO_FLY} estrelas`}</span>`;
     return `<li><button type="button" class="mcard" data-mission="${n}" ${open ? '' : 'disabled'}
-        aria-label="Missão ${n}: ${M.title}. ${M.topic}. ${open ? (finished(n) ? 'Ver de novo' : 'Jogar') : 'Bloqueada: termine as outras 5 missões para liberar'}">
+        aria-label="Missão ${n}: ${M.title}. ${M.topic}. ${open ? (finished(n) ? 'Ver de novo' : 'Jogar') : `Bloqueada: termine as outras 5 missões e junte ${STARS_TO_FLY} estrelas para liberar`}">
       <span class="mcard__img"><img src="${IMG.card[n]}" alt="">
         <span class="mcard__num">Missão ${n}</span>
         ${open ? '' : `<span class="mcard__lock">${icon('lock')}</span>`}</span>
@@ -1198,7 +1212,18 @@ function renderMapa() {
         ${status}
       </span></button></li>`;
   }).join('');
+  $('map-finish').hidden = !stuckBeforeAirport();
 }
+
+/* Finalizar sem o Aeroporto: ele vale 0 e a nota é calculada normalmente */
+$('map-finish-btn').addEventListener('click', () => {
+  S.skipped[LAST] = true;
+  S.noAirport = true;
+  S.completed = true;
+  S.finalMs = Math.round(S.activeMs);
+  save();
+  show('fim');
+});
 $('missions').addEventListener('click', event => {
   const btn = event.target.closest('[data-mission]');
   if (!btn || btn.disabled) return;
@@ -1546,8 +1571,8 @@ function renderFim() {
   $('g-stars').innerHTML = starsHtml(stars);
   $('g-stars').setAttribute('aria-label', `${stars} de 5 estrelas`);
   $('g-level').textContent = `Nível de conhecimento: ${LEVEL[stars]}`;
-  $('g-list').innerHTML = MISSIONS.map(n => `<li><span>${n}. ${MISSION[n].title}</span><strong>${S.skipped[n] ? 'pulada · 0' : missionPoints(n)} pts</strong></li>`).join('');
-  const review = MISSIONS.filter(n => S.skipped[n] || missionPoints(n) < 70);
+  $('g-list').innerHTML = MISSIONS.map(n => `<li><span>${n}. ${MISSION[n].title}</span><strong>${n === LAST && S.noAirport ? 'não liberada · 0' : S.skipped[n] ? 'pulada · 0' : missionPoints(n)} pts</strong></li>`).join('');
+  const review = MISSIONS.filter(n => !(n === LAST && S.noAirport) && (S.skipped[n] || missionPoints(n) < 70));
   $('g-study').hidden = !review.length;
   $('g-study-lead').textContent = 'Essas missões merecem uma revisada:';
   $('g-study-list').innerHTML = review.map(n => `<div class="study"><h3>${MISSION[n].title} · ${MISSION[n].topic}</h3><ul>${STUDY[n]

@@ -40,6 +40,6 @@ def make_page(name, title, description, extra_head=''):
             f'<script>\n{common}\n{script}</script>\n</body>\n</html>\n')
     (repo / f'{name}.html').write_text(html)
 
-make_page('ranking', 'Ranking · GTA Missões do Glicério', 'Ranking publicado das Missões do Glicério (GTA).')
-make_page('gestao', 'Gestão · GTA Missões do Glicério', 'Área de gestão do jogo GTA.', '<meta name="robots" content="noindex, nofollow">\n')
+make_page('ranking', 'Ranking · GTA Edição Porto Alegre', 'Ranking publicado do GTA, Edição Porto Alegre.')
+make_page('gestao', 'Gestão · GTA Edição Porto Alegre', 'Área de gestão do jogo GTA.', '<meta name="robots" content="noindex, nofollow">\n')
 print('páginas ok')
