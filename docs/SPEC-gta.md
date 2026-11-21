@@ -6,7 +6,7 @@
 
 ## 1. Estrutura
 
-- **6 missões**, 2 por área. As missões 1 a 5 ficam **abertas desde o início**, em qualquer ordem. A 6 (Aeroporto Salgado Filho) só libera quando as outras cinco estiverem terminadas, concluídas ou puladas.
+- **6 missões**, 2 por área. As missões 1 a 5 ficam **abertas desde o início**, em qualquer ordem. A 6 (Aeroporto Salgado Filho) só libera quando as outras cinco estiverem terminadas (concluídas ou puladas) **e** o jogador tiver pelo menos 3 estrelas. Sem as 3 estrelas, aparece "Finalizar a live": o Aeroporto conta como 0 (enviado ao servidor como pulado) e a nota é calculada normalmente, com mínimo 5.
 - A tela inicial é a **colagem tipo pôster**: cada missão é um painel da cidade, e o painel "acende" quando a missão é concluída.
 - Cada missão tem: **briefing** (o personagem explica a situação), **pistas** na cena, **desafio em 2 etapas** (A e B) e **recompensa** (pontos e estrelas).
 
@@ -100,6 +100,7 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **0.8 (21/11/2026):** Aeroporto exige 3 estrelas, com opção de finalizar sem ele; marca "Edição Porto Alegre" no lugar de "Missões do Glicério".
 - **0.7 (21/11/2026):** desafios no nível do 1º ano: sem lei dos senos/cossenos nem ciclo trigonométrico (entram razões trigonométricas com sen 30° e Pitágoras na Usina, e o vértice da parábola na Arena); números menores nas outras missões (π continua 3,14: o Lucas pediu para nunca alterar). Os sorteios detalhados da seção 2 ficaram valendo só como histórico; os atuais estão na tabela.
 - **0.6 (21/11/2026):** missões 1 a 5 abertas desde o início e o Aeroporto liberado no fim; logo "G.T.A" em Pricedown branco com o nome escrito à mão.
 - **0.5 (21/11/2026):** nova ordem (Mercado, Redenção, Beira-Rio, Gasômetro, Arena, Aeroporto); a Orla saiu e a função quadrática deu lugar à função afim no Aeroporto Salgado Filho (h₀ ∈ {300, 500} m, r ∈ {400, 500, 600} m/min, t ∈ {3, 4, 5}, tempo pedido ∈ {8, 10, 12} min).
