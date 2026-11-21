@@ -69,36 +69,36 @@ const MISSION = {
   1: {
     title: 'Mercado Público', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
     brief: '{nick}, partiu Mercado Público! Uma banca vai encher um tonel cilíndrico de suco e precisa saber quanto cabe nele. Bora medir?',
-    hint: 'A base do cilindro é um círculo: área = π · r² (r é o raio, metade do diâmetro). Depois, volume = área da base × altura. Pra passar de m³ pra litros, multiplica por 1.000. Salva essa dica!',
+    hint: 'A base do tonel é um círculo: área = π · r · r (r é o raio, a metade do diâmetro). Aqui a gente usa π = 3. Depois, volume = área da base × altura. Pra passar de m³ pra litros, multiplica por 1.000. Salva essa dica!',
     alt: 'Fachada amarela do Mercado Público de Porto Alegre ao pôr do sol, com uma banca de frutas e um tonel de madeira em primeiro plano.',
     gen() {
-      const r = pick([0.5, 0.6, 0.8, 1]), h = pick([1, 1.2, 1.5, 2]);
-      const A = round2(3.14 * r * r);
+      const r = pick([0.5, 1, 1.5]), h = pick([1, 2]);
+      const A = round2(3 * r * r);
       return { r, h, A, B: round2(A * h * 1000) };
     },
     stages: d => [
-      { type: 'build', data: [['Raio da base do tonel', `${fmt(d.r)} m`], ['Altura do tonel', `${fmt(d.h)} m`], ['Use π', '3,14']],
+      { type: 'build', data: [['Raio da base do tonel', `${fmt(d.r)} m`], ['Altura do tonel', `${fmt(d.h)} m`], ['Use π', '3']],
         question: 'Monte a conta da área da base do tonel.',
-        template: ['A = ', slot('3,14'), ' · ', slot(fmt(d.r)), '²'],
-        chips: makeChips(['3,14', fmt(d.r)], [fmt(2 * d.r), fmt(d.h), '2']),
-        result: `Área da base: ${fmt(d.A)} m² (arredondada).` },
+        template: ['A = ', slot('3'), ' · ', slot(fmt(d.r)), '²'],
+        chips: makeChips(['3', fmt(d.r)], [fmt(2 * d.r), fmt(d.h), '3,14', '2']),
+        result: `Área da base: ${fmt(d.A)} m².` },
       { type: 'choice', data: [['Área da base', `${fmt(d.A)} m²`], ['Altura do tonel', `${fmt(d.h)} m`], ['Conversão', '1 m³ = 1.000 L']],
         question: 'Quantos litros cabem no tonel?', unit: 'litros', correct: d.B,
-        distractors: [round2(d.A * d.h), round2(d.A * d.h * 100), round2(3.14 * 4 * d.r * d.r * d.h * 1000)] }
+        distractors: [round2(d.A * d.h), round2(d.A * d.h * 100), round2(3 * 4 * d.r * d.r * d.h * 1000)] }
     ],
     solution: d => [
-      `Área da base: 3,14 · ${fmt(d.r)}² = ${fmt(d.A)} m².`,
+      `Área da base: 3 · ${fmt(d.r)}² = ${fmt(d.A)} m².`,
       `Volume: ${fmt(d.A)} · ${fmt(d.h)} = ${fmt(round2(d.A * d.h))} m³, ou seja, ${fmtBig(d.B)} litros.`
     ]
   },
   2: {
     title: 'Parque Redenção', area: 'Geometria', topic: 'Geometria analítica (ponto médio e distância)',
     brief: '{nick}, hoje o rolê é na Redenção! A galera vai se encontrar no meio do caminho entre o lago dos pedalinhos e o Brique. Bora achar esse ponto e a distância?',
-    hint: 'Ponto médio: faz a média das coordenadas, x = (x₁ + x₂) ÷ 2. Distância: d = √((x₂ − x₁)² + (y₂ − y₁)²). É Pitágoras disfarçado no plano. GG!',
+    hint: 'Ponto médio: é a média, x = (x₁ + x₂) ÷ 2. Distância: desenha um triângulo retângulo entre os dois pontos. Um cateto é quanto andou no x, o outro é quanto andou no y, e a distância é a hipotenusa (Pitágoras). GG!',
     alt: 'Vista aérea do Parque Farroupilha, a Redenção, ao entardecer, com o lago dos pedalinhos, o chafariz e dois marcadores rosa.',
     gen() {
-      const [dx, dy] = pick([[3, 4], [4, 3], [6, 8], [8, 6], [5, 12], [12, 5], [9, 12]]);
-      const x1 = randInt(0, 20 - dx), y1 = randInt(0, 20 - dy);
+      const [dx, dy] = pick([[3, 4], [4, 3], [6, 8], [8, 6]]);
+      const x1 = randInt(0, 12 - dx), y1 = randInt(0, 12 - dy);
       const flip = Math.random() < 0.5;
       const P = [x1, flip ? y1 + dy : y1], Q = [x1 + dx, flip ? y1 : y1 + dy];
       return { P, Q, dx, dy, mx: round2((P[0] + Q[0]) / 2), dist: Math.hypot(dx, dy) };
@@ -121,11 +121,11 @@ const MISSION = {
   3: {
     title: 'Beira-Rio', area: 'Álgebra', topic: 'Progressão aritmética (PA) e geométrica (PG)',
     brief: '{nick}, dia de show no Beira-Rio! Cada fileira da arquibancada tem mais lugares que a de baixo, e o convite do show se espalha em rodadas. Bora organizar?',
-    hint: 'PA: aₙ = a₁ + (n − 1) · r. PG: aₙ = a₁ · qⁿ⁻¹. Na PA você soma a razão; na PG você multiplica.',
+    hint: 'PA: cada fileira soma a mesma quantidade, então aₙ = a₁ + (n − 1) · r. PG: cada rodada multiplica pelo mesmo número, então dá pra ir multiplicando rodada por rodada. Na PA você soma; na PG você multiplica.',
     alt: 'Estádio de assentos vermelhos à beira do lago ao pôr do sol, com fileiras de arquibancada que se alargam para cima.',
     gen() {
-      const a1 = pick([8, 10, 12]), r = pick([2, 3, 4]), n = pick([6, 8, 10]);
-      const g1 = pick([2, 3]), q = pick([2, 3]), m = pick([4, 5]);
+      const a1 = pick([5, 6, 8]), r = pick([2, 3]), n = pick([4, 5, 6]);
+      const g1 = pick([2, 3]), q = pick([2, 3]), m = pick([3, 4]);
       return { a1, r, n, an: a1 + (n - 1) * r, g1, q, m, gm: g1 * q ** (m - 1) };
     },
     stages: d => [
@@ -144,56 +144,52 @@ const MISSION = {
     ]
   },
   4: {
-    title: 'Usina do Gasômetro', area: 'Trigonometria', topic: 'Lei dos senos e lei dos cossenos',
-    brief: '{nick}, cheguei no mirante da Usina do Gasômetro bem na hora do pôr do sol! Daqui dá pra ver a boia e dois veleiros no Guaíba. Bora descobrir as distâncias?',
-    hint: 'Lei dos senos: cada lado dividido pelo seno do ângulo oposto dá sempre o mesmo valor (sen 30° = 0,5 e sen 90° = 1). Lei dos cossenos: c² = a² + b² − 2·a·b·cos θ, com cos 60° = 0,5.',
+    title: 'Usina do Gasômetro', area: 'Trigonometria', topic: 'Razões trigonométricas e Pitágoras',
+    brief: '{nick}, cheguei no mirante da Usina do Gasômetro bem na hora do pôr do sol! Bora descobrir a altura da chaminé e a distância até um veleiro no Guaíba?',
+    hint: 'No triângulo retângulo: seno = cateto oposto ÷ hipotenusa. Então cateto oposto = hipotenusa · seno. Lembra: sen 30° = 0,5. Pra distância do veleiro, é Pitágoras: d² = a² + b².',
     alt: 'Usina do Gasômetro, de tijolos vermelhos e chaminé alta, à beira do Guaíba ao pôr do sol, com dois veleiros na água.',
     gen() {
-      const [a, b, c] = pick([[3, 8, 7], [5, 8, 7], [7, 15, 13], [8, 15, 13], [5, 21, 19]]);
-      return { lado30: pick([40, 60, 70, 90]), a: a * 100, b: b * 100, c: c * 100 };
+      const [a, b, c] = pick([[3, 4, 5], [6, 8, 10], [5, 12, 13]]);
+      return { L: pick([40, 60, 80, 100]), a: a * 100, b: b * 100, c: c * 100 };
     },
     stages: d => [
-      { type: 'build', data: [['Triângulo', 'mirante, veleiro e boia'], ['Ângulo de 30°', `lado oposto: ${d.lado30} m`], ['Ângulo de 90°', 'lado oposto: x']],
-        question: 'Monte a lei dos senos para achar x, o lado oposto ao ângulo de 90°.',
-        template: ['x ÷ sen 90° = ', slot(d.lado30), ' ÷ sen ', slot('30°')],
-        chips: makeChips([d.lado30, '30°'], ['60°', '90°', d.lado30 / 2]),
-        result: `Como sen 30° = 0,5: x = ${d.lado30 * 2} m.` },
-      { type: 'choice', data: [['Mirante até o veleiro 1', `${fmtBig(d.a)} m`], ['Mirante até o veleiro 2', `${fmtBig(d.b)} m`], ['Ângulo no mirante', '60°']],
-        question: 'Qual é a distância entre os dois veleiros?', unit: 'm', correct: d.c,
-        distractors: [round2(Math.hypot(d.a, d.b)), d.a + d.b, d.b - d.a] }
+      { type: 'build', data: [['Linha do chão até o topo da chaminé', `${d.L} m (hipotenusa)`], ['Ângulo com o chão', '30°'], ['Tabela', 'sen 30° = 0,5 · cos 30° ≈ 0,87']],
+        question: 'Monte a conta da altura da chaminé (o cateto oposto ao ângulo de 30°).',
+        template: ['h = ', slot(d.L), ' · ', slot('0,5')],
+        chips: makeChips([d.L, '0,5'], ['0,87', 30, 2]),
+        result: `A chaminé tem ${d.L / 2} m de altura.` },
+      { type: 'choice', data: [['Veleiro: para o leste', `${fmtBig(d.a)} m`], ['Veleiro: para o norte', `${fmtBig(d.b)} m`], ['Ângulo entre leste e norte', '90°']],
+        question: 'Qual é a distância em linha reta do mirante até o veleiro?', unit: 'm', correct: d.c,
+        distractors: [d.a + d.b, d.b - d.a, d.c + 100, d.a * 2] }
     ],
     solution: d => [
-      `Lei dos senos: x ÷ sen 90° = ${d.lado30} ÷ sen 30°, então x = ${d.lado30} ÷ 0,5 = ${d.lado30 * 2} m.`,
-      `Lei dos cossenos: d² = ${fmtBig(d.a)}² + ${fmtBig(d.b)}² − 2 · ${fmtBig(d.a)} · ${fmtBig(d.b)} · 0,5 = ${fmtBig(d.c * d.c)}, então d = ${fmtBig(d.c)} m.`
+      `Altura: h = ${d.L} · sen 30° = ${d.L} · 0,5 = ${d.L / 2} m.`,
+      `Distância: d² = ${fmtBig(d.a)}² + ${fmtBig(d.b)}² = ${fmtBig(d.c * d.c)}, então d = ${fmtBig(d.c)} m.`
     ]
   },
   5: {
-    title: 'Arena do Grêmio', area: 'Trigonometria', topic: 'Ciclo trigonométrico e função seno',
-    brief: '{nick}, hoje a live é na Arena! A grua da TV gira o braço com a câmera na ponta, e a altura da câmera segue uma função seno. Partiu calcular?',
-    hint: 'O seno vai de −1 a 1, então a altura máxima é quando sen θ = 1. Num ângulo qualquer, olha o quadrante: sen 30° = sen 150° = 0,5, sen 90° = 1, sen 210° = sen 330° = −0,5 e sen 270° = −1.',
+    title: 'Arena do Grêmio', area: 'Álgebra', topic: 'Função quadrática (vértice da parábola)',
+    brief: '{nick}, hoje a live é na Arena! A grua da TV acompanha um tiro de meta, e a bola faz uma parábola no ar. Bora descobrir onde ela fica mais alta?',
+    hint: 'Numa parábola h(x) = −x² + b·x, o ponto mais alto (o vértice) fica no meio do caminho: x = b ÷ 2. Depois é só colocar esse x na função pra achar a altura.',
     alt: 'Estádio de assentos azuis ao entardecer, com uma grua de TV erguendo a câmera sobre o gramado.',
     gen() {
-      const R = pick([8, 10, 12, 15]), theta = pick([30, 90, 150, 210, 270, 330]);
-      const sin = { 30: 0.5, 90: 1, 150: 0.5, 210: -0.5, 270: -1, 330: -0.5 }[theta];
-      return { R, theta, sin, max: 2 * R + 1, h: round2(R + 1 + R * sin) };
+      const k = pick([6, 8, 10]);
+      return { k, x: k / 2, H: k * k / 4 };
     },
     stages: d => [
-      { type: 'build', data: [['Braço da grua', `${d.R} m`], ['Eixo da grua', `${d.R + 1} m acima do gramado`], ['Altura da câmera', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`]],
-        question: 'Monte a conta da altura máxima. Dica: qual é o maior valor do seno?',
-        template: ['h máx = ', slot(d.R + 1), ' + ', slot(d.R), ' · ', slot('1')],
-        chips: makeChips([d.R + 1, d.R, 1], ['0', '0,5', 2 * d.R]),
-        result: `Altura máxima: ${d.max} m.` },
-      { type: 'choice', data: [['Altura da câmera', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`], ['Ângulo do braço agora', `θ = ${d.theta}°`]],
-        question: 'Qual é a altura da câmera nesse ângulo?', unit: 'm', correct: d.h,
-        distractors: [round2(d.R + 1 - d.R * d.sin), d.R + 1, d.max, round2(d.R * Math.abs(d.sin)), d.R] }
+      { type: 'build', data: [['Altura da bola', `h(x) = −x² + ${d.k}x`], ['x', 'distância do gol, em metros'], ['h', 'altura da bola, em metros']],
+        question: 'Monte a conta do x do vértice (onde a bola fica mais alta).',
+        template: ['x = ', slot(d.k), ' ÷ ', slot('2')],
+        chips: makeChips([d.k, 2], [4, 1, d.k * 2]),
+        result: `A bola fica mais alta em x = ${d.x} m.` },
+      { type: 'choice', data: [['Altura da bola', `h(x) = −x² + ${d.k}x`], ['Vértice', `x = ${d.x} m`]],
+        question: 'Qual é a altura máxima da bola?', unit: 'm', correct: d.H,
+        distractors: [d.k * d.k / 2, d.k, d.H + d.k, d.x] }
     ],
-    solution: d => {
-      const s = { 30: '0,5', 90: '1', 150: '0,5', 210: '−0,5', 270: '−1', 330: '−0,5' }[d.theta];
-      return [
-        `Altura máxima: sen θ = 1, então h = ${d.R + 1} + ${d.R} · 1 = ${d.max} m.`,
-        `Em θ = ${d.theta}°: sen ${d.theta}° = ${s}, então h = ${d.R + 1} + ${d.R} · (${s}) = ${fmt(d.h)} m.`
-      ];
-    }
+    solution: d => [
+      `Vértice: x = ${d.k} ÷ 2 = ${d.x} m.`,
+      `Altura máxima: h(${d.x}) = −${d.x}² + ${d.k} · ${d.x} = ${d.H} m.`
+    ]
   },
   6: {
     title: 'Aeroporto Salgado Filho', area: 'Álgebra', topic: 'Função afim (taxa de variação)',
@@ -201,7 +197,7 @@ const MISSION = {
     hint: 'Função afim: h(t) = h₀ + r · t, em que h₀ é a altitude inicial e r é quanto o avião sobe por minuto. Pra achar o tempo, isola o t: t = (h − h₀) ÷ r.',
     alt: 'Aeroporto ao pôr do sol, com terminal envidraçado, torre de controle e um avião subindo logo depois da decolagem.',
     gen() {
-      const h0 = pick([300, 500]), r = pick([400, 500, 600]), t = pick([3, 4, 5]), t2 = pick([8, 10, 12]);
+      const h0 = pick([100, 200]), r = pick([200, 300]), t = pick([2, 3, 4]), t2 = pick([5, 6, 8]);
       return { h0, r, t, ht: h0 + r * t, t2, H: h0 + r * t2 };
     },
     stages: d => [
@@ -243,8 +239,8 @@ const STUDY = {
   1: [['Khan Academy · volume do cilindro', khan('volume do cilindro')], ['YouTube · área do círculo e volume do cilindro', yt('volume do cilindro área da base aula')]],
   2: [['Khan Academy · distância entre dois pontos', khan('distância entre dois pontos')], ['YouTube · ponto médio e distância entre pontos', yt('geometria analítica ponto médio distância entre dois pontos aula')]],
   3: [['Khan Academy · progressões aritméticas e geométricas', khan('progressão aritmética geométrica')], ['YouTube · termo geral da PA e da PG', yt('termo geral PA PG aula')]],
-  4: [['Khan Academy · lei dos senos e dos cossenos', khan('lei dos senos lei dos cossenos')], ['YouTube · lei dos senos e dos cossenos', yt('lei dos senos e lei dos cossenos aula')]],
-  5: [['Khan Academy · ciclo trigonométrico', khan('círculo trigonométrico seno')], ['YouTube · função seno e ciclo trigonométrico', yt('função seno ciclo trigonométrico aula')]],
+  4: [['Khan Academy · razões trigonométricas no triângulo retângulo', khan('seno cosseno tangente triângulo retângulo')], ['YouTube · seno, cosseno e tangente', yt('seno cosseno tangente triângulo retângulo aula')]],
+  5: [['Khan Academy · vértice da parábola', khan('vértice da parábola função quadrática')], ['YouTube · altura máxima e vértice da parábola', yt('vértice da parábola valor máximo aula')]],
   6: [['Khan Academy · função afim', khan('função afim taxa de variação')], ['YouTube · função afim: taxa de variação', yt('função afim taxa de variação aula')]]
 };
 
@@ -279,7 +275,7 @@ let S = null;
 
 function freshState() {
   return {
-    v: 3, started: true, jornadaId: newJourneyId(), player: null,
+    v: 4, started: true, jornadaId: newJourneyId(), player: null,
     data: Object.fromEntries(MISSIONS.map(n => [n, MISSION[n].gen()])),
     stage: perMission(0), stageErrors: perMission(0),
     done: perMission(false), skipped: perMission(false), errors: perMission(0), hint: perMission(false),
@@ -290,7 +286,7 @@ function freshState() {
 function loadState() {
   try {
     const data = JSON.parse(localStorage.getItem(STORE_KEY));
-    return data && data.v === 3 && data.data ? data : null;
+    return data && data.v === 4 && data.data ? data : null;
   } catch (e) { return null; }
 }
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* segue sem salvar */ } }

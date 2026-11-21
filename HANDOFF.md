@@ -29,7 +29,7 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
 - **Testes:** scripts Playwright em `test/`. O Chromium já vem instalado no ambiente em nuvem: `require('playwright')` funciona e não é preciso instalar nada. O servidor local que imita a Vercel é `test/dev-server.mjs`.
 
 **Decisões do Lucas (21/11/2026):**
-1. **Público:** 2º e 3º ano do ensino médio.
+1. **Público:** ensino médio, com as questões ajustadas em 21/11 para que um aluno do 1º ano consiga responder.
 2. **Formato: missões**, no lugar dos capítulos do escape room. A pontuação é dada **de acordo com a missão concluída**: cada missão vale pontos e o total vira a nota.
 3. **Tom:** linguagem mais adolescente. Gírias e humor podem, palavrão não (é um jogo escolar).
 4. **Escola:** "Glicério" é o nome da escola, por isso o endereço `gta-glicerio`. Pode aparecer no jogo, por exemplo "Missões do Glicério" ou o ranking das turmas do Glicério.

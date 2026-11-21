@@ -1,7 +1,7 @@
 # SPEC: GTA (Geometria, Trigonometria e Álgebra), Missões do Glicério
 
 **Versão:** 0.1 (rascunho) · **Data:** 21/11/2026
-**Público:** 2º e 3º ano do ensino médio da escola Glicério.
+**Público:** ensino médio da escola Glicério, com os desafios ajustados para que um aluno do 1º ano consiga resolver (decisão de 21/11).
 **Base técnica:** O Enigma de Pitágoras (ver `SPEC-enigma-de-pitagoras.md`).
 
 ## 1. Estrutura
@@ -20,12 +20,12 @@
 
 | # | Área | Missão | Assunto | Etapa A (montar a conta) | Etapa B (múltipla escolha) |
 |---|------|--------|---------|---------|---------|
-| 1 | Geometria | Mercado Público (tonel cilíndrico de uma banca) | Áreas e volumes | Área da base | Volume em litros |
-| 2 | Geometria | Parque Redenção (lago dos pedalinhos e Brique) | Geometria analítica | x do ponto médio | Distância entre os pontos |
-| 3 | Álgebra | Beira-Rio (arquibancada num dia de show e convites) | PA e PG | Cadeiras na fileira n (PA) | Pessoas na rodada m (PG) |
-| 4 | Trigonometria | Usina do Gasômetro (mirante, veleiros no Guaíba) | Lei dos senos e dos cossenos | Lado oposto a 90° (lei dos senos) | Distância entre os veleiros (lei dos cossenos, 60°) |
-| 5 | Trigonometria | Arena do Grêmio (grua de TV) | Ciclo trigonométrico e função seno | Altura máxima da câmera | Altura da câmera num ângulo |
-| 6 | Álgebra | Aeroporto Salgado Filho (avião subindo) | Função afim (taxa de variação) | Altitude depois de t minutos: h₀ + r · t | Tempo até a altitude H: (H − h₀) ÷ r |
+| 1 | Geometria | Mercado Público (tonel de uma banca) | Área do círculo e volume do cilindro (π = 3) | Área da base: 3 · r² (r ∈ {0,5; 1; 1,5} m) | Litros: área · altura · 1.000 (h ∈ {1, 2} m) |
+| 2 | Geometria | Parque Redenção (lago e Brique) | Ponto médio e distância (Pitágoras no plano) | x do ponto médio | Distância, com catetos (3,4), (4,3), (6,8) ou (8,6) |
+| 3 | Álgebra | Beira-Rio (arquibancada e convites) | PA e PG | Cadeiras na fileira n ∈ {4, 5, 6} | Pessoas na rodada m ∈ {3, 4} |
+| 4 | Trigonometria | Usina do Gasômetro (chaminé e veleiro) | Razões trigonométricas e Pitágoras | Altura da chaminé: L · sen 30° (L ∈ {40, 60, 80, 100} m) | Distância até o veleiro: ternas (3,4,5), (6,8,10) ou (5,12,13) × 100 m |
+| 5 | Álgebra | Arena do Grêmio (tiro de meta) | Função quadrática (vértice) | x do vértice de h(x) = −x² + kx: k ÷ 2 (k ∈ {6, 8, 10}) | Altura máxima: k² ÷ 4 |
+| 6 | Álgebra | Aeroporto Salgado Filho (avião subindo) | Função afim | Altitude: h₀ + r · t (h₀ ∈ {100, 200}, r ∈ {200, 300}, t ∈ {2, 3, 4}) | Tempo até a altitude dada: (H − h₀) ÷ r ∈ {5, 6, 8} min |
 
 ### Sorteio por missão (por jornada)
 
@@ -100,6 +100,7 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **0.7 (21/11/2026):** desafios no nível do 1º ano: sem lei dos senos/cossenos nem ciclo trigonométrico (entram razões trigonométricas com sen 30° e Pitágoras na Usina, e o vértice da parábola na Arena); π = 3 e números menores nas outras missões. Os sorteios detalhados da seção 2 ficaram valendo só como histórico; os atuais estão na tabela.
 - **0.6 (21/11/2026):** missões 1 a 5 abertas desde o início e o Aeroporto liberado no fim; logo "G.T.A" em Pricedown branco com o nome escrito à mão.
 - **0.5 (21/11/2026):** nova ordem (Mercado, Redenção, Beira-Rio, Gasômetro, Arena, Aeroporto); a Orla saiu e a função quadrática deu lugar à função afim no Aeroporto Salgado Filho (h₀ ∈ {300, 500} m, r ∈ {400, 500, 600} m/min, t ∈ {3, 4, 5}, tempo pedido ∈ {8, 10, 12} min).
 - **0.4 (21/11/2026):** missões ambientadas em Porto Alegre, com ilustrações novas. Nos estádios, o contexto é neutro (transmissão de TV e show), sem escudos nem torcida de clube.
