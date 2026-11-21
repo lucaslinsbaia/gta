@@ -6,7 +6,7 @@
 
 ## 1. Estrutura
 
-- **6 missões**, 2 por área, liberadas **em sequência**: concluir (ou pular) uma missão libera a próxima. O mapa mostra as missões bloqueadas.
+- **6 missões**, 2 por área. As missões 1 a 5 ficam **abertas desde o início**, em qualquer ordem. A 6 (Aeroporto Salgado Filho) só libera quando as outras cinco estiverem terminadas, concluídas ou puladas.
 - A tela inicial é a **colagem tipo pôster**: cada missão é um painel da cidade, e o painel "acende" quando a missão é concluída.
 - Cada missão tem: **briefing** (o personagem explica a situação), **pistas** na cena, **desafio em 2 etapas** (A e B) e **recompensa** (pontos e estrelas).
 
@@ -80,8 +80,8 @@
   - laranja #FF5E3A e amarelo #FFB02E;
   - turquesa #22E3FF e verde ácido #B6FF3B;
   - texto em creme #FFF7EC.
-- **Fontes:** Bungee (logo e selos), Anton (títulos), Bebas Neue (rótulos e placar) e Inter (texto).
-- **Logo (aprovado em 21/11):** "GTA" em Bungee com listras amarelo #FFB02E, laranja #FF5E3A, rosa #FF2E93 e magenta #A3167A, com contorno creme. A assinatura "Geometria, Trigonometria e Álgebra" vai pequena abaixo.
+- **Fontes:** Anton (títulos), Bebas Neue (rótulos e placar), Permanent Marker (nome do jogo escrito à mão, sob o logo) e Inter (texto).
+- **Logo (21/11, versão final):** "G.T.A" em Pricedown Black, branco com contorno preto e sombra rosa, convertido em contorno (símbolo `#logo-gta` no sprite de `src/body.html`). Logo abaixo, "Geometria, Trigonometria e Álgebra" escrito à mão em Permanent Marker, amarelo e levemente inclinado.
 - **Estilo:** pintura tipo pôster na hora dourada, colagem em painéis, cidade inventada, sem ser de uma região específica (orla, roda-gigante, pista de skate, quadra, obra, food truck). Contornos e sombras chapadas.
 - **Personagem das dicas (aprovado em 21/11): Dani Pixel.** Cria conteúdo de desafios e transmite as missões ao vivo. As dicas vêm como falas da live ("chat, olha só...") e explicam o caminho sem dar a resposta.
 - **Linguagem e personagem:** sem estereótipos nem regionalismos, porque o jogo será aplicado em vários lugares do Brasil.
@@ -100,6 +100,7 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **0.6 (21/11/2026):** missões 1 a 5 abertas desde o início e o Aeroporto liberado no fim; logo "G.T.A" em Pricedown branco com o nome escrito à mão.
 - **0.5 (21/11/2026):** nova ordem (Mercado, Redenção, Beira-Rio, Gasômetro, Arena, Aeroporto); a Orla saiu e a função quadrática deu lugar à função afim no Aeroporto Salgado Filho (h₀ ∈ {300, 500} m, r ∈ {400, 500, 600} m/min, t ∈ {3, 4, 5}, tempo pedido ∈ {8, 10, 12} min).
 - **0.4 (21/11/2026):** missões ambientadas em Porto Alegre, com ilustrações novas. Nos estádios, o contexto é neutro (transmissão de TV e show), sem escudos nem torcida de clube.
 - **0.3 (21/11/2026):** respostas sem digitar: etapa A de arrastar e soltar para montar a conta, etapa B de múltipla escolha.

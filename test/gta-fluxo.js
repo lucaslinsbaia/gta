@@ -39,7 +39,8 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.goto(GAME + '#teste'); await p.evaluate(() => localStorage.clear()); await p.reload(); await p.waitForTimeout(400);
     await p.click('#btn-start'); await p.fill('#id-name', 'Ana'); await p.click('#id-form button[type=submit]'); await p.waitForTimeout(300);
-    assert(await p.isDisabled('[data-mission="2"]'), 'missão 2 começa bloqueada');
+    assert(!(await p.isDisabled('[data-mission="5"]')), 'missões 1 a 5 começam abertas');
+    assert(await p.isDisabled('[data-mission="6"]'), 'o Aeroporto começa bloqueado');
 
     // Missão 1: monta a conta errado (1 erro), depois certo por toque e por arrastar; erra 1 alternativa; usa dica → 100 − 20 − 20 = 60
     await p.click('[data-mission="1"]'); await p.waitForTimeout(200);
@@ -86,8 +87,9 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     assert(await p.isVisible('#rw-solution'), 'resolução aparece ao pular');
     await p.click('#rw-next'); await p.waitForTimeout(200);
 
-    // Missões 3 a 6 no modo de teste
-    for (let n = 3; n <= 6; n++) {
+    // Missões 3 a 5 no modo de teste, fora de ordem; depois a 6 libera
+    for (const n of [5, 3, 4, 6]) {
+      if (n === 6) assert(!(await p.isDisabled('[data-mission="6"]')), 'o Aeroporto libera depois das outras 5');
       await p.click(`[data-mission="${n}"]`); await p.waitForTimeout(150);
       await p.click('#test-fab'); await p.waitForTimeout(150); await p.click('#test-fab'); await p.waitForTimeout(200);
       await p.click('#rw-next'); await p.waitForTimeout(200);

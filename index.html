@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#1A0833">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Bungee&family=Inter:wght@400;500;600;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Bungee&family=Permanent+Marker&family=Inter:wght@400;500;600;800&display=swap">
 <style>
   /* =====================================================================
      GTA · MISSÕES DO GLICÉRIO — estilos
@@ -54,7 +54,8 @@
     --font-logo: "Bungee", "Anton", Impact, sans-serif;
     --font-display: "Anton", Impact, "Arial Narrow", sans-serif;
     --font-label: "Bebas Neue", "Anton", "Arial Narrow", sans-serif;
-    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-hand: "Permanent Marker", "Bradley Hand", cursive;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
     --text-2xs: 0.75rem;
     --text-xs: 0.8125rem;
@@ -120,6 +121,7 @@
   .nav { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s5); background: rgba(26, 8, 51, 0.94); border-bottom: 3px solid var(--pink); backdrop-filter: blur(6px); }
   .brand { display: inline-flex; align-items: center; gap: var(--s3); padding: 0; background: none; border: 0; cursor: pointer; text-align: left; }
   .brand__mark { font: 400 1.9rem/1 var(--font-logo); background: var(--stripes); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: 1.5px var(--cream); }
+  .brand__logo { display: block; height: 40px; width: auto; }
   .brand > .icon { color: var(--yellow); }
   .brand__name { display: block; font: 400 1.25rem/1 var(--font-label); letter-spacing: 0.08em; color: var(--ink); }
   .brand__sub { display: block; font-size: var(--text-2xs); color: var(--muted); }
@@ -158,6 +160,8 @@
   .cover__logo { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s2); padding: var(--s3); background: var(--night); border: var(--edge); text-align: center; }
   .logo { margin: 0; display: flex; flex-direction: column; align-items: center; gap: var(--s2); }
   .logo__gta { font: 400 clamp(4rem, 2rem + 9vw, 9.5rem)/1 var(--font-logo); background: var(--stripes); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: 3px var(--cream); }
+  .logo__svg { display: block; width: min(88%, 520px); height: auto; filter: drop-shadow(6px 6px 0 var(--pink)); }
+  .logo__name { display: block; margin-top: var(--s2); font: 400 clamp(1rem, 0.7rem + 1.3vw, 1.75rem)/1.15 var(--font-hand); color: var(--yellow); transform: rotate(-3deg); text-align: center; }
   .logo__sign { font: 500 clamp(0.6rem, 0.5rem + 0.3vw, 0.8rem)/1.3 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
   .cover__tag { margin: var(--s2) 0 0; font: 400 clamp(1.1rem, 0.9rem + 0.8vw, 1.8rem)/1 var(--font-label); letter-spacing: 0.14em; color: var(--cyan); }
   .cover__side .title-lg { font-size: var(--text-xl); line-height: 1.05; }
@@ -345,7 +349,7 @@
      =================================================================== -->
 <header class="nav">
   <button type="button" class="brand" id="brand" aria-label="GTA, Missões do Glicério: voltar ao início">
-    <span class="brand__mark" aria-hidden="true">GTA</span>
+    <svg class="brand__logo" viewBox="0 0 2173 759" aria-hidden="true" focusable="false"><use href="#logo-gta"/></svg>
     <span>
       <span class="brand__name">Missões do Glicério</span>
       <span class="brand__sub" id="nav-sub">Geometria, Trigonometria e Álgebra</span>
@@ -374,8 +378,8 @@
         <div class="cover__panel"><img data-card="4" alt=""></div>
         <div class="cover__panel"><img data-card="3" alt=""></div>
         <div class="cover__logo">
-          <h1 class="logo" id="cover-title"><span class="logo__gta">GTA</span>
-            <span class="logo__sign">Geometria, Trigonometria e Álgebra</span></h1>
+          <h1 class="logo" id="cover-title"><span class="sr-only">GTA</span><svg class="logo__svg" viewBox="0 0 2173 759" aria-hidden="true" focusable="false"><use href="#logo-gta"/></svg>
+            <span class="logo__name">Geometria, Trigonometria e Álgebra</span></h1>
         </div>
         <div class="cover__panel"><img data-card="1" alt=""></div>
         <div class="cover__panel"><img data-card="2" alt=""></div>
@@ -612,6 +616,8 @@
 <p class="sr-only" id="live" aria-live="polite"></p>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Logo "G.T.A" em Pricedown Black (Typodermic) convertido em contorno: desenho fixo, sem a fonte embutida -->
+  <symbol id="logo-gta" viewBox="0 0 2173 759"><path d="M527 699V308H319V540H270C269 540 268 539 268 538V222C268 221 269 220 270 220H317C318 220 319 221 319 222V249H527V141C527 87 492 60 423 60H164C95 60 60 87 60 141V620C60 673 95 699 164 699Z M786 699V540H578V699Z M1232 699C1301 699 1336 673 1336 620V300H1129V538C1129 539 1128 540 1127 540H1079C1078 540 1077 539 1077 538V259H1336V101H1077V60H869V101H818V259H869V620C869 673 904 699 973 699Z M1595 699V540H1387V699Z M1905 300H1854V222C1854 221 1855 220 1856 220H1903C1904 220 1905 221 1905 222ZM2113 699V141C2113 87 2078 60 2009 60H1750C1681 60 1646 87 1646 141V699H1854V460H1905V699Z" fill="#FFFFFF" stroke="#000000" stroke-width="56" stroke-linejoin="round" paint-order="stroke fill"/></symbol>
   <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
   <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
@@ -928,7 +934,10 @@ function loadState() {
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* segue sem salvar */ } }
 
 const finished = n => S.done[n] || S.skipped[n];
-const unlocked = n => n === 1 || finished(n - 1);
+/* Missões 1 a 5 ficam abertas desde o início, em qualquer ordem. A 6 (Aeroporto)
+   só libera quando as cinco anteriores estiverem terminadas (concluídas ou puladas). */
+const LAST = 6;
+const unlocked = n => n !== LAST || MISSIONS.filter(m => m !== LAST).every(finished);
 const allFinished = () => MISSIONS.every(finished);
 
 /* Tempo ativo: conta só com a aba visível, durante o jogo */
@@ -1167,11 +1176,12 @@ $('id-class').addEventListener('change', () => setFieldMessage($('id-class'), $(
 function renderMapa() {
   $('map-avatar').src = IMG.avatar;
   const next = MISSIONS.find(n => !finished(n));
-  const first = next === 1 && !S.stage[1] && !S.errors[1];
+  const first = !MISSIONS.some(finished);
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
   $('map-bubble').textContent = first
-    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Começa pelo Mercado Público que eu vou junto!`
-    : next ? `Mandou bem até aqui! Próxima parada: ${MISSION[next].title}. Tô torcendo, ${nick()}!`
+    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Escolhe por onde começar! O Aeroporto só libera no fim, depois das outras cinco.`
+    : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão da live. Bora decolar?`
+      : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
@@ -1179,9 +1189,9 @@ function renderMapa() {
     const status = S.done[n] ? `<span class="mcard__status is-done">${icon('check', 'icon icon--sm')} Concluída · ${missionPoints(n)} pts</span>`
       : S.skipped[n] ? `<span class="mcard__status is-skip">${icon('skip', 'icon icon--sm')} Pulada · 0 pts</span>`
         : open ? `<span class="mcard__status is-open">${icon('play', 'icon icon--sm')} ${S.stage[n] || S.errors[n] ? 'Em andamento' : 'Disponível'} · até 100 pts</span>`
-          : `<span class="mcard__status">${icon('lock', 'icon icon--sm')} Bloqueada</span>`;
+          : `<span class="mcard__status">${icon('lock', 'icon icon--sm')} Termine as outras 5 missões</span>`;
     return `<li><button type="button" class="mcard" data-mission="${n}" ${open ? '' : 'disabled'}
-        aria-label="Missão ${n}: ${M.title}. ${M.topic}. ${open ? (finished(n) ? 'Ver de novo' : 'Jogar') : 'Bloqueada: conclua a anterior'}">
+        aria-label="Missão ${n}: ${M.title}. ${M.topic}. ${open ? (finished(n) ? 'Ver de novo' : 'Jogar') : 'Bloqueada: termine as outras 5 missões para liberar'}">
       <span class="mcard__img"><img src="${IMG.card[n]}" alt="">
         <span class="mcard__num">Missão ${n}</span>
         ${open ? '' : `<span class="mcard__lock">${icon('lock')}</span>`}</span>
