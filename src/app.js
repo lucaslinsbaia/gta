@@ -22,12 +22,12 @@ const IMG = {
   dani: '__IMG_gta_dani_pixel__',
   avatar: '__IMG_gta_dani_avatar__',
   card: {
-    1: '__IMG_gta_card_m1_obra__', 2: '__IMG_gta_card_m2_mapa__', 3: '__IMG_gta_card_m3_torre__',
-    4: '__IMG_gta_card_m4_roda__', 5: '__IMG_gta_card_m5_foodtruck__', 6: '__IMG_gta_card_m6_formatura__'
+    1: '__IMG_gta_card_m1_mercado__', 2: '__IMG_gta_card_m2_redencao__', 3: '__IMG_gta_card_m3_gasometro__',
+    4: '__IMG_gta_card_m4_arena__', 5: '__IMG_gta_card_m5_orla__', 6: '__IMG_gta_card_m6_beirario__'
   },
   scene: {
-    1: '__IMG_gta_cena_m1_obra__', 2: '__IMG_gta_cena_m2_mapa__', 3: '__IMG_gta_cena_m3_torre__',
-    4: '__IMG_gta_cena_m4_roda__', 5: '__IMG_gta_cena_m5_foodtruck__', 6: '__IMG_gta_cena_m6_formatura__'
+    1: '__IMG_gta_cena_m1_mercado__', 2: '__IMG_gta_cena_m2_redencao__', 3: '__IMG_gta_cena_m3_gasometro__',
+    4: '__IMG_gta_cena_m4_arena__', 5: '__IMG_gta_cena_m5_orla__', 6: '__IMG_gta_cena_m6_beirario__'
   }
 };
 
@@ -67,23 +67,23 @@ function makeChips(required, distractors) {
 
 const MISSION = {
   1: {
-    title: 'Obra na Laje', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
-    brief: '{nick}, olha essa obra! A galera vai instalar uma caixa d\'água cilíndrica na laje e precisa saber quanto cabe nela antes de ligar a bomba. Bora medir?',
+    title: 'Mercado Público', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
+    brief: '{nick}, partiu Mercado Público! Uma banca vai encher um tonel cilíndrico de suco e precisa saber quanto cabe nele. Bora medir?',
     hint: 'A base do cilindro é um círculo: área = π · r² (r é o raio, metade do diâmetro). Depois, volume = área da base × altura. Pra passar de m³ pra litros, multiplica por 1.000. Salva essa dica!',
-    alt: 'Laje em obra ao pôr do sol, com uma caixa d\'água cilíndrica azul no centro, andaime, tijolos e baldes.',
+    alt: 'Fachada amarela do Mercado Público de Porto Alegre ao pôr do sol, com uma banca de frutas e um tonel de madeira em primeiro plano.',
     gen() {
       const r = pick([0.5, 0.6, 0.8, 1]), h = pick([1, 1.2, 1.5, 2]);
       const A = round2(3.14 * r * r);
       return { r, h, A, B: round2(A * h * 1000) };
     },
     stages: d => [
-      { type: 'build', data: [['Raio da base', `${fmt(d.r)} m`], ['Altura da caixa', `${fmt(d.h)} m`], ['Use π', '3,14']],
-        question: 'Monte a conta da área da base da caixa.',
+      { type: 'build', data: [['Raio da base do tonel', `${fmt(d.r)} m`], ['Altura do tonel', `${fmt(d.h)} m`], ['Use π', '3,14']],
+        question: 'Monte a conta da área da base do tonel.',
         template: ['A = ', slot('3,14'), ' · ', slot(fmt(d.r)), '²'],
         chips: makeChips(['3,14', fmt(d.r)], [fmt(2 * d.r), fmt(d.h), '2']),
         result: `Área da base: ${fmt(d.A)} m² (arredondada).` },
-      { type: 'choice', data: [['Área da base', `${fmt(d.A)} m²`], ['Altura da caixa', `${fmt(d.h)} m`], ['Conversão', '1 m³ = 1.000 L']],
-        question: 'Quantos litros cabem na caixa d\'água?', unit: 'litros', correct: d.B,
+      { type: 'choice', data: [['Área da base', `${fmt(d.A)} m²`], ['Altura do tonel', `${fmt(d.h)} m`], ['Conversão', '1 m³ = 1.000 L']],
+        question: 'Quantos litros cabem no tonel?', unit: 'litros', correct: d.B,
         distractors: [round2(d.A * d.h), round2(d.A * d.h * 100), round2(3.14 * 4 * d.r * d.r * d.h * 1000)] }
     ],
     solution: d => [
@@ -92,10 +92,10 @@ const MISSION = {
     ]
   },
   2: {
-    title: 'Rolê no Mapa', area: 'Geometria', topic: 'Geometria analítica (ponto médio e distância)',
-    brief: '{nick}, hoje o rolê é de skate! A pista nova fica num ponto do mapa e a sorveteria em outro. Vamos marcar o encontro no meio do caminho e descobrir a distância.',
+    title: 'Parque Redenção', area: 'Geometria', topic: 'Geometria analítica (ponto médio e distância)',
+    brief: '{nick}, hoje o rolê é na Redenção! A galera vai se encontrar no meio do caminho entre o lago dos pedalinhos e o Brique. Bora achar esse ponto e a distância?',
     hint: 'Ponto médio: faz a média das coordenadas, x = (x₁ + x₂) ÷ 2. Distância: d = √((x₂ − x₁)² + (y₂ − y₁)²). É Pitágoras disfarçado no plano. GG!',
-    alt: 'Vista aérea da cidade ao entardecer, com ruas em grade e dois marcadores rosa em esquinas diferentes.',
+    alt: 'Vista aérea do Parque Farroupilha, a Redenção, ao entardecer, com o lago dos pedalinhos, o chafariz e dois marcadores rosa.',
     gen() {
       const [dx, dy] = pick([[3, 4], [4, 3], [6, 8], [8, 6], [5, 12], [12, 5], [9, 12]]);
       const x1 = randInt(0, 20 - dx), y1 = randInt(0, 20 - dy);
@@ -104,36 +104,36 @@ const MISSION = {
       return { P, Q, dx, dy, mx: round2((P[0] + Q[0]) / 2), dist: Math.hypot(dx, dy) };
     },
     stages: d => [
-      { type: 'build', data: [['Pista de skate', `(${d.P[0]}, ${d.P[1]})`], ['Sorveteria', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala', '1 unidade = 1 quarteirão']],
-        question: 'Monte a conta da coordenada x do ponto médio entre a pista e a sorveteria.',
+      { type: 'build', data: [['Lago dos pedalinhos', `(${d.P[0]}, ${d.P[1]})`], ['Banca do Brique', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala do mapa', '1 unidade = 10 m']],
+        question: 'Monte a conta da coordenada x do ponto de encontro (o ponto médio).',
         template: ['x = (', slot(d.P[0]), ' + ', slot(d.Q[0]), ') ÷ ', slot('2')], swap: [[0, 1]],
         chips: makeChips([d.P[0], d.Q[0], 2], [d.P[1], d.Q[1], 4, d.P[0] + d.Q[0], 1]),
         result: `Ponto médio: x = ${fmt(d.mx)}.` },
-      { type: 'choice', data: [['Pista de skate', `(${d.P[0]}, ${d.P[1]})`], ['Sorveteria', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala', '1 unidade = 1 quarteirão']],
-        question: 'Qual é a distância em linha reta entre a pista e a sorveteria?', unit: 'quarteirões', correct: d.dist,
+      { type: 'choice', data: [['Lago dos pedalinhos', `(${d.P[0]}, ${d.P[1]})`], ['Banca do Brique', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala do mapa', '1 unidade = 10 m']],
+        question: 'Qual é a distância em linha reta entre o lago e a banca, em unidades do mapa?', unit: 'unidades', correct: d.dist,
         distractors: [d.dx + d.dy, d.dx * d.dx + d.dy * d.dy, Math.abs(d.dx - d.dy)] }
     ],
     solution: d => [
       `Ponto médio: x = (${d.P[0]} + ${d.Q[0]}) ÷ 2 = ${fmt(d.mx)}.`,
-      `Distância: √(${d.dx}² + ${d.dy}²) = ${d.dist} quarteirões.`
+      `Distância: √(${d.dx}² + ${d.dy}²) = ${d.dist} unidades do mapa, ou ${d.dist * 10} m.`
     ]
   },
   3: {
-    title: 'Torre da Orla', area: 'Trigonometria', topic: 'Lei dos senos e lei dos cossenos',
-    brief: '{nick}, subi na torre de observação da praia! Daqui dá pra ver a boia e dois veleiros. Bora descobrir umas distâncias com a lei dos senos e a dos cossenos.',
+    title: 'Usina do Gasômetro', area: 'Trigonometria', topic: 'Lei dos senos e lei dos cossenos',
+    brief: '{nick}, cheguei no mirante da Usina do Gasômetro bem na hora do pôr do sol! Daqui dá pra ver a boia e dois veleiros no Guaíba. Bora descobrir as distâncias?',
     hint: 'Lei dos senos: cada lado dividido pelo seno do ângulo oposto dá sempre o mesmo valor (sen 30° = 0,5 e sen 90° = 1). Lei dos cossenos: c² = a² + b² − 2·a·b·cos θ, com cos 60° = 0,5.',
-    alt: 'Torre de observação pastel numa praia ao pôr do sol, olhando para o mar turquesa com dois veleiros distantes.',
+    alt: 'Usina do Gasômetro, de tijolos vermelhos e chaminé alta, à beira do Guaíba ao pôr do sol, com dois veleiros na água.',
     gen() {
       const [a, b, c] = pick([[3, 8, 7], [5, 8, 7], [7, 15, 13], [8, 15, 13], [5, 21, 19]]);
       return { lado30: pick([40, 60, 70, 90]), a: a * 100, b: b * 100, c: c * 100 };
     },
     stages: d => [
-      { type: 'build', data: [['Triângulo', 'torre, veleiro e boia'], ['Ângulo de 30°', `lado oposto: ${d.lado30} m`], ['Ângulo de 90°', 'lado oposto: x']],
+      { type: 'build', data: [['Triângulo', 'mirante, veleiro e boia'], ['Ângulo de 30°', `lado oposto: ${d.lado30} m`], ['Ângulo de 90°', 'lado oposto: x']],
         question: 'Monte a lei dos senos para achar x, o lado oposto ao ângulo de 90°.',
         template: ['x ÷ sen 90° = ', slot(d.lado30), ' ÷ sen ', slot('30°')],
         chips: makeChips([d.lado30, '30°'], ['60°', '90°', d.lado30 / 2]),
         result: `Como sen 30° = 0,5: x = ${d.lado30 * 2} m.` },
-      { type: 'choice', data: [['Torre até o veleiro 1', `${fmtBig(d.a)} m`], ['Torre até o veleiro 2', `${fmtBig(d.b)} m`], ['Ângulo na torre', '60°']],
+      { type: 'choice', data: [['Mirante até o veleiro 1', `${fmtBig(d.a)} m`], ['Mirante até o veleiro 2', `${fmtBig(d.b)} m`], ['Ângulo no mirante', '60°']],
         question: 'Qual é a distância entre os dois veleiros?', unit: 'm', correct: d.c,
         distractors: [round2(Math.hypot(d.a, d.b)), d.a + d.b, d.b - d.a] }
     ],
@@ -143,23 +143,23 @@ const MISSION = {
     ]
   },
   4: {
-    title: 'Roda-Gigante', area: 'Trigonometria', topic: 'Ciclo trigonométrico e função seno',
-    brief: '{nick}, olha o tamanho dessa roda-gigante! A altura de uma cadeira muda com o ângulo do giro, igualzinho a uma função seno. Partiu calcular?',
+    title: 'Arena do Grêmio', area: 'Trigonometria', topic: 'Ciclo trigonométrico e função seno',
+    brief: '{nick}, hoje a live é na Arena! A grua da TV gira o braço com a câmera na ponta, e a altura da câmera segue uma função seno. Partiu calcular?',
     hint: 'O seno vai de −1 a 1, então a altura máxima é quando sen θ = 1. Num ângulo qualquer, olha o quadrante: sen 30° = sen 150° = 0,5, sen 90° = 1, sen 210° = sen 330° = −0,5 e sen 270° = −1.',
-    alt: 'Roda-gigante iluminada com luzes neon num píer ao pôr do sol, refletida na água.',
+    alt: 'Estádio de assentos azuis ao entardecer, com uma grua de TV erguendo a câmera sobre o gramado.',
     gen() {
       const R = pick([8, 10, 12, 15]), theta = pick([30, 90, 150, 210, 270, 330]);
       const sin = { 30: 0.5, 90: 1, 150: 0.5, 210: -0.5, 270: -1, 330: -0.5 }[theta];
       return { R, theta, sin, max: 2 * R + 1, h: round2(R + 1 + R * sin) };
     },
     stages: d => [
-      { type: 'build', data: [['Raio da roda', `${d.R} m`], ['Centro da roda', `${d.R + 1} m acima do chão`], ['Altura da cadeira', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`]],
+      { type: 'build', data: [['Braço da grua', `${d.R} m`], ['Eixo da grua', `${d.R + 1} m acima do gramado`], ['Altura da câmera', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`]],
         question: 'Monte a conta da altura máxima. Dica: qual é o maior valor do seno?',
         template: ['h máx = ', slot(d.R + 1), ' + ', slot(d.R), ' · ', slot('1')],
         chips: makeChips([d.R + 1, d.R, 1], ['0', '0,5', 2 * d.R]),
         result: `Altura máxima: ${d.max} m.` },
-      { type: 'choice', data: [['Altura da cadeira', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`], ['Ângulo do giro agora', `θ = ${d.theta}°`]],
-        question: 'Qual é a altura da cadeira nesse ângulo?', unit: 'm', correct: d.h,
+      { type: 'choice', data: [['Altura da câmera', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`], ['Ângulo do braço agora', `θ = ${d.theta}°`]],
+        question: 'Qual é a altura da câmera nesse ângulo?', unit: 'm', correct: d.h,
         distractors: [round2(d.R + 1 - d.R * d.sin), d.R + 1, d.max, round2(d.R * Math.abs(d.sin)), d.R] }
     ],
     solution: d => {
@@ -171,10 +171,10 @@ const MISSION = {
     }
   },
   5: {
-    title: 'Food Truck', area: 'Álgebra', topic: 'Função quadrática (vértice da parábola)',
-    brief: '{nick}, o food truck da orla quer descobrir o preço do lanche que dá mais lucro. O lucro segue uma parábola, então a resposta tá no vértice!',
+    title: 'Orla do Guaíba', area: 'Álgebra', topic: 'Função quadrática (vértice da parábola)',
+    brief: '{nick}, o food truck da Orla do Guaíba quer descobrir o preço do lanche que dá mais lucro. O lucro segue uma parábola, então a resposta tá no vértice!',
     hint: 'Numa parábola L(p) = a·p² + b·p + c, o vértice fica em p = −b ÷ (2a). Aqui a = −1, então é só dividir o coeficiente de p por 2. Depois, calcula L nesse preço.',
-    alt: 'Food truck turquesa e rosa numa feira noturna à beira-mar, com varal de luzes e clientes.',
+    alt: 'Food truck turquesa e rosa na Orla do Guaíba ao pôr do sol, com mesas, palmeiras e pessoas olhando o lago.',
     gen() {
       const k = pick([16, 20, 24, 28]), c = randInt(10, k * k / 4 - 10);
       return { k, c, p: k / 2, L: k * k / 4 - c };
@@ -195,28 +195,28 @@ const MISSION = {
     ]
   },
   6: {
-    title: 'Festa da Formatura', area: 'Álgebra', topic: 'Progressão aritmética (PA) e geométrica (PG)',
-    brief: '{nick}, a formatura tá chegando! Cada fileira de cadeiras tem mais lugares que a anterior, e os convites se espalham em rodadas. Bora organizar essa festa?',
+    title: 'Beira-Rio', area: 'Álgebra', topic: 'Progressão aritmética (PA) e geométrica (PG)',
+    brief: '{nick}, dia de show no Beira-Rio! Cada fileira da arquibancada tem mais lugares que a de baixo, e o convite do show se espalha em rodadas. Bora organizar?',
     hint: 'PA: aₙ = a₁ + (n − 1) · r. PG: aₙ = a₁ · qⁿ⁻¹. Na PA você soma a razão; na PG você multiplica.',
-    alt: 'Salão de festa de formatura com palco, arco de balões, muitas fileiras de cadeiras e convites sobre a mesa.',
+    alt: 'Estádio de assentos vermelhos à beira do lago ao pôr do sol, com fileiras de arquibancada que se alargam para cima.',
     gen() {
       const a1 = pick([8, 10, 12]), r = pick([2, 3, 4]), n = pick([6, 8, 10]);
       const g1 = pick([2, 3]), q = pick([2, 3]), m = pick([4, 5]);
       return { a1, r, n, an: a1 + (n - 1) * r, g1, q, m, gm: g1 * q ** (m - 1) };
     },
     stages: d => [
-      { type: 'build', data: [['1ª fileira', `${d.a1} cadeiras`], ['Cada fileira seguinte', `+${d.r} cadeiras`], ['Fileira procurada', `${d.n}ª`]],
+      { type: 'build', data: [['1ª fileira do setor', `${d.a1} cadeiras`], ['Cada fileira acima', `+${d.r} cadeiras`], ['Fileira procurada', `${d.n}ª`]],
         question: `Monte a conta das cadeiras da ${d.n}ª fileira.`,
         template: [`a${d.n} = `, slot(d.a1), ' + (', slot(d.n), ' − 1) · ', slot(d.r)],
         chips: makeChips([d.a1, d.n, d.r], [d.a1 + d.r, 1]),
         result: `A ${d.n}ª fileira tem ${d.an} cadeiras.` },
-      { type: 'choice', data: [['1ª rodada', `${d.g1} convites`], ['Cada convidado repassa para', `${d.q} pessoas`]],
-        question: `Quantos convites são enviados na ${d.m}ª rodada?`, unit: 'convites', correct: d.gm,
+      { type: 'choice', data: [['1ª rodada', `${d.g1} pessoas recebem o convite`], ['Cada pessoa repassa para', `${d.q} amigos`]],
+        question: `Quantas pessoas recebem o convite na ${d.m}ª rodada?`, unit: 'pessoas', correct: d.gm,
         distractors: [d.g1 * d.q ** d.m, d.g1 + (d.m - 1) * d.q, d.q ** (d.m - 1), d.g1 * d.q * d.m] }
     ],
     solution: d => [
       `PA: a${d.n} = ${d.a1} + (${d.n} − 1) · ${d.r} = ${d.an} cadeiras.`,
-      `PG: a${d.m} = ${d.g1} · ${d.q}^${d.m - 1} = ${d.gm} convites.`
+      `PG: a${d.m} = ${d.g1} · ${d.q}^${d.m - 1} = ${d.gm} pessoas.`
     ]
   }
 };
@@ -441,7 +441,7 @@ function renderMapa() {
   const first = next === 1 && !S.stage[1] && !S.errors[1];
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
   $('map-bubble').textContent = first
-    ? `Fala, ${nick()}! Hoje a live é de missões pela cidade. Cada uma vale até 100 pontos. Começa pela Obra na Laje que eu vou junto!`
+    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Começa pelo Mercado Público que eu vou junto!`
     : next ? `Mandou bem até aqui! Próxima parada: ${MISSION[next].title}. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   $('missions').innerHTML = MISSIONS.map(n => {

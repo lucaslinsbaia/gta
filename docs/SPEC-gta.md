@@ -20,12 +20,12 @@
 
 | # | Área | Missão | Assunto | Etapa A | Etapa B |
 |---|------|--------|---------|---------|---------|
-| 1 | Geometria | Obra na Laje | Áreas e volumes | Área da base da caixa d'água (m²) | Volume em litros |
-| 2 | Geometria | Rolê no Mapa | Geometria analítica | Coordenada x do ponto médio entre dois pontos | Distância entre os pontos (quarteirões) |
-| 3 | Trigonometria | Torre da Orla | Lei dos senos e dos cossenos | Lei dos senos: lado oposto a 90°, com o oposto a 30° dado | Lei dos cossenos: distância entre duas jangadas (ângulo de 60°) |
-| 4 | Trigonometria | Roda-Gigante | Ciclo trigonométrico e função seno | Altura máxima da cadeira | Altura da cadeira num ângulo do ciclo |
-| 5 | Álgebra | Food Truck | Função quadrática | Preço que dá o lucro máximo (vértice) | Lucro máximo |
-| 6 | Álgebra | Festa da Formatura | PA e PG | PA: cadeiras na fileira n | PG: convites enviados na rodada n |
+| 1 | Geometria | Mercado Público (tonel cilíndrico de uma banca) | Áreas e volumes | Área da base da caixa d'água (m²) | Volume em litros |
+| 2 | Geometria | Parque Redenção (lago dos pedalinhos e Brique) | Geometria analítica | Coordenada x do ponto médio entre dois pontos | Distância entre os pontos (quarteirões) |
+| 3 | Trigonometria | Usina do Gasômetro (mirante, veleiros no Guaíba) | Lei dos senos e dos cossenos | Lei dos senos: lado oposto a 90°, com o oposto a 30° dado | Lei dos cossenos: distância entre duas jangadas (ângulo de 60°) |
+| 4 | Trigonometria | Arena do Grêmio (grua de TV) | Ciclo trigonométrico e função seno | Altura máxima da cadeira | Altura da cadeira num ângulo do ciclo |
+| 5 | Álgebra | Orla do Guaíba (food truck) | Função quadrática | Preço que dá o lucro máximo (vértice) | Lucro máximo |
+| 6 | Álgebra | Beira-Rio (arquibancada num dia de show e convites) | PA e PG | PA: cadeiras na fileira n | PG: convites enviados na rodada n |
 
 ### Sorteio por missão (por jornada)
 
@@ -100,5 +100,6 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **0.4 (21/11/2026):** missões ambientadas em Porto Alegre, com ilustrações novas. Nos estádios, o contexto é neutro (transmissão de TV e show), sem escudos nem torcida de clube.
 - **0.3 (21/11/2026):** respostas sem digitar: etapa A de arrastar e soltar para montar a conta, etapa B de múltipla escolha.
 - **0.2 (21/11/2026):** jogo implementado em `src/` (6 missões, pontuação, ilustrações) e servidor com pontos e estrelas.
