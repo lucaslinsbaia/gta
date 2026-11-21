@@ -76,7 +76,8 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
   
   Todo personagem, cena e pôster do GTA da escola é original.
 - **Logo:** a sigla "GTA" com letras próprias e cores do jogo, sem calcar o logotipo da Rockstar. Isso evita problema de marca e deixa o jogo com cara própria. A assinatura "Geometria, Trigonometria e Álgebra" fica pequena, sob o logo ou no rodapé.
-- **Fontes:** só fontes livres do Google Fonts, como Anton, Bebas Neue ou Bungee.
+- **Fontes:** fontes livres do Google Fonts (Anton, Bebas Neue, Bungee, Inter).
+- **Exceção autorizada pelo Lucas (21/11): a tela "wasted"** usa a Pricedown Black (Typodermic). Ele enviou a fonte gratuita, cuja licença de desktop não cobre webfont nem distribuir o arquivo. Por isso a palavra foi convertida em contorno (um SVG fixo em `src/body.html`), e o arquivo `.otf` **não** entra no repositório. Para mudar a palavra, gere o contorno de novo com fontTools a partir do `.otf` que o Lucas tem.
 
 ## 3. O que já foi feito
 
