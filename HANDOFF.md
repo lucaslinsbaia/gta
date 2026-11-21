@@ -142,7 +142,7 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
 5. **Propor ao Lucas, antes de codar, numa página de rascunho (artifact) ou nas mensagens:**
    - **logo GTA** original, com a assinatura discreta;
    - **paleta e tipografia**;
-   - **personagem das dicas:** 2 ou 3 opções de nome, visual e jeito de falar. Exemplo de linha: um "mano das contas" ou uma grafiteira da quebrada que manja de matemática;
+   - **personagem das dicas:** 2 ou 3 opções de nome, visual e jeito de falar. sem estereótipos nem regionalismos (ver "Tom do jogo" na seção 8);
    - **mapa de missões** com os assuntos (seção 6, pergunta 1);
    - **regra de pontuação** por missão (pergunta 2).
 6. **Reescrever o jogo em `src/`** a partir das decisões:
@@ -177,10 +177,10 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
    - nota = pontos ÷ 60, mínimo 5 para quem conclui;
    - o ranking mostra pontos e estrelas.
    Detalhes em `docs/SPEC-gta.md`.
-3. **Personagem:** nome, gênero, visual e bordões. O Lucas escolhe entre opções propostas.
+3. **Personagem:** o Lucas pediu que não siga estereótipos, porque o jogo será aplicado em vários lugares do Brasil (o Glicério fica no Rio Grande do Sul). Opções atuais no canvas: A Nina Vetor (estudante skatista), B Dani Pixel (cria conteúdo e transmite as missões) e C Bit (drone sem gênero). Falta ele escolher.
 4. **Imagens:** quem gera as ilustrações tipo pôster? Opções: o Lucas (Figma ou ferramenta de IA dele), a sessão com as ferramentas disponíveis, ou ilustrador. Em que proporção e quantidade?
 5. ~~**Números negativos.**~~ **Decidido em 21/11:** nenhuma pergunta pode ter resposta negativa. Os sorteios da SPEC garantem isso, e o teclado continua `inputmode="decimal"`.
-6. **Logo:** aprovar o desenho original da sigla GTA antes de aplicá-lo nas telas.
+6. ~~**Logo.**~~ **Decidido em 21/11:** direção C, "Listras pôr do sol". É a sigla em Bungee com listras amarelo, laranja, rosa e magenta e contorno creme. A assinatura "Geometria, Trigonometria e Álgebra" fica discreta abaixo.
 7. **Ramo antigo do Enigma:** `wip/fracao-barra-fixa` pode ser apagado pelo Lucas no GitHub.
 
 ## 7. Artefatos relevantes
@@ -243,7 +243,7 @@ npm install && POSTGRES_URL=postgres://enigma:enigma@localhost:5432/enigma ADMIN
 ## 8. Instruções pra próxima sessão
 
 - **Idioma e tom com o Lucas:** português do Brasil, direto e cordial. Ele valoriza ver o resultado: depois de cada mudança visual, tire capturas de tela (390 px e 1440 px) e mostre. Faça commit e envio ao fim de cada pedido; a Vercel publica sozinha a partir da branch `main`.
-- **Tom do jogo:** linguagem adolescente, bem-humorada, de "missão na cidade", com gírias atuais como "mano", "partiu", "tá voando", "brabo", "corre", "quebrada". Sem palavrão, violência, crime glamourizado, armas ou drogas: é um jogo escolar. "Procurado" vira "nível de conhecimento", e as missões são desafios de matemática pela cidade (obra, festa, quadra, loja, viagem), não crimes.
+- **Tom do jogo:** linguagem adolescente, bem-humorada, de "missão na cidade", com gírias que se usam no país todo, como "partiu", "mandou bem", "tá voando", "bora", "GG". **Sem estereótipos nem regionalismos** (sotaque, gírias de uma região, "quebrada", "macho" etc.): o jogo será aplicado em vários lugares do Brasil, e o Glicério fica no Rio Grande do Sul. A cidade das missões é inventada e não representa nenhuma região. Sem palavrão, violência, crime glamourizado, armas ou drogas: é um jogo escolar. "Procurado" vira "nível de conhecimento", e as missões são desafios de matemática pela cidade (obra, festa, quadra, loja, viagem), não crimes.
 - **Antes de construir, confirme as perguntas da seção 6**, principalmente assuntos, pontuação e personagem. Use AskUserQuestion com opções e uma recomendação, e mostre rascunhos visuais (artifact) do logo, da paleta e do personagem antes de mexer no jogo.
 - **Armadilhas conhecidas:**
   - **Criar repositório e GraphQL:** a sessão não cria repositórios no GitHub nem usa a API GraphQL; só a REST, em repositórios já ligados com `add_repo`.
