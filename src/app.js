@@ -40,6 +40,8 @@ const fmtBig = n => n.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 const icon = (name, cls = 'icon') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 const escapeHtml = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 const MISSIONS = [1, 2, 3, 4, 5, 6];
+/** Nome ou apelido informado na identificação: a Dani chama o jogador por ele. */
+const nick = () => (S && S.player && S.player.name) || 'você';
 
 function newJourneyId() {
   if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
@@ -66,7 +68,7 @@ function makeChips(required, distractors) {
 const MISSION = {
   1: {
     title: 'Obra na Laje', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
-    brief: 'Chat, olha essa obra! A galera vai instalar uma caixa d\'água cilíndrica na laje e precisa saber quanto cabe nela antes de ligar a bomba. Bora medir?',
+    brief: '{nick}, olha essa obra! A galera vai instalar uma caixa d\'água cilíndrica na laje e precisa saber quanto cabe nela antes de ligar a bomba. Bora medir?',
     hint: 'A base do cilindro é um círculo: área = π · r² (r é o raio, metade do diâmetro). Depois, volume = área da base × altura. Pra passar de m³ pra litros, multiplica por 1.000. Salva essa dica!',
     alt: 'Laje em obra ao pôr do sol, com uma caixa d\'água cilíndrica azul no centro, andaime, tijolos e baldes.',
     gen() {
@@ -91,7 +93,7 @@ const MISSION = {
   },
   2: {
     title: 'Rolê no Mapa', area: 'Geometria', topic: 'Geometria analítica (ponto médio e distância)',
-    brief: 'Chat, hoje o rolê é de skate! A pista nova fica num ponto do mapa e a sorveteria em outro. Vamos marcar o encontro no meio do caminho e descobrir a distância.',
+    brief: '{nick}, hoje o rolê é de skate! A pista nova fica num ponto do mapa e a sorveteria em outro. Vamos marcar o encontro no meio do caminho e descobrir a distância.',
     hint: 'Ponto médio: faz a média das coordenadas, x = (x₁ + x₂) ÷ 2. Distância: d = √((x₂ − x₁)² + (y₂ − y₁)²). É Pitágoras disfarçado no plano. GG!',
     alt: 'Vista aérea da cidade ao entardecer, com ruas em grade e dois marcadores rosa em esquinas diferentes.',
     gen() {
@@ -118,7 +120,7 @@ const MISSION = {
   },
   3: {
     title: 'Torre da Orla', area: 'Trigonometria', topic: 'Lei dos senos e lei dos cossenos',
-    brief: 'Chat, subi na torre de observação da praia! Daqui dá pra ver a boia e dois veleiros. Bora descobrir umas distâncias com a lei dos senos e a dos cossenos.',
+    brief: '{nick}, subi na torre de observação da praia! Daqui dá pra ver a boia e dois veleiros. Bora descobrir umas distâncias com a lei dos senos e a dos cossenos.',
     hint: 'Lei dos senos: cada lado dividido pelo seno do ângulo oposto dá sempre o mesmo valor (sen 30° = 0,5 e sen 90° = 1). Lei dos cossenos: c² = a² + b² − 2·a·b·cos θ, com cos 60° = 0,5.',
     alt: 'Torre de observação pastel numa praia ao pôr do sol, olhando para o mar turquesa com dois veleiros distantes.',
     gen() {
@@ -142,7 +144,7 @@ const MISSION = {
   },
   4: {
     title: 'Roda-Gigante', area: 'Trigonometria', topic: 'Ciclo trigonométrico e função seno',
-    brief: 'Chat, olha o tamanho dessa roda-gigante! A altura de uma cadeira muda com o ângulo do giro, igualzinho a uma função seno. Partiu calcular?',
+    brief: '{nick}, olha o tamanho dessa roda-gigante! A altura de uma cadeira muda com o ângulo do giro, igualzinho a uma função seno. Partiu calcular?',
     hint: 'O seno vai de −1 a 1, então a altura máxima é quando sen θ = 1. Num ângulo qualquer, olha o quadrante: sen 30° = sen 150° = 0,5, sen 90° = 1, sen 210° = sen 330° = −0,5 e sen 270° = −1.',
     alt: 'Roda-gigante iluminada com luzes neon num píer ao pôr do sol, refletida na água.',
     gen() {
@@ -152,7 +154,7 @@ const MISSION = {
     },
     stages: d => [
       { type: 'build', data: [['Raio da roda', `${d.R} m`], ['Centro da roda', `${d.R + 1} m acima do chão`], ['Altura da cadeira', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`]],
-        question: 'Monte a conta da altura máxima. Dica do chat: qual é o maior valor do seno?',
+        question: 'Monte a conta da altura máxima. Dica: qual é o maior valor do seno?',
         template: ['h máx = ', slot(d.R + 1), ' + ', slot(d.R), ' · ', slot('1')],
         chips: makeChips([d.R + 1, d.R, 1], ['0', '0,5', 2 * d.R]),
         result: `Altura máxima: ${d.max} m.` },
@@ -170,7 +172,7 @@ const MISSION = {
   },
   5: {
     title: 'Food Truck', area: 'Álgebra', topic: 'Função quadrática (vértice da parábola)',
-    brief: 'Chat, o food truck da orla quer descobrir o preço do lanche que dá mais lucro. O lucro segue uma parábola, então a resposta tá no vértice!',
+    brief: '{nick}, o food truck da orla quer descobrir o preço do lanche que dá mais lucro. O lucro segue uma parábola, então a resposta tá no vértice!',
     hint: 'Numa parábola L(p) = a·p² + b·p + c, o vértice fica em p = −b ÷ (2a). Aqui a = −1, então é só dividir o coeficiente de p por 2. Depois, calcula L nesse preço.',
     alt: 'Food truck turquesa e rosa numa feira noturna à beira-mar, com varal de luzes e clientes.',
     gen() {
@@ -194,7 +196,7 @@ const MISSION = {
   },
   6: {
     title: 'Festa da Formatura', area: 'Álgebra', topic: 'Progressão aritmética (PA) e geométrica (PG)',
-    brief: 'Chat, a formatura tá chegando! Cada fileira de cadeiras tem mais lugares que a anterior, e os convites se espalham em rodadas. Bora organizar essa festa?',
+    brief: '{nick}, a formatura tá chegando! Cada fileira de cadeiras tem mais lugares que a anterior, e os convites se espalham em rodadas. Bora organizar essa festa?',
     hint: 'PA: aₙ = a₁ + (n − 1) · r. PG: aₙ = a₁ · qⁿ⁻¹. Na PA você soma a razão; na PG você multiplica.',
     alt: 'Salão de festa de formatura com palco, arco de balões, muitas fileiras de cadeiras e convites sobre a mesa.',
     gen() {
@@ -422,8 +424,8 @@ function renderMapa() {
   const first = next === 1 && !S.stage[1] && !S.errors[1];
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
   $('map-bubble').textContent = first
-    ? 'Fala, chat! Hoje a live é de missões pela cidade. Cada uma vale até 100 pontos. Começa pela Obra na Laje que eu vou junto!'
-    : next ? `Mandou bem até aqui! Próxima parada: ${MISSION[next].title}. O chat tá torcendo.`
+    ? `Fala, ${nick()}! Hoje a live é de missões pela cidade. Cada uma vale até 100 pontos. Começa pela Obra na Laje que eu vou junto!`
+    : next ? `Mandou bem até aqui! Próxima parada: ${MISSION[next].title}. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
@@ -488,7 +490,7 @@ function renderMissao() {
   $('m-avatar').src = IMG.avatar;
   $('m-eyebrow').textContent = `Missão ${n} · ${M.area}`;
   $('m-title').textContent = M.title;
-  $('m-brief').textContent = M.brief;
+  $('m-brief').textContent = M.brief.replace(/\{nick\}/g, nick());
   const k = closed ? 1 : S.stage[n];
   $('m-steps').innerHTML = ['Etapa A', 'Etapa B'].map((name, i) => {
     const cls = closed || i < S.stage[n] ? 'is-done' : i === k ? 'is-current' : '';
@@ -681,7 +683,7 @@ function checkChoice() {
   renderChoice(stage);
   setMsg(S.stageErrors[n] >= SCORE.skipAfter
     ? 'Ainda não. Se travar, agora dá pra pular a missão (ela vale 0).'
-    : pick(['Não foi essa. Confere a conta e tenta outra.', 'Quase! Revisa os dados e escolhe de novo.', 'Essa não, chat. Respira e confere cada passo.']), true);
+    : pick(['Não foi essa. Confere a conta e tenta outra.', 'Quase! Revisa os dados e escolhe de novo.', `Essa não, ${nick()}. Respira e confere cada passo.`]), true);
   wastedForError();
 }
 
@@ -771,7 +773,7 @@ function completeMission(n, skipped) {
   $('rw-pts').innerHTML = `<strong>+${pts}</strong> pts`;
   $('rw-text').textContent = skipped
     ? 'Sem estresse: confere a resolução e salva pra revisar depois.'
-    : S.errors[n] === 0 && !S.hint[n] ? 'Chat, de primeira e sem dica! Pontuação cheia.' : 'Chat, missão no bolso! Bora pra próxima.';
+    : S.errors[n] === 0 && !S.hint[n] ? `${nick()}, de primeira e sem dica! Pontuação cheia.` : `${nick()}, missão no bolso! Bora pra próxima.`;
   $('rw-solution').hidden = !skipped;
   $('rw-solution').innerHTML = skipped ? MISSION[n].solution(S.data[n]).map(line => `<p>${escapeHtml(line)}</p>`).join('') : '';
   $('rw-next').textContent = last ? 'Ver resultado da live' : 'Voltar ao mapa';
