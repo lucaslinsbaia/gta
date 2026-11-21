@@ -178,7 +178,12 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
    - o ranking mostra pontos e estrelas.
    Detalhes em `docs/SPEC-gta.md`.
 3. ~~**Personagem.**~~ **Decidido em 21/11:** **Dani Pixel**. Cria conteúdo de desafios e transmite cada missão como uma live, com o "chat" torcendo. Nome que serve para qualquer gênero; usa fone amarelo e jaqueta magenta e anda sempre com o celular na mão. Fala em linguagem de internet, igual no Brasil todo: "chat, olha isso", "nível desbloqueado", "GG", "salva essa dica". Nada de estereótipo nem de regionalismo: o jogo será aplicado em vários lugares, e o Glicério fica no RS.
-4. **Imagens:** quem gera as ilustrações tipo pôster? Opções: o Lucas (Figma ou ferramenta de IA dele), a sessão com as ferramentas disponíveis, ou ilustrador. Em que proporção e quantidade?
+4. ~~**Imagens.**~~ **Feito em 21/11:** a sessão gerou as ilustrações tipo pôster pela geração de imagem do Figma, no time "Baía" do Lucas (arquivo "GTA Glicério — Ilustrações", https://www.figma.com/design/nttiyzSJ2Wpn1GeQG8QYf5). São a Dani Pixel e uma cena para cada missão, todas sem texto e sem números. Ficam em `img/`:
+   - `gta_cena_m*` (1510 × 806);
+   - `gta_card_m*` (832 × 496);
+   - `gta_dani_pixel` (800 × 1000) e `gta_dani_avatar` (480 × 480).
+
+   A capa é montada em HTML, numa colagem com as imagens e o logo (ver o artboard "Capa" no canvas). O estilo segue as capas da franquia, mas todos os personagens e cenas são originais.
 5. ~~**Números negativos.**~~ **Decidido em 21/11:** nenhuma pergunta pode ter resposta negativa. Os sorteios da SPEC garantem isso, e o teclado continua `inputmode="decimal"`.
 6. ~~**Logo.**~~ **Decidido em 21/11:** direção C, "Listras pôr do sol". É a sigla em Bungee com listras amarelo, laranja, rosa e magenta e contorno creme. A assinatura "Geometria, Trigonometria e Álgebra" fica discreta abaixo.
 7. **Ramo antigo do Enigma:** `wip/fracao-barra-fixa` pode ser apagado pelo Lucas no GitHub.
