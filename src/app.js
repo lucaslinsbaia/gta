@@ -391,8 +391,21 @@ function renderIdentificacao() {
   setTimeout(() => $('id-name').focus(), 0);
 }
 
-$('id-form').addEventListener('submit', event => {
+/** Com servidor, o nome passa também pela lista de palavras proibidas da gestão. */
+async function serverNameProblem(name) {
+  if (!API.on) return '';
+  try {
+    const res = await fetch('/api/nome', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nome: name }) });
+    if (res.ok) return '';
+    const data = await res.json().catch(() => ({}));
+    return res.status === 400 ? (data.erro || 'Esse nome não pode ser usado no jogo. Escolha outro nome ou apelido.') : '';
+  } catch (e) { return ''; }   // sem conexão: o servidor confere de novo ao gravar o resultado
+}
+
+let checkingName = false;
+$('id-form').addEventListener('submit', async event => {
   event.preventDefault();
+  if (checkingName) return;
   if (!API.loaded) { API.ready.then(() => $('id-form').requestSubmit()); return; }
   const name = $('id-name').value.trim().replace(/\s+/g, ' ');
   const select = $('id-class');
@@ -405,6 +418,10 @@ $('id-form').addEventListener('submit', event => {
   setFieldMessage($('id-name'), $('id-name-msg'), nameMsg);
   setFieldMessage($('id-class'), $('id-class-msg'), classMsg);
   if (nameMsg || classMsg) { (nameMsg ? $('id-name') : $('id-class')).focus(); return; }
+  checkingName = true;
+  const serverMsg = await serverNameProblem(name);
+  checkingName = false;
+  if (serverMsg) { setFieldMessage($('id-name'), $('id-name-msg'), serverMsg); $('id-name').focus(); return; }
   const player = { name, turma, turmaId };
   try { localStorage.setItem(PLAYER_KEY, JSON.stringify(player)); } catch (e) { /* segue sem lembrar */ }
   S = freshState();

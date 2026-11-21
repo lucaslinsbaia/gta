@@ -114,7 +114,7 @@
   .screen { animation: enter 420ms var(--ease) backwards; }
   @keyframes enter { from { opacity: 0; transform: translateY(10px); } }
   .card { background: var(--panel); border: 3px solid var(--cream); border-radius: var(--radius); padding: var(--s6); box-shadow: 8px 8px 0 var(--pink); }
-  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); margin-top: var(--s5); }
+  div.actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); margin-top: var(--s5); }
 
   /* ---------- Cabeçalho ---------- */
   .nav { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s5); background: rgba(26, 8, 51, 0.94); border-bottom: 3px solid var(--pink); backdrop-filter: blur(6px); }
@@ -376,7 +376,6 @@
         <div class="cover__logo">
           <h1 class="logo" id="cover-title"><span class="logo__gta">GTA</span>
             <span class="logo__sign">Geometria, Trigonometria e Álgebra</span></h1>
-          <p class="cover__tag">Missões do Glicério</p>
         </div>
         <div class="cover__panel"><img data-card="1" alt=""></div>
         <div class="cover__panel"><img data-card="2" alt=""></div>
@@ -1018,6 +1017,9 @@ function lastPlayer() {
      que aparecem dentro de nomes reais ("cu" em Cunha, "puto" em Caputo).
    - BLOCKED_ROOTS: raízes inconfundíveis, procuradas também dentro de
      palavras e com as letras separadas (c.a.r.a.l.h.o).
+   - Lista extra: palavras que o professor cadastra na gestão (/gestao).
+     Ficam só no servidor: o jogo confere o nome em /api/nome, e o
+     servidor confere de novo ao gravar o resultado e ao criar turmas.
    ------------------------------------------------------------------ */
 const BLOCKED_WORDS = [
   // português
@@ -1028,15 +1030,25 @@ const BLOCKED_WORDS = [
   'corno', 'corna', 'chifrudo', 'viado', 'bicha', 'sapatao', 'traveco', 'vadia', 'vagabunda', 'vagabundo',
   'piranha', 'prostituta', 'safada', 'safado', 'arrombado', 'arrombada', 'desgracado', 'desgracada',
   'escroto', 'escrota', 'canalha', 'nojento', 'lixo', 'macaco', 'macaca', 'nazista', 'nazi', 'hitler',
+  'caraio', 'caralio', 'fudido', 'fudida', 'fuder', 'fudeu', 'cagao', 'cagona', 'bunda', 'bundao', 'bundona', 'peido', 'peidao',
+  'punheta', 'punheteiro', 'siririca', 'broxa', 'tesao', 'tesudo', 'tesuda', 'piru', 'pirocudo', 'caceta', 'xavasca', 'xana',
+  'chupa', 'chupar', 'mamada', 'boquete', 'putinho', 'rapariga', 'quenga', 'meretriz', 'kenga', 'biscate', 'galinha',
+  'baitola', 'boiola', 'mulherzinha', 'mariquinha',
+  'burro', 'burra', 'jumento', 'anta', 'besta', 'mongoloide', 'aleijado', 'aleijada', 'gordo', 'gorda', 'baleia', 'balofo', 'balofa',
+  'feio', 'feia', 'nerdola', 'perdedor', 'fracassado', 'fracassada',
+  'estupro', 'estuprador', 'pedofilo', 'assassino', 'terrorista', 'suicida', 'matar', 'morra', 'morre',
+  'maconha', 'maconheiro', 'cocaina', 'crack', 'droga', 'drogado', 'drogada', 'baseado', 'lsd', 'ecstasy',
+  'sexo', 'sexy', 'porno', 'nude', 'nudes', 'pelado', 'xxx', 'penis', 'vagina', 'kkk',
   // abreviações
-  'fdp', 'vsf', 'vtnc', 'tnc', 'pqp', 'krl', 'crl', 'prr', 'pnc', 'bct', 'tmnc',
+  'fdp', 'vsf', 'vtnc', 'tnc', 'pqp', 'krl', 'crl', 'prr', 'pnc', 'bct', 'tmnc', 'vsfd', 'vtmnc', 'ptqp',
   // inglês
   'fuck', 'fucker', 'fucking', 'shit', 'bitch', 'dick', 'cock', 'cunt', 'pussy', 'ass', 'asshole',
-  'bastard', 'slut', 'whore', 'fag', 'faggot', 'nigga', 'nigger', 'retard'
+  'bastard', 'slut', 'whore', 'fag', 'faggot', 'nigga', 'nigger', 'retard', 'sex', 'porn', 'dildo', 'boobs', 'tits', 'penis', 'rape'
 ];
 const BLOCKED_ROOTS = [
   'caralh', 'buceta', 'boceta', 'xoxot', 'punhet', 'arromb', 'filhodaput', 'putaquepariu', 'vaitomarnocu',
-  'merda', 'porra', 'fuck', 'shit', 'bitch', 'cunt', 'nigg', 'faggot', 'asshole'
+  'merda', 'porra', 'fuck', 'shit', 'bitch', 'cunt', 'nigg', 'faggot', 'asshole',
+  'punhet', 'siriric', 'boquet', 'pedofil', 'estupr', 'pornogr', 'maconh', 'cocain', 'hitler', 'nazist', 'viadinh', 'putinh'
 ];
 
 const LEET = { 0: 'o', 1: 'i', 3: 'e', 4: 'a', 5: 's', 7: 't', 8: 'b', '@': 'a', '$': 's', '!': 'i', 'ø': 'o', 'æ': 'ae', 'ß': 'ss', 'ł': 'l', 'đ': 'd' };
@@ -1052,30 +1064,43 @@ function normalizeForFilter(text) {
 const BLOCKED_WORD_SET = new Set(BLOCKED_WORDS.map(collapseRepeats));
 const BLOCKED_ROOT_LIST = BLOCKED_ROOTS.map(collapseRepeats);
 
-/** true se o texto tem um termo proibido (palavra inteira ou raiz, mesmo com letras separadas). */
-function hasBlockedTerm(text) {
+/** Chave de comparação de uma palavra (a mesma usada para guardar a lista extra). */
+const filterKey = word => collapseRepeats(normalizeForFilter(String(word)).replace(/[^a-z]+/g, ''));
+
+/**
+ * true se o texto tem um termo proibido (palavra inteira ou raiz, mesmo com letras separadas).
+ * extra: palavras da gestão, [{ chave, dentro }]; com dentro=true valem também dentro de outras palavras.
+ */
+function hasBlockedTerm(text, extra = []) {
   const tokens = normalizeForFilter(text).split(/[^a-z]+/).filter(Boolean).map(collapseRepeats);
   const compact = collapseRepeats(tokens.join(''));
-  return tokens.some(t => BLOCKED_WORD_SET.has(t)) || BLOCKED_ROOT_LIST.some(root => compact.includes(root));
+  if (tokens.some(t => BLOCKED_WORD_SET.has(t)) || BLOCKED_ROOT_LIST.some(root => compact.includes(root))) return true;
+  // Palavra inteira: compara com cada sequência de palavras seguidas ("Zé Ruela" dentro de "Ana Zé Ruela")
+  const runs = new Set();
+  for (let i = 0; i < tokens.length; i++) {
+    let run = '';
+    for (let j = i; j < tokens.length && j < i + 4; j++) { run += tokens[j]; runs.add(collapseRepeats(run)); }
+  }
+  return extra.some(w => w.chave && (w.dentro ? compact.includes(w.chave) : runs.has(w.chave)));
 }
 
 const NAME_CHARS = /^[\p{L}\p{N} .'’-]+$/u;
 const CLASS_CHARS = /^[\p{L}\p{N} .'’ºª°/-]+$/u;
 
 /** Devolve a orientação para o nome, ou '' se estiver tudo certo. */
-function nameProblem(name) {
+function nameProblem(name, extra = []) {
   if (!name) return 'Digite seu nome ou apelido para começar.';
   if (!NAME_CHARS.test(name)) return 'Use só letras, números, espaços, hífen, ponto ou apóstrofo no nome.';
   if ((name.match(/\p{L}/gu) || []).length < 2) return 'Use pelo menos 2 letras no nome ou apelido.';
-  if (hasBlockedTerm(name)) return 'Esse nome não pode ser usado no jogo. Escolha outro nome ou apelido.';
+  if (hasBlockedTerm(name, extra)) return 'Esse nome não pode ser usado no jogo. Escolha outro nome ou apelido.';
   return '';
 }
 
 /** Devolve a orientação para a turma (opcional), ou '' se estiver tudo certo. */
-function classProblem(turma) {
+function classProblem(turma, extra = []) {
   if (!turma) return '';
   if (!CLASS_CHARS.test(turma)) return 'Use só letras, números, espaços e º, ª, hífen ou barra na turma.';
-  if (hasBlockedTerm(turma)) return 'Esse texto não pode ser usado na turma. Revise e tente de novo.';
+  if (hasBlockedTerm(turma, extra)) return 'Esse texto não pode ser usado na turma. Revise e tente de novo.';
   return '';
 }
 
@@ -1095,8 +1120,21 @@ function renderIdentificacao() {
   setTimeout(() => $('id-name').focus(), 0);
 }
 
-$('id-form').addEventListener('submit', event => {
+/** Com servidor, o nome passa também pela lista de palavras proibidas da gestão. */
+async function serverNameProblem(name) {
+  if (!API.on) return '';
+  try {
+    const res = await fetch('/api/nome', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nome: name }) });
+    if (res.ok) return '';
+    const data = await res.json().catch(() => ({}));
+    return res.status === 400 ? (data.erro || 'Esse nome não pode ser usado no jogo. Escolha outro nome ou apelido.') : '';
+  } catch (e) { return ''; }   // sem conexão: o servidor confere de novo ao gravar o resultado
+}
+
+let checkingName = false;
+$('id-form').addEventListener('submit', async event => {
   event.preventDefault();
+  if (checkingName) return;
   if (!API.loaded) { API.ready.then(() => $('id-form').requestSubmit()); return; }
   const name = $('id-name').value.trim().replace(/\s+/g, ' ');
   const select = $('id-class');
@@ -1109,6 +1147,10 @@ $('id-form').addEventListener('submit', event => {
   setFieldMessage($('id-name'), $('id-name-msg'), nameMsg);
   setFieldMessage($('id-class'), $('id-class-msg'), classMsg);
   if (nameMsg || classMsg) { (nameMsg ? $('id-name') : $('id-class')).focus(); return; }
+  checkingName = true;
+  const serverMsg = await serverNameProblem(name);
+  checkingName = false;
+  if (serverMsg) { setFieldMessage($('id-name'), $('id-name-msg'), serverMsg); $('id-name').focus(); return; }
   const player = { name, turma, turmaId };
   try { localStorage.setItem(PLAYER_KEY, JSON.stringify(player)); } catch (e) { /* segue sem lembrar */ }
   S = freshState();

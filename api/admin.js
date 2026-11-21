@@ -3,7 +3,8 @@
 import { sql, ensureSchema } from '../lib/db.js';
 import { send, handle, fail, readBody, keyOf } from '../lib/http.js';
 import { passwordMatches, issueToken, requireAdmin } from '../lib/auth.js';
-import { classProblem } from '../lib/filtro.js';
+import { classProblem, filterKey } from '../lib/filtro.js';
+import { extraWords } from '../lib/palavras.js';
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const toId = v => { const n = Number(v); if (!Number.isInteger(n) || n <= 0) throw fail(400, 'Identificador inválido.'); return n; };
@@ -40,13 +41,30 @@ const actions = {
     const publicacoes = await sql`
       SELECT id, to_char(dia, 'YYYY-MM-DD') AS dia, turma_id, turma_nome, jsonb_array_length(entradas)::int AS total, publicada_em
       FROM publicacoes ORDER BY dia DESC, turma_nome NULLS FIRST`;
-    return { turmas, dias, publicacoes };
+    const palavras = await sql`SELECT id, palavra, dentro FROM palavras_proibidas ORDER BY palavra`;
+    return { turmas, dias, publicacoes, palavras };
+  },
+
+  async adicionarPalavra(b) {
+    const palavra = String(b.palavra || '').trim().replace(/\s+/g, ' ').slice(0, 40);
+    const chave = filterKey(palavra);
+    if (chave.length < 2) throw fail(400, 'Digite uma palavra com pelo menos 2 letras.');
+    const rows = await sql`
+      INSERT INTO palavras_proibidas (palavra, chave, dentro) VALUES (${palavra}, ${chave}, ${Boolean(b.dentro)})
+      ON CONFLICT (chave) DO NOTHING RETURNING id, palavra, dentro`;
+    if (!rows.length) throw fail(409, `“${palavra}” já está na lista.`);
+    return { palavra: rows[0] };
+  },
+
+  async removerPalavra(b) {
+    await sql`DELETE FROM palavras_proibidas WHERE id = ${toId(b.id)}`;
+    return { ok: true };
   },
 
   async criarTurma(b) {
     const nome = String(b.nome || '').trim().replace(/\s+/g, ' ').slice(0, 20);
     if (!nome) throw fail(400, 'Digite o nome da turma.');
-    const msg = classProblem(nome);
+    const msg = classProblem(nome, await extraWords());
     if (msg) throw fail(400, msg);
     const rows = await sql`INSERT INTO turmas (nome, chave) VALUES (${nome}, ${keyOf(nome).replace(/[^\p{L}\p{N}]/gu, '')}) ON CONFLICT (chave) DO NOTHING RETURNING id, nome`;
     if (!rows.length) throw fail(409, `A turma “${nome}” já existe.`);

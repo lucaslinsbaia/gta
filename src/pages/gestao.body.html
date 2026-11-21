@@ -29,6 +29,7 @@
       <button type="button" class="tab" role="tab" id="tab-partidas" aria-controls="p-partidas" aria-selected="true">Partidas e publicação</button>
       <button type="button" class="tab" role="tab" id="tab-turmas" aria-controls="p-turmas" aria-selected="false">Turmas</button>
       <button type="button" class="tab" role="tab" id="tab-publicados" aria-controls="p-publicados" aria-selected="false">Rankings publicados</button>
+      <button type="button" class="tab" role="tab" id="tab-palavras" aria-controls="p-palavras" aria-selected="false">Palavras proibidas</button>
     </div>
     <p class="msg" id="app-msg" aria-live="polite"></p>
 
@@ -77,6 +78,26 @@
         <tbody id="u-body"></tbody>
       </table>
       <p class="empty" id="u-empty" hidden>Nenhum ranking publicado ainda. Publique na aba “Partidas e publicação”.</p>
+    </div>
+    <div role="tabpanel" id="p-palavras" aria-labelledby="tab-palavras" hidden>
+      <form class="panel-box" id="w-form" novalidate>
+        <h2 class="title-md">Adicionar palavra proibida</h2>
+        <p class="page__lead">O jogo já bloqueia uma lista fixa de palavrões, insultos e termos ofensivos, inclusive com números no lugar de letras (p0rr4) ou letras separadas. As palavras daqui se somam a ela e valem para o nome dos alunos e das turmas. Elas ficam só no servidor e não aparecem para os alunos.</p>
+        <div class="row-form">
+          <div class="field">
+            <label for="w-palavra">Palavra ou apelido</label>
+            <input id="w-palavra" type="text" maxlength="40" autocomplete="off" aria-describedby="w-msg">
+          </div>
+          <label class="check"><input type="checkbox" id="w-dentro"> Bloquear também dentro de outras palavras</label>
+          <button type="submit" class="btn btn--gold">Adicionar</button>
+        </div>
+        <p class="msg" id="w-msg" aria-live="polite"></p>
+      </form>
+      <table class="table" id="w-table" hidden>
+        <thead><tr><th scope="col">Palavra</th><th scope="col">Como bloqueia</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+        <tbody id="w-body"></tbody>
+      </table>
+      <p class="empty" id="w-empty" hidden>Nenhuma palavra extra. Só a lista fixa do jogo está valendo.</p>
     </div>
   </section>
 </main>

@@ -114,7 +114,7 @@
   .screen { animation: enter 420ms var(--ease) backwards; }
   @keyframes enter { from { opacity: 0; transform: translateY(10px); } }
   .card { background: var(--panel); border: 3px solid var(--cream); border-radius: var(--radius); padding: var(--s6); box-shadow: 8px 8px 0 var(--pink); }
-  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); margin-top: var(--s5); }
+  div.actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); margin-top: var(--s5); }
 
   /* ---------- Cabeçalho ---------- */
   .nav { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s5); background: rgba(26, 8, 51, 0.94); border-bottom: 3px solid var(--pink); backdrop-filter: blur(6px); }
@@ -399,6 +399,7 @@
   .login { max-width: 420px; }
   .foot-note { margin-top: auto; padding: var(--s6) 16px; font-size: var(--text-2xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; }
   .star-text { color: var(--yellow); letter-spacing: 0.1em; }
+  .panel-box .page__lead { margin: 0 0 var(--s4); max-width: 760px; }
 </style>
 </head>
 <body>
@@ -433,6 +434,7 @@
       <button type="button" class="tab" role="tab" id="tab-partidas" aria-controls="p-partidas" aria-selected="true">Partidas e publicação</button>
       <button type="button" class="tab" role="tab" id="tab-turmas" aria-controls="p-turmas" aria-selected="false">Turmas</button>
       <button type="button" class="tab" role="tab" id="tab-publicados" aria-controls="p-publicados" aria-selected="false">Rankings publicados</button>
+      <button type="button" class="tab" role="tab" id="tab-palavras" aria-controls="p-palavras" aria-selected="false">Palavras proibidas</button>
     </div>
     <p class="msg" id="app-msg" aria-live="polite"></p>
 
@@ -481,6 +483,26 @@
         <tbody id="u-body"></tbody>
       </table>
       <p class="empty" id="u-empty" hidden>Nenhum ranking publicado ainda. Publique na aba “Partidas e publicação”.</p>
+    </div>
+    <div role="tabpanel" id="p-palavras" aria-labelledby="tab-palavras" hidden>
+      <form class="panel-box" id="w-form" novalidate>
+        <h2 class="title-md">Adicionar palavra proibida</h2>
+        <p class="page__lead">O jogo já bloqueia uma lista fixa de palavrões, insultos e termos ofensivos, inclusive com números no lugar de letras (p0rr4) ou letras separadas. As palavras daqui se somam a ela e valem para o nome dos alunos e das turmas. Elas ficam só no servidor e não aparecem para os alunos.</p>
+        <div class="row-form">
+          <div class="field">
+            <label for="w-palavra">Palavra ou apelido</label>
+            <input id="w-palavra" type="text" maxlength="40" autocomplete="off" aria-describedby="w-msg">
+          </div>
+          <label class="check"><input type="checkbox" id="w-dentro"> Bloquear também dentro de outras palavras</label>
+          <button type="submit" class="btn btn--gold">Adicionar</button>
+        </div>
+        <p class="msg" id="w-msg" aria-live="polite"></p>
+      </form>
+      <table class="table" id="w-table" hidden>
+        <thead><tr><th scope="col">Palavra</th><th scope="col">Como bloqueia</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+        <tbody id="w-body"></tbody>
+      </table>
+      <p class="empty" id="w-empty" hidden>Nenhuma palavra extra. Só a lista fixa do jogo está valendo.</p>
     </div>
   </section>
 </main>
@@ -531,6 +553,9 @@ const fmtStamp = iso => new Date(iso).toLocaleString('pt-BR', { day: '2-digit', 
      que aparecem dentro de nomes reais ("cu" em Cunha, "puto" em Caputo).
    - BLOCKED_ROOTS: raízes inconfundíveis, procuradas também dentro de
      palavras e com as letras separadas (c.a.r.a.l.h.o).
+   - Lista extra: palavras que o professor cadastra na gestão (/gestao).
+     Ficam só no servidor: o jogo confere o nome em /api/nome, e o
+     servidor confere de novo ao gravar o resultado e ao criar turmas.
    ------------------------------------------------------------------ */
 const BLOCKED_WORDS = [
   // português
@@ -541,15 +566,25 @@ const BLOCKED_WORDS = [
   'corno', 'corna', 'chifrudo', 'viado', 'bicha', 'sapatao', 'traveco', 'vadia', 'vagabunda', 'vagabundo',
   'piranha', 'prostituta', 'safada', 'safado', 'arrombado', 'arrombada', 'desgracado', 'desgracada',
   'escroto', 'escrota', 'canalha', 'nojento', 'lixo', 'macaco', 'macaca', 'nazista', 'nazi', 'hitler',
+  'caraio', 'caralio', 'fudido', 'fudida', 'fuder', 'fudeu', 'cagao', 'cagona', 'bunda', 'bundao', 'bundona', 'peido', 'peidao',
+  'punheta', 'punheteiro', 'siririca', 'broxa', 'tesao', 'tesudo', 'tesuda', 'piru', 'pirocudo', 'caceta', 'xavasca', 'xana',
+  'chupa', 'chupar', 'mamada', 'boquete', 'putinho', 'rapariga', 'quenga', 'meretriz', 'kenga', 'biscate', 'galinha',
+  'baitola', 'boiola', 'mulherzinha', 'mariquinha',
+  'burro', 'burra', 'jumento', 'anta', 'besta', 'mongoloide', 'aleijado', 'aleijada', 'gordo', 'gorda', 'baleia', 'balofo', 'balofa',
+  'feio', 'feia', 'nerdola', 'perdedor', 'fracassado', 'fracassada',
+  'estupro', 'estuprador', 'pedofilo', 'assassino', 'terrorista', 'suicida', 'matar', 'morra', 'morre',
+  'maconha', 'maconheiro', 'cocaina', 'crack', 'droga', 'drogado', 'drogada', 'baseado', 'lsd', 'ecstasy',
+  'sexo', 'sexy', 'porno', 'nude', 'nudes', 'pelado', 'xxx', 'penis', 'vagina', 'kkk',
   // abreviações
-  'fdp', 'vsf', 'vtnc', 'tnc', 'pqp', 'krl', 'crl', 'prr', 'pnc', 'bct', 'tmnc',
+  'fdp', 'vsf', 'vtnc', 'tnc', 'pqp', 'krl', 'crl', 'prr', 'pnc', 'bct', 'tmnc', 'vsfd', 'vtmnc', 'ptqp',
   // inglês
   'fuck', 'fucker', 'fucking', 'shit', 'bitch', 'dick', 'cock', 'cunt', 'pussy', 'ass', 'asshole',
-  'bastard', 'slut', 'whore', 'fag', 'faggot', 'nigga', 'nigger', 'retard'
+  'bastard', 'slut', 'whore', 'fag', 'faggot', 'nigga', 'nigger', 'retard', 'sex', 'porn', 'dildo', 'boobs', 'tits', 'penis', 'rape'
 ];
 const BLOCKED_ROOTS = [
   'caralh', 'buceta', 'boceta', 'xoxot', 'punhet', 'arromb', 'filhodaput', 'putaquepariu', 'vaitomarnocu',
-  'merda', 'porra', 'fuck', 'shit', 'bitch', 'cunt', 'nigg', 'faggot', 'asshole'
+  'merda', 'porra', 'fuck', 'shit', 'bitch', 'cunt', 'nigg', 'faggot', 'asshole',
+  'punhet', 'siriric', 'boquet', 'pedofil', 'estupr', 'pornogr', 'maconh', 'cocain', 'hitler', 'nazist', 'viadinh', 'putinh'
 ];
 
 const LEET = { 0: 'o', 1: 'i', 3: 'e', 4: 'a', 5: 's', 7: 't', 8: 'b', '@': 'a', '$': 's', '!': 'i', 'ø': 'o', 'æ': 'ae', 'ß': 'ss', 'ł': 'l', 'đ': 'd' };
@@ -565,34 +600,47 @@ function normalizeForFilter(text) {
 const BLOCKED_WORD_SET = new Set(BLOCKED_WORDS.map(collapseRepeats));
 const BLOCKED_ROOT_LIST = BLOCKED_ROOTS.map(collapseRepeats);
 
-/** true se o texto tem um termo proibido (palavra inteira ou raiz, mesmo com letras separadas). */
-function hasBlockedTerm(text) {
+/** Chave de comparação de uma palavra (a mesma usada para guardar a lista extra). */
+const filterKey = word => collapseRepeats(normalizeForFilter(String(word)).replace(/[^a-z]+/g, ''));
+
+/**
+ * true se o texto tem um termo proibido (palavra inteira ou raiz, mesmo com letras separadas).
+ * extra: palavras da gestão, [{ chave, dentro }]; com dentro=true valem também dentro de outras palavras.
+ */
+function hasBlockedTerm(text, extra = []) {
   const tokens = normalizeForFilter(text).split(/[^a-z]+/).filter(Boolean).map(collapseRepeats);
   const compact = collapseRepeats(tokens.join(''));
-  return tokens.some(t => BLOCKED_WORD_SET.has(t)) || BLOCKED_ROOT_LIST.some(root => compact.includes(root));
+  if (tokens.some(t => BLOCKED_WORD_SET.has(t)) || BLOCKED_ROOT_LIST.some(root => compact.includes(root))) return true;
+  // Palavra inteira: compara com cada sequência de palavras seguidas ("Zé Ruela" dentro de "Ana Zé Ruela")
+  const runs = new Set();
+  for (let i = 0; i < tokens.length; i++) {
+    let run = '';
+    for (let j = i; j < tokens.length && j < i + 4; j++) { run += tokens[j]; runs.add(collapseRepeats(run)); }
+  }
+  return extra.some(w => w.chave && (w.dentro ? compact.includes(w.chave) : runs.has(w.chave)));
 }
 
 const NAME_CHARS = /^[\p{L}\p{N} .'’-]+$/u;
 const CLASS_CHARS = /^[\p{L}\p{N} .'’ºª°/-]+$/u;
 
 /** Devolve a orientação para o nome, ou '' se estiver tudo certo. */
-function nameProblem(name) {
+function nameProblem(name, extra = []) {
   if (!name) return 'Digite seu nome ou apelido para começar.';
   if (!NAME_CHARS.test(name)) return 'Use só letras, números, espaços, hífen, ponto ou apóstrofo no nome.';
   if ((name.match(/\p{L}/gu) || []).length < 2) return 'Use pelo menos 2 letras no nome ou apelido.';
-  if (hasBlockedTerm(name)) return 'Esse nome não pode ser usado no jogo. Escolha outro nome ou apelido.';
+  if (hasBlockedTerm(name, extra)) return 'Esse nome não pode ser usado no jogo. Escolha outro nome ou apelido.';
   return '';
 }
 
 /** Devolve a orientação para a turma (opcional), ou '' se estiver tudo certo. */
-function classProblem(turma) {
+function classProblem(turma, extra = []) {
   if (!turma) return '';
   if (!CLASS_CHARS.test(turma)) return 'Use só letras, números, espaços e º, ª, hífen ou barra na turma.';
-  if (hasBlockedTerm(turma)) return 'Esse texto não pode ser usado na turma. Revise e tente de novo.';
+  if (hasBlockedTerm(turma, extra)) return 'Esse texto não pode ser usado na turma. Revise e tente de novo.';
   return '';
 }
 
-const TOKEN_KEY = 'enigma-gestao-token';
+const TOKEN_KEY = 'gta-glicerio-gestao-token';
 let token = null;
 try { token = sessionStorage.getItem(TOKEN_KEY); } catch (e) { /* sem armazenamento */ }
 let painel = { turmas: [], dias: [], publicacoes: [] };
@@ -651,7 +699,7 @@ $('login-form').addEventListener('submit', async event => {
 $('g-logout').addEventListener('click', () => logout());
 
 /* --- Abas --- */
-const TABS = ['partidas', 'turmas', 'publicados'];
+const TABS = ['partidas', 'turmas', 'publicados', 'palavras'];
 function selectTab(name) {
   TABS.forEach(t => {
     $(`tab-${t}`).setAttribute('aria-selected', String(t === name));
@@ -665,6 +713,7 @@ async function loadPainel() {
   painel = await api('painel');
   renderTurmas();
   renderPublicados();
+  renderPalavras();
   renderFiltros();
 }
 
@@ -705,6 +754,40 @@ $('t-body').addEventListener('click', async event => {
     }
     if (toggle || del) await loadPainel();
   } catch (e) { setMsg('t-msg', e.message, 'error'); }
+});
+
+/* --- Palavras proibidas (lista extra, só no servidor) --- */
+function renderPalavras() {
+  const list = painel.palavras || [];
+  $('w-table').hidden = !list.length;
+  $('w-empty').hidden = list.length > 0;
+  $('w-body').innerHTML = list.map(w => `<tr>
+    <td class="name" data-label="Palavra">${escapeHtml(w.palavra)}</td>
+    <td data-label="Como bloqueia">${w.dentro ? 'Também dentro de outras palavras' : 'Só a palavra inteira'}</td>
+    <td class="actions"><button type="button" class="link-btn" data-del-palavra="${w.id}">Remover</button></td>
+  </tr>`).join('');
+}
+
+$('w-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const palavra = $('w-palavra').value.trim().replace(/\s+/g, ' ');
+  if (!palavra) { setMsg('w-msg', 'Digite a palavra.', 'error'); $('w-palavra').focus(); return; }
+  try {
+    await api('adicionarPalavra', { palavra, dentro: $('w-dentro').checked });
+    $('w-palavra').value = '';
+    $('w-dentro').checked = false;
+    setMsg('w-msg', `“${palavra}” adicionada. Já vale para novos nomes e turmas.`, 'ok');
+    await loadPainel();
+  } catch (e) { setMsg('w-msg', e.message, 'error'); }
+});
+
+$('w-body').addEventListener('click', async event => {
+  const del = event.target.closest('[data-del-palavra]');
+  if (!del) return;
+  const w = (painel.palavras || []).find(x => x.id === Number(del.dataset.delPalavra));
+  if (!confirm(`Remover “${w.palavra}” da lista?`)) return;
+  try { await api('removerPalavra', { id: w.id }); await loadPainel(); setMsg('w-msg', `“${w.palavra}” removida.`, 'ok'); }
+  catch (e) { setMsg('w-msg', e.message, 'error'); }
 });
 
 /* --- Partidas e publicação --- */

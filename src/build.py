@@ -10,7 +10,7 @@ head = (src / 'head.html').read_text()
 filtro = (src / 'filtro.js').read_text()
 js = js.replace('/*__FILTRO__*/', filtro)
 repo = src.parent
-(repo / 'lib' / 'filtro.js').write_text('/* Gerado a partir de src/filtro.js (o mesmo filtro do jogo). */\n' + filtro + '\nexport { nameProblem, classProblem, hasBlockedTerm };\n')
+(repo / 'lib' / 'filtro.js').write_text('/* Gerado a partir de src/filtro.js (o mesmo filtro do jogo). */\n' + filtro + '\nexport { nameProblem, classProblem, hasBlockedTerm, filterKey };\n')
 for f in sorted(img.glob('*.jpg')):
     uri = 'data:image/jpeg;base64,' + base64.b64encode(f.read_bytes()).decode()
     js = js.replace(f'__IMG_{f.stem}__', uri)

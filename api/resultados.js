@@ -4,6 +4,7 @@ import { sql, ensureSchema } from '../lib/db.js';
 import { send, handle, fail, readBody, keyOf } from '../lib/http.js';
 import { nameProblem, classProblem } from '../lib/filtro.js';
 import { scoreFrom, MISSIONS } from '../lib/nota.js';
+import { extraWords } from '../lib/palavras.js';
 
 const int = (v, max) => {
   const n = Number(v);
@@ -18,10 +19,12 @@ export default handle(async (req, res) => {
   const jornada = String(b.jornadaId || '');
   if (!/^[A-Za-z0-9-]{8,64}$/.test(jornada)) throw fail(400, 'Resultado inválido.');
   const nome = String(b.nome || '').trim().replace(/\s+/g, ' ').slice(0, 40);
-  const nomeMsg = nameProblem(nome);
+  await ensureSchema();
+  const extra = await extraWords();
+  const nomeMsg = nameProblem(nome, extra);
   if (nomeMsg) throw fail(400, nomeMsg);
   const turmaTexto = String(b.turmaTexto || '').trim().replace(/\s+/g, ' ').slice(0, 20);
-  if (classProblem(turmaTexto)) throw fail(400, 'Turma inválida.');
+  if (classProblem(turmaTexto, extra)) throw fail(400, 'Turma inválida.');
 
   const errors = Object.fromEntries(MISSIONS.map(n => [n, int(b.erros?.[n], 999)]));
   const skipped = Object.fromEntries(MISSIONS.map(n => [n, Boolean(b.pulados?.[n])]));

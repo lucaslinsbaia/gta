@@ -1,6 +1,6 @@
 /* Área de gestão: turmas, partidas do dia e publicação do ranking. */
 /*__FILTRO__*/
-const TOKEN_KEY = 'enigma-gestao-token';
+const TOKEN_KEY = 'gta-glicerio-gestao-token';
 let token = null;
 try { token = sessionStorage.getItem(TOKEN_KEY); } catch (e) { /* sem armazenamento */ }
 let painel = { turmas: [], dias: [], publicacoes: [] };
@@ -59,7 +59,7 @@ $('login-form').addEventListener('submit', async event => {
 $('g-logout').addEventListener('click', () => logout());
 
 /* --- Abas --- */
-const TABS = ['partidas', 'turmas', 'publicados'];
+const TABS = ['partidas', 'turmas', 'publicados', 'palavras'];
 function selectTab(name) {
   TABS.forEach(t => {
     $(`tab-${t}`).setAttribute('aria-selected', String(t === name));
@@ -73,6 +73,7 @@ async function loadPainel() {
   painel = await api('painel');
   renderTurmas();
   renderPublicados();
+  renderPalavras();
   renderFiltros();
 }
 
@@ -113,6 +114,40 @@ $('t-body').addEventListener('click', async event => {
     }
     if (toggle || del) await loadPainel();
   } catch (e) { setMsg('t-msg', e.message, 'error'); }
+});
+
+/* --- Palavras proibidas (lista extra, só no servidor) --- */
+function renderPalavras() {
+  const list = painel.palavras || [];
+  $('w-table').hidden = !list.length;
+  $('w-empty').hidden = list.length > 0;
+  $('w-body').innerHTML = list.map(w => `<tr>
+    <td class="name" data-label="Palavra">${escapeHtml(w.palavra)}</td>
+    <td data-label="Como bloqueia">${w.dentro ? 'Também dentro de outras palavras' : 'Só a palavra inteira'}</td>
+    <td class="actions"><button type="button" class="link-btn" data-del-palavra="${w.id}">Remover</button></td>
+  </tr>`).join('');
+}
+
+$('w-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const palavra = $('w-palavra').value.trim().replace(/\s+/g, ' ');
+  if (!palavra) { setMsg('w-msg', 'Digite a palavra.', 'error'); $('w-palavra').focus(); return; }
+  try {
+    await api('adicionarPalavra', { palavra, dentro: $('w-dentro').checked });
+    $('w-palavra').value = '';
+    $('w-dentro').checked = false;
+    setMsg('w-msg', `“${palavra}” adicionada. Já vale para novos nomes e turmas.`, 'ok');
+    await loadPainel();
+  } catch (e) { setMsg('w-msg', e.message, 'error'); }
+});
+
+$('w-body').addEventListener('click', async event => {
+  const del = event.target.closest('[data-del-palavra]');
+  if (!del) return;
+  const w = (painel.palavras || []).find(x => x.id === Number(del.dataset.delPalavra));
+  if (!confirm(`Remover “${w.palavra}” da lista?`)) return;
+  try { await api('removerPalavra', { id: w.id }); await loadPainel(); setMsg('w-msg', `“${w.palavra}” removida.`, 'ok'); }
+  catch (e) { setMsg('w-msg', e.message, 'error'); }
 });
 
 /* --- Partidas e publicação --- */
