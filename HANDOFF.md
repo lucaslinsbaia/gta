@@ -1,7 +1,7 @@
 # Handoff: GTA (Geometria, Trigonometria e Álgebra), novo jogo a partir do Enigma de Pitágoras
 
 **Data:** 21/11/2026
-**Status:** aguardando decisão. O repositório `lucaslinsbaia/gta` já existe e tem a base enviada. Falta o Lucas ligá-lo ao projeto da Vercel (passo 1 da seção 5) e decidir o conteúdo e a direção de arte (seção 6).
+**Status:** aguardando decisão. O repositório `lucaslinsbaia/gta` já existe e tem a base enviada. O repositório já está ligado ao projeto `gta-glicerio` na Vercel, que publica a `main` automaticamente. Falta decidir o conteúdo e a direção de arte (seção 6).
 
 ## 1. Objetivo
 
@@ -93,24 +93,22 @@ Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e
    - uma **página provisória "Em breve"** no estilo neon como `index.html`.
 3. **Repositório no GitHub:** a sessão não consegue criar repositórios (só acessa os que já existem), então o Lucas criou `lucaslinsbaia/gta`, privado e vazio. Em seguida, a sessão o ligou com `add_repo` e enviou a base para a branch `main`.
 4. **A base foi testada:** o build gerou um `index.html` idêntico ao do Enigma, e os testes de fluxo, de nota e do Círculo passaram.
-5. **Ligação com a Vercel bloqueada:** a tentativa de ligar o repositório ao projeto `gta-glicerio` pela ferramenta da Vercel falhou com "To link a GitHub repository, you need to install the GitHub integration first". O app da Vercel no GitHub do Lucas só acessa repositórios escolhidos, e o `gta` ainda não está entre eles. Isso precisa ser feito pelo Lucas no painel (passo 1 da seção 5).
+5. **Ligação com a Vercel bloqueada:** a tentativa de ligar o repositório ao projeto `gta-glicerio` pela ferramenta da Vercel falhou com "To link a GitHub repository, you need to install the GitHub integration first". O app da Vercel no GitHub do Lucas só acessa repositórios escolhidos, e o `gta` ainda não está entre eles. O Lucas liberou o acesso e ligou o repositório pelo painel (Settings → Git); a partir daí, cada envio para a `main` publica.
 
 ## 4. Estado atual
 
 - **Funciona:**
   - o projeto `gta-glicerio` existe na Vercel com o domínio reservado;
   - a base de código é a do Enigma, funcionando e testada.
-- **Repositório:** `lucaslinsbaia/gta` existe, com a base enviada na branch `main`.
+- **Repositório:** `lucaslinsbaia/gta` existe, com a base enviada na branch `main`, e está ligado ao projeto `gta-glicerio` na Vercel.
 - **Ainda não existe:**
-  - ligação entre o repositório e o projeto `gta-glicerio` na Vercel;
-  - nenhum deploy, então o endereço ainda não abre nada;
   - nada do conteúdo do GTA: o jogo em `src/` ainda é o Enigma inteiro, com textos, imagens e capítulos de trigonometria.
 - **Atenção:** rodar `python3 src/build.py` **substitui** a página provisória `index.html` pelo jogo montado. Até o GTA ter conteúdo próprio, não rode o build antes de enviar, ou o endereço vai mostrar o Enigma.
 - **Sem banco:** as rotas `/api/*` respondem 503 ("Banco de dados não configurado"). Sem servidor, o jogo funciona sem ranking e esconde o campo Turma.
 
 ## 5. Próximos passos
 
-1. **Lucas: ligar o repositório na Vercel.** No painel da Vercel, abrir o projeto **gta-glicerio** → **Settings** → **Git** → **Connect Git Repository** → GitHub. Se o `gta` não aparecer na lista, clicar em **Adjust GitHub App Permissions** (ou ir em GitHub → Settings → Applications → Vercel → Configure → Repository access) e incluir o `gta`. Depois, escolher `lucaslinsbaia/gta`.
+1. ~~**Lucas: ligar o repositório na Vercel.**~~ **Feito.** No painel da Vercel, abrir o projeto **gta-glicerio** → **Settings** → **Git** → **Connect Git Repository** → GitHub. Se o `gta` não aparecer na lista, clicar em **Adjust GitHub App Permissions** (ou ir em GitHub → Settings → Applications → Vercel → Configure → Repository access) e incluir o `gta`. Depois, escolher `lucaslinsbaia/gta`.
 2. **Sessão: publicar e conferir.**
    - Fazer qualquer envio para a `main` (ou pedir ao Lucas um **Redeploy**) para gerar o primeiro deploy.
    - Conferir com `list_deployments` (projeto `gta-glicerio`) e abrir https://gta-glicerio.vercel.app, que deve mostrar a página "Em breve".
