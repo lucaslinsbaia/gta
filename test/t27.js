@@ -1,0 +1,22 @@
+const GAME = 'file://' + require('path').resolve(__dirname, '../index.html');
+const { chromium } = require('playwright');
+(async () => {
+  const b = await chromium.launch(); const errs = [];
+  const g = await b.newPage({ viewport: { width: 1440, height: 900 } }); g.on('pageerror', e => errs.push(e.message));
+  await g.goto('http://localhost:3000/'); await g.evaluate(() => localStorage.clear()); await g.reload(); await g.waitForTimeout(800);
+  await g.click('#btn-start'); await g.waitForTimeout(500);
+  console.log('opções:', await g.$$eval('#id-class option', o => o.map(x => x.textContent + (x.disabled ? '(desab.)' : ''))), '| valor:', JSON.stringify(await g.inputValue('#id-class')));
+  await g.fill('#id-name', 'Lucas'); await g.click('#id-form button[type=submit]'); await g.waitForTimeout(400);
+  console.log('sem turma → tela', await g.evaluate(() => screen), '| msg:', await g.textContent('#id-class-msg'));
+  await g.screenshot({ path: 'g-ident3.png' });
+  await g.selectOption('#id-class', { label: '102A' });
+  console.log('msg após escolher:', JSON.stringify(await g.textContent('#id-class-msg')));
+  await g.click('#id-form button[type=submit]'); await g.waitForTimeout(500);
+  console.log('com turma → tela', await g.evaluate(() => screen), JSON.stringify(await g.evaluate(() => S.player)));
+  const f = await b.newPage(); f.on('pageerror', e => errs.push(e.message));
+  await f.goto(GAME + ''); await f.evaluate(() => localStorage.clear()); await f.reload(); await f.waitForTimeout(500);
+  await f.click('#btn-start'); await f.waitForTimeout(500); await f.fill('#id-name', 'Ana');
+  console.log('sem servidor: campo turma visível?', await f.isVisible('#id-class'));
+  await f.click('#id-form button[type=submit]'); await f.waitForTimeout(400); console.log('sem servidor → tela', await f.evaluate(() => screen));
+  console.log('erros', errs); await b.close();
+})();

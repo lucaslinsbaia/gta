@@ -1,0 +1,82 @@
+<header class="nav">
+  <a class="brand" href="/" aria-label="O Enigma de Pitágoras: ir para o jogo">
+    <svg class="icon" aria-hidden="true"><use href="#i-landmark"/></svg>
+    <span><span class="brand__name">O Enigma de Pitágoras</span><span class="brand__sub">Área de gestão</span></span>
+  </a>
+  <button type="button" class="link-btn" id="g-logout" hidden>Sair</button>
+</header>
+<main class="wrap page">
+  <!-- Entrada -->
+  <section id="v-login" hidden>
+    <p class="eyebrow">Área de gestão</p>
+    <h1 class="hero__title hero__title--sm">Entrar na gestão</h1>
+    <p class="page__lead">Crie turmas, acompanhe as partidas e publique o ranking.</p>
+    <form class="panel-box login" id="login-form" novalidate>
+      <div class="field">
+        <label for="login-pwd">Senha</label>
+        <input id="login-pwd" type="password" autocomplete="current-password" required aria-describedby="login-msg">
+      </div>
+      <p class="msg" id="login-msg" aria-live="polite"></p>
+      <button type="submit" class="btn btn--gold">Entrar <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+    </form>
+  </section>
+
+  <!-- Painel -->
+  <section id="v-app" hidden>
+    <p class="eyebrow">Área de gestão</p>
+    <h1 class="hero__title hero__title--sm">Gestão da expedição</h1>
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab" role="tab" id="tab-partidas" aria-controls="p-partidas" aria-selected="true">Partidas e publicação</button>
+      <button type="button" class="tab" role="tab" id="tab-turmas" aria-controls="p-turmas" aria-selected="false">Turmas</button>
+      <button type="button" class="tab" role="tab" id="tab-publicados" aria-controls="p-publicados" aria-selected="false">Rankings publicados</button>
+    </div>
+    <p class="msg" id="app-msg" aria-live="polite"></p>
+
+    <div role="tabpanel" id="p-partidas" aria-labelledby="tab-partidas">
+      <div class="filters">
+        <div class="field"><label for="m-dia">Data</label><select id="m-dia"></select></div>
+        <div class="field"><label for="m-turma">Turma</label><select id="m-turma"></select></div>
+        <label class="check"><input type="checkbox" id="m-teste"> Incluir partidas do modo de teste</label>
+      </div>
+      <div class="pub-box" id="m-pub" hidden>
+        <p id="m-pub-text"></p>
+        <div class="pub-actions">
+          <button type="button" class="btn btn--gold btn--sm" id="m-publish">Publicar ranking</button>
+          <button type="button" class="btn btn--outline btn--sm" id="m-unpublish" hidden>Despublicar</button>
+        </div>
+      </div>
+      <table class="table" id="m-table" hidden>
+        <thead><tr><th scope="col">Posição</th><th scope="col">Participante</th><th scope="col">Turma</th><th scope="col" class="num">Nota</th><th scope="col" class="num">Erros</th><th scope="col" class="num">Dicas</th><th scope="col" class="num">Tempo</th><th scope="col" class="num">Partidas</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+        <tbody id="m-body"></tbody>
+      </table>
+      <p class="empty" id="m-empty" hidden></p>
+    </div>
+
+    <div role="tabpanel" id="p-turmas" aria-labelledby="tab-turmas" hidden>
+      <form class="panel-box" id="t-form" novalidate>
+        <h2 class="title-md">Nova turma</h2>
+        <div class="row-form">
+          <div class="field">
+            <label for="t-nome">Nome da turma</label>
+            <input id="t-nome" type="text" maxlength="20" placeholder="ex.: 9º B" autocomplete="off" aria-describedby="t-msg">
+          </div>
+          <button type="submit" class="btn btn--gold">Criar turma</button>
+        </div>
+        <p class="msg" id="t-msg" aria-live="polite"></p>
+      </form>
+      <table class="table" id="t-table" hidden>
+        <thead><tr><th scope="col">Turma</th><th scope="col">Situação</th><th scope="col" class="num">Partidas</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+        <tbody id="t-body"></tbody>
+      </table>
+      <p class="empty" id="t-empty" hidden>Nenhuma turma criada. As turmas criadas aqui aparecem para os alunos na tela de identificação do jogo.</p>
+    </div>
+
+    <div role="tabpanel" id="p-publicados" aria-labelledby="tab-publicados" hidden>
+      <table class="table" id="u-table" hidden>
+        <thead><tr><th scope="col">Data</th><th scope="col">Turma</th><th scope="col" class="num">Participantes</th><th scope="col">Publicado em</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+        <tbody id="u-body"></tbody>
+      </table>
+      <p class="empty" id="u-empty" hidden>Nenhum ranking publicado ainda. Publique na aba “Partidas e publicação”.</p>
+    </div>
+  </section>
+</main>

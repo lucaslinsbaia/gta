@@ -1,0 +1,23 @@
+<header class="nav">
+  <a class="brand" href="/" aria-label="O Enigma de Pitágoras: ir para o jogo">
+    <svg class="icon" aria-hidden="true"><use href="#i-landmark"/></svg>
+    <span><span class="brand__name">O Enigma de Pitágoras</span><span class="brand__sub">Ranking da expedição</span></span>
+  </a>
+  <a class="link-btn" href="/">Jogar <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+</header>
+<main class="wrap page">
+  <p class="eyebrow">Ranking da expedição</p>
+  <h1 class="hero__title hero__title--sm">Quem dominou o teorema</h1>
+  <p class="page__lead">Vale a melhor nota de cada participante no dia. Em caso de empate, ganha quem teve menos tentativas incorretas e, depois, menos tempo.</p>
+  <div class="filters" id="r-filters" hidden>
+    <div class="field"><label for="f-dia">Data</label><select id="f-dia"></select></div>
+    <div class="field"><label for="f-turma">Turma</label><select id="f-turma"></select></div>
+  </div>
+  <p class="page__meta" id="r-meta" aria-live="polite">Carregando o ranking…</p>
+  <table class="table" id="r-table" hidden>
+    <thead><tr><th scope="col">Posição</th><th scope="col">Participante</th><th scope="col">Turma</th><th scope="col" class="num">Nota</th><th scope="col">Conceito</th><th scope="col" class="num">Tentativas incorretas</th><th scope="col" class="num">Dicas</th><th scope="col" class="num">Tempo</th></tr></thead>
+    <tbody id="r-body"></tbody>
+  </table>
+  <p class="empty" id="r-empty" hidden></p>
+</main>
+<p class="foot-note">O ranking é publicado pelo professor na área de gestão.</p>

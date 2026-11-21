@@ -1,0 +1,23 @@
+const GAME = 'file://' + require('path').resolve(__dirname, '../index.html');
+const { chromium, devices } = require('playwright');
+(async () => {
+  const b = await chromium.launch(); const errs = [];
+  const ctx = await b.newContext({ ...devices['iPhone 13'] }); const p = await ctx.newPage(); p.on('pageerror', e => errs.push(e.message));
+  await p.goto(GAME + '#teste'); await p.evaluate(() => localStorage.clear()); await p.reload(); await p.waitForTimeout(400);
+  await p.click('#btn-start'); await p.waitForTimeout(300); await p.fill('#id-name', 'Ana'); await p.click('#id-form button[type=submit]'); await p.waitForTimeout(400);
+  await p.click('[data-chapter="1"]'); await p.waitForTimeout(500);
+  await p.click('[data-main]'); await p.waitForTimeout(400); await p.fill('#ans-c', '25/5'); await p.waitForTimeout(200);
+  console.log('cap I fração:', await p.textContent('#en-status'), '| confirmar desativado:', await p.isDisabled('#btn-confirm'));
+  await p.click('#test-fab'); await p.waitForSelector('#dlg-feedback[open]'); await p.waitForTimeout(300); await p.click('#fb-action'); await p.waitForTimeout(500);
+  await p.click('[data-main]'); await p.waitForTimeout(300); await p.click('#test-fab'); await p.waitForSelector('#dlg-feedback[open]'); await p.waitForTimeout(300); await p.click('#fb-action'); await p.waitForTimeout(500);
+  await p.click('[data-main]'); await p.waitForTimeout(600);
+  const T = await p.evaluate(() => S.tri[3]);
+  console.log('botão / existe?', await p.$('[data-slash]') !== null, '| teclado:', await p.getAttribute('#ans-sen', 'inputmode'));
+  const tryv = async v => { await p.fill('#ans-sen', v); await p.click('[data-check="sen"]'); await p.waitForTimeout(250); return p.evaluate(() => document.getElementById('msg-sen').textContent); };
+  console.log('fração:', await tryv(`${T.o}/${T.h}`));
+  console.log('3 casas:', await tryv((T.o / T.h).toFixed(3).replace('.', ',')));
+  console.log('erros contados até aqui:', await p.evaluate(() => S.errors[3]));
+  console.log('2 casas:', await tryv((T.o / T.h).toFixed(2).replace('.', ',')));
+  await p.screenshot({ path: 'i-decimal-mobile.png' });
+  console.log('erros', errs); await b.close();
+})();
