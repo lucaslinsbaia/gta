@@ -116,6 +116,8 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
 5. **Ligação com a Vercel bloqueada:** a tentativa de ligar o repositório ao projeto `gta-glicerio` pela ferramenta da Vercel falhou com "To link a GitHub repository, you need to install the GitHub integration first". O app da Vercel no GitHub do Lucas só acessa repositórios escolhidos, e o `gta` ainda não está entre eles. O Lucas liberou o acesso e ligou o repositório pelo painel (Settings → Git); a partir daí, cada envio para a `main` publica.
 6. **Primeiro deploy no ar:** https://gta-glicerio.vercel.app mostra a página provisória "Em breve" e abre sem login.
 7. **Decisões do Lucas registradas** em 21/11 (seção 2): público, formato em missões, tom, escola, personagem, arte tipo pôster, banco e gestão novos, marca.
+8. **Referências visuais** pesquisadas na divulgação do GTA VI (capa de 18/06/2026). O quadro de referências e um rascunho de pôster 4:5 estão no canvas "GTA Glicério — Referências visuais" (https://claude.ai/artifact/KNmFHxpmqN7DVK6dQve36b).
+9. **Missões e pontuação definidas** em `docs/SPEC-gta.md` (v0.1), com sorteios que só dão respostas positivas.
 
 ## 4. Estado atual
 
@@ -167,20 +169,17 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
 
 ## 6. Perguntas em aberto
 
-1. **Assuntos das missões** (2º e 3º ano, seguindo a BNCC). Proposta para validar com o Lucas, com cerca de duas missões por área:
-   - **Geometria:** áreas e volumes (prismas, cilindros, cones), geometria analítica (distância entre pontos, equação da reta, circunferência);
-   - **Trigonometria:** lei dos senos e dos cossenos, ciclo trigonométrico, funções seno e cosseno;
-   - **Álgebra:** funções (afim, quadrática, exponencial, logaritmo), progressões (PA e PG), sistemas e matrizes.
-   
-   Quantas missões no total? Todas liberadas, ou em sequência?
-2. **Pontuação:**
-   - Quanto vale cada missão, e se os valores mudam por dificuldade.
-   - Se erros e dicas descontam (como no Enigma).
-   - Como vira a nota de 0 a 10 para o professor, e se continua a nota mínima por concluir.
-   - Se o ranking mostra pontos, nota ou os dois.
+1. ~~**Assuntos das missões.**~~ **Decidido em 21/11:** 6 missões em sequência, 2 por área. Detalhes em `docs/SPEC-gta.md`.
+2. ~~**Pontuação.**~~ **Decidido em 21/11:**
+   - 100 pontos por missão;
+   - erro −10, dica −20 (uma vez);
+   - piso de 50 por missão concluída, pulada vale 0;
+   - nota = pontos ÷ 60, mínimo 5 para quem conclui;
+   - o ranking mostra pontos e estrelas.
+   Detalhes em `docs/SPEC-gta.md`.
 3. **Personagem:** nome, gênero, visual e bordões. O Lucas escolhe entre opções propostas.
 4. **Imagens:** quem gera as ilustrações tipo pôster? Opções: o Lucas (Figma ou ferramenta de IA dele), a sessão com as ferramentas disponíveis, ou ilustrador. Em que proporção e quantidade?
-5. **Números negativos e outras respostas:** a Álgebra pode pedir respostas negativas, raízes ou pares ordenados. O teclado `inputmode="decimal"` não tem sinal de menos. Definir o formato de resposta (botão ±, campos separados, múltipla escolha).
+5. ~~**Números negativos.**~~ **Decidido em 21/11:** nenhuma pergunta pode ter resposta negativa. Os sorteios da SPEC garantem isso, e o teclado continua `inputmode="decimal"`.
 6. **Logo:** aprovar o desenho original da sigla GTA antes de aplicá-lo nas telas.
 7. **Ramo antigo do Enigma:** `wip/fracao-barra-fixa` pode ser apagado pelo Lucas no GitHub.
 
