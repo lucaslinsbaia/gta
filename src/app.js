@@ -22,12 +22,12 @@ const IMG = {
   dani: '__IMG_gta_dani_pixel__',
   avatar: '__IMG_gta_dani_avatar__',
   card: {
-    1: '__IMG_gta_card_m1_mercado__', 2: '__IMG_gta_card_m2_redencao__', 3: '__IMG_gta_card_m3_gasometro__',
-    4: '__IMG_gta_card_m4_arena__', 5: '__IMG_gta_card_m5_orla__', 6: '__IMG_gta_card_m6_beirario__'
+    1: '__IMG_gta_card_m1_mercado__', 2: '__IMG_gta_card_m2_redencao__', 3: '__IMG_gta_card_m3_beirario__',
+    4: '__IMG_gta_card_m4_gasometro__', 5: '__IMG_gta_card_m5_arena__', 6: '__IMG_gta_card_m6_aeroporto__'
   },
   scene: {
-    1: '__IMG_gta_cena_m1_mercado__', 2: '__IMG_gta_cena_m2_redencao__', 3: '__IMG_gta_cena_m3_gasometro__',
-    4: '__IMG_gta_cena_m4_arena__', 5: '__IMG_gta_cena_m5_orla__', 6: '__IMG_gta_cena_m6_beirario__'
+    1: '__IMG_gta_cena_m1_mercado__', 2: '__IMG_gta_cena_m2_redencao__', 3: '__IMG_gta_cena_m3_beirario__',
+    4: '__IMG_gta_cena_m4_gasometro__', 5: '__IMG_gta_cena_m5_arena__', 6: '__IMG_gta_cena_m6_aeroporto__'
   }
 };
 
@@ -119,6 +119,31 @@ const MISSION = {
     ]
   },
   3: {
+    title: 'Beira-Rio', area: 'Álgebra', topic: 'Progressão aritmética (PA) e geométrica (PG)',
+    brief: '{nick}, dia de show no Beira-Rio! Cada fileira da arquibancada tem mais lugares que a de baixo, e o convite do show se espalha em rodadas. Bora organizar?',
+    hint: 'PA: aₙ = a₁ + (n − 1) · r. PG: aₙ = a₁ · qⁿ⁻¹. Na PA você soma a razão; na PG você multiplica.',
+    alt: 'Estádio de assentos vermelhos à beira do lago ao pôr do sol, com fileiras de arquibancada que se alargam para cima.',
+    gen() {
+      const a1 = pick([8, 10, 12]), r = pick([2, 3, 4]), n = pick([6, 8, 10]);
+      const g1 = pick([2, 3]), q = pick([2, 3]), m = pick([4, 5]);
+      return { a1, r, n, an: a1 + (n - 1) * r, g1, q, m, gm: g1 * q ** (m - 1) };
+    },
+    stages: d => [
+      { type: 'build', data: [['1ª fileira do setor', `${d.a1} cadeiras`], ['Cada fileira acima', `+${d.r} cadeiras`], ['Fileira procurada', `${d.n}ª`]],
+        question: `Monte a conta das cadeiras da ${d.n}ª fileira.`,
+        template: [`a${d.n} = `, slot(d.a1), ' + (', slot(d.n), ' − 1) · ', slot(d.r)],
+        chips: makeChips([d.a1, d.n, d.r], [d.a1 + d.r, 1]),
+        result: `A ${d.n}ª fileira tem ${d.an} cadeiras.` },
+      { type: 'choice', data: [['1ª rodada', `${d.g1} pessoas recebem o convite`], ['Cada pessoa repassa para', `${d.q} amigos`]],
+        question: `Quantas pessoas recebem o convite na ${d.m}ª rodada?`, unit: 'pessoas', correct: d.gm,
+        distractors: [d.g1 * d.q ** d.m, d.g1 + (d.m - 1) * d.q, d.q ** (d.m - 1), d.g1 * d.q * d.m] }
+    ],
+    solution: d => [
+      `PA: a${d.n} = ${d.a1} + (${d.n} − 1) · ${d.r} = ${d.an} cadeiras.`,
+      `PG: a${d.m} = ${d.g1} · ${d.q}^${d.m - 1} = ${d.gm} pessoas.`
+    ]
+  },
+  4: {
     title: 'Usina do Gasômetro', area: 'Trigonometria', topic: 'Lei dos senos e lei dos cossenos',
     brief: '{nick}, cheguei no mirante da Usina do Gasômetro bem na hora do pôr do sol! Daqui dá pra ver a boia e dois veleiros no Guaíba. Bora descobrir as distâncias?',
     hint: 'Lei dos senos: cada lado dividido pelo seno do ângulo oposto dá sempre o mesmo valor (sen 30° = 0,5 e sen 90° = 1). Lei dos cossenos: c² = a² + b² − 2·a·b·cos θ, com cos 60° = 0,5.',
@@ -142,7 +167,7 @@ const MISSION = {
       `Lei dos cossenos: d² = ${fmtBig(d.a)}² + ${fmtBig(d.b)}² − 2 · ${fmtBig(d.a)} · ${fmtBig(d.b)} · 0,5 = ${fmtBig(d.c * d.c)}, então d = ${fmtBig(d.c)} m.`
     ]
   },
-  4: {
+  5: {
     title: 'Arena do Grêmio', area: 'Trigonometria', topic: 'Ciclo trigonométrico e função seno',
     brief: '{nick}, hoje a live é na Arena! A grua da TV gira o braço com a câmera na ponta, e a altura da câmera segue uma função seno. Partiu calcular?',
     hint: 'O seno vai de −1 a 1, então a altura máxima é quando sen θ = 1. Num ângulo qualquer, olha o quadrante: sen 30° = sen 150° = 0,5, sen 90° = 1, sen 210° = sen 330° = −0,5 e sen 270° = −1.',
@@ -170,53 +195,28 @@ const MISSION = {
       ];
     }
   },
-  5: {
-    title: 'Orla do Guaíba', area: 'Álgebra', topic: 'Função quadrática (vértice da parábola)',
-    brief: '{nick}, o food truck da Orla do Guaíba quer descobrir o preço do lanche que dá mais lucro. O lucro segue uma parábola, então a resposta tá no vértice!',
-    hint: 'Numa parábola L(p) = a·p² + b·p + c, o vértice fica em p = −b ÷ (2a). Aqui a = −1, então é só dividir o coeficiente de p por 2. Depois, calcula L nesse preço.',
-    alt: 'Food truck turquesa e rosa na Orla do Guaíba ao pôr do sol, com mesas, palmeiras e pessoas olhando o lago.',
-    gen() {
-      const k = pick([16, 20, 24, 28]), c = randInt(10, k * k / 4 - 10);
-      return { k, c, p: k / 2, L: k * k / 4 - c };
-    },
-    stages: d => [
-      { type: 'build', data: [['Lucro por noite', `L(p) = −p² + ${d.k}p − ${d.c}`], ['p', 'preço do lanche, em reais'], ['L', 'lucro, em dezenas de reais']],
-        question: 'Monte a conta do preço que dá o lucro máximo (o p do vértice).',
-        template: ['p = ', slot(d.k), ' ÷ ', slot('2')],
-        chips: makeChips([d.k, 2], [d.c, 4, 1]),
-        result: `Preço do lucro máximo: ${d.p} reais.` },
-      { type: 'choice', data: [['Lucro por noite', `L(p) = −p² + ${d.k}p − ${d.c}`], ['Preço do lucro máximo', `${d.p} reais`]],
-        question: 'Qual é o lucro máximo, em dezenas de reais?', unit: 'dezenas de reais', correct: d.L,
-        distractors: [d.k * d.k / 4, d.k * d.k / 4 + d.c, d.k * d.k / 2 - d.c] }
-    ],
-    solution: d => [
-      `Vértice: p = −${d.k} ÷ (2 · (−1)) = ${d.p} reais.`,
-      `Lucro máximo: L(${d.p}) = −${d.p}² + ${d.k} · ${d.p} − ${d.c} = ${d.L}.`
-    ]
-  },
   6: {
-    title: 'Beira-Rio', area: 'Álgebra', topic: 'Progressão aritmética (PA) e geométrica (PG)',
-    brief: '{nick}, dia de show no Beira-Rio! Cada fileira da arquibancada tem mais lugares que a de baixo, e o convite do show se espalha em rodadas. Bora organizar?',
-    hint: 'PA: aₙ = a₁ + (n − 1) · r. PG: aₙ = a₁ · qⁿ⁻¹. Na PA você soma a razão; na PG você multiplica.',
-    alt: 'Estádio de assentos vermelhos à beira do lago ao pôr do sol, com fileiras de arquibancada que se alargam para cima.',
+    title: 'Aeroporto Salgado Filho', area: 'Álgebra', topic: 'Função afim (taxa de variação)',
+    brief: '{nick}, partiu Salgado Filho! O avião acabou de decolar e sobe sempre no mesmo ritmo. Bora descobrir a altitude dele e quanto tempo falta pra chegar lá em cima?',
+    hint: 'Função afim: h(t) = h₀ + r · t, em que h₀ é a altitude inicial e r é quanto o avião sobe por minuto. Pra achar o tempo, isola o t: t = (h − h₀) ÷ r.',
+    alt: 'Aeroporto ao pôr do sol, com terminal envidraçado, torre de controle e um avião subindo logo depois da decolagem.',
     gen() {
-      const a1 = pick([8, 10, 12]), r = pick([2, 3, 4]), n = pick([6, 8, 10]);
-      const g1 = pick([2, 3]), q = pick([2, 3]), m = pick([4, 5]);
-      return { a1, r, n, an: a1 + (n - 1) * r, g1, q, m, gm: g1 * q ** (m - 1) };
+      const h0 = pick([300, 500]), r = pick([400, 500, 600]), t = pick([3, 4, 5]), t2 = pick([8, 10, 12]);
+      return { h0, r, t, ht: h0 + r * t, t2, H: h0 + r * t2 };
     },
     stages: d => [
-      { type: 'build', data: [['1ª fileira do setor', `${d.a1} cadeiras`], ['Cada fileira acima', `+${d.r} cadeiras`], ['Fileira procurada', `${d.n}ª`]],
-        question: `Monte a conta das cadeiras da ${d.n}ª fileira.`,
-        template: [`a${d.n} = `, slot(d.a1), ' + (', slot(d.n), ' − 1) · ', slot(d.r)],
-        chips: makeChips([d.a1, d.n, d.r], [d.a1 + d.r, 1]),
-        result: `A ${d.n}ª fileira tem ${d.an} cadeiras.` },
-      { type: 'choice', data: [['1ª rodada', `${d.g1} pessoas recebem o convite`], ['Cada pessoa repassa para', `${d.q} amigos`]],
-        question: `Quantas pessoas recebem o convite na ${d.m}ª rodada?`, unit: 'pessoas', correct: d.gm,
-        distractors: [d.g1 * d.q ** d.m, d.g1 + (d.m - 1) * d.q, d.q ** (d.m - 1), d.g1 * d.q * d.m] }
+      { type: 'build', data: [['Altitude no início da contagem', `${fmtBig(d.h0)} m`], ['Subida por minuto', `${d.r} m`], ['Tempo de voo', `${d.t} min`]],
+        question: `Monte a conta da altitude do avião depois de ${d.t} minutos.`,
+        template: ['h = ', slot(d.h0), ' + ', slot(d.r), ' · ', slot(d.t)],
+        chips: makeChips([d.h0, d.r, d.t], [d.t + 1, d.r + 100, 60]),
+        result: `Depois de ${d.t} minutos, o avião está a ${fmtBig(d.ht)} m.` },
+      { type: 'choice', data: [['Altitude', `h(t) = ${d.h0} + ${d.r} · t`], ['Altitude de cruzeiro da subida', `${fmtBig(d.H)} m`]],
+        question: 'Em quantos minutos o avião chega a essa altitude?', unit: 'min', correct: d.t2,
+        distractors: [d.H / d.r, (d.H + d.h0) / d.r, d.t2 * 2, d.t2 + 1] }
     ],
     solution: d => [
-      `PA: a${d.n} = ${d.a1} + (${d.n} − 1) · ${d.r} = ${d.an} cadeiras.`,
-      `PG: a${d.m} = ${d.g1} · ${d.q}^${d.m - 1} = ${d.gm} pessoas.`
+      `Altitude: h = ${d.h0} + ${d.r} · ${d.t} = ${fmtBig(d.ht)} m.`,
+      `Tempo: t = (${fmtBig(d.H)} − ${d.h0}) ÷ ${d.r} = ${d.t2} minutos.`
     ]
   }
 };
@@ -242,10 +242,10 @@ const khan = q => `https://pt.khanacademy.org/search?page_search_query=${encodeU
 const STUDY = {
   1: [['Khan Academy · volume do cilindro', khan('volume do cilindro')], ['YouTube · área do círculo e volume do cilindro', yt('volume do cilindro área da base aula')]],
   2: [['Khan Academy · distância entre dois pontos', khan('distância entre dois pontos')], ['YouTube · ponto médio e distância entre pontos', yt('geometria analítica ponto médio distância entre dois pontos aula')]],
-  3: [['Khan Academy · lei dos senos e dos cossenos', khan('lei dos senos lei dos cossenos')], ['YouTube · lei dos senos e dos cossenos', yt('lei dos senos e lei dos cossenos aula')]],
-  4: [['Khan Academy · ciclo trigonométrico', khan('círculo trigonométrico seno')], ['YouTube · função seno e ciclo trigonométrico', yt('função seno ciclo trigonométrico aula')]],
-  5: [['Khan Academy · vértice da parábola', khan('vértice da parábola função quadrática')], ['YouTube · máximo e mínimo da função quadrática', yt('vértice da parábola máximo função quadrática aula')]],
-  6: [['Khan Academy · progressões aritméticas e geométricas', khan('progressão aritmética geométrica')], ['YouTube · termo geral da PA e da PG', yt('termo geral PA PG aula')]]
+  3: [['Khan Academy · progressões aritméticas e geométricas', khan('progressão aritmética geométrica')], ['YouTube · termo geral da PA e da PG', yt('termo geral PA PG aula')]],
+  4: [['Khan Academy · lei dos senos e dos cossenos', khan('lei dos senos lei dos cossenos')], ['YouTube · lei dos senos e dos cossenos', yt('lei dos senos e lei dos cossenos aula')]],
+  5: [['Khan Academy · ciclo trigonométrico', khan('círculo trigonométrico seno')], ['YouTube · função seno e ciclo trigonométrico', yt('função seno ciclo trigonométrico aula')]],
+  6: [['Khan Academy · função afim', khan('função afim taxa de variação')], ['YouTube · função afim: taxa de variação', yt('função afim taxa de variação aula')]]
 };
 
 /* ---------------------------------------------------------------
@@ -279,7 +279,7 @@ let S = null;
 
 function freshState() {
   return {
-    v: 2, started: true, jornadaId: newJourneyId(), player: null,
+    v: 3, started: true, jornadaId: newJourneyId(), player: null,
     data: Object.fromEntries(MISSIONS.map(n => [n, MISSION[n].gen()])),
     stage: perMission(0), stageErrors: perMission(0),
     done: perMission(false), skipped: perMission(false), errors: perMission(0), hint: perMission(false),
@@ -290,7 +290,7 @@ function freshState() {
 function loadState() {
   try {
     const data = JSON.parse(localStorage.getItem(STORE_KEY));
-    return data && data.v === 2 && data.data ? data : null;
+    return data && data.v === 3 && data.data ? data : null;
   } catch (e) { return null; }
 }
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* segue sem salvar */ } }
