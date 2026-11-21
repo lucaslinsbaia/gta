@@ -136,17 +136,18 @@
         <ul class="data" id="m-data"></ul>
         <p class="question" id="m-question"></p>
         <form id="m-form" novalidate>
-          <div class="field">
-            <label for="m-input" id="m-label">Sua resposta</label>
-            <div class="answer">
-              <input type="text" id="m-input" inputmode="decimal" autocomplete="off" aria-describedby="m-help m-msg">
-              <span class="answer__unit" id="m-unit"></span>
-            </div>
-            <p class="msg" id="m-help">Só números. Para decimais, use vírgula, com até duas casas.</p>
-            <p class="msg is-error" id="m-msg" aria-live="polite"></p>
+          <div class="build" id="m-build" hidden>
+            <div class="build__expr" id="m-expr" aria-label="Conta para montar"></div>
+            <p class="msg" id="m-build-help">Arraste cada peça até a lacuna certa. Também dá pra tocar na peça e depois na lacuna.</p>
+            <div class="chips" id="m-chips" aria-label="Peças"></div>
           </div>
+          <fieldset class="choice" id="m-choice" hidden>
+            <legend class="sr-only">Alternativas</legend>
+            <div class="options" id="m-options"></div>
+          </fieldset>
+          <p class="msg" id="m-msg" aria-live="polite"></p>
           <div class="mission__actions sticky-actions">
-            <button type="submit" class="btn btn--gold" id="m-confirm">Confirmar
+            <button type="submit" class="btn btn--gold" id="m-confirm"><span id="m-confirm-text">Confirmar</span>
               <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></button>
           </div>
         </form>

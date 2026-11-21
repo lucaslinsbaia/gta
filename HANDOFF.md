@@ -128,7 +128,7 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
 - **Jogo do GTA no ar (21/11):** o `src/` foi reescrito e o `index.html` agora é o jogo:
   - capa em colagem com o logo C;
   - identificação e mapa com as 6 missões em sequência;
-  - missões em duas etapas, com dicas da Dani Pixel (−20), "Pular" depois de 10 erros e resolução;
+  - missões em duas etapas: A é montar a conta arrastando peças, B é múltipla escolha com 4 alternativas; dicas da Dani Pixel (−20), "Pular" depois de 10 erros e resolução;
   - conclusão com pontos, estrelas e links de estudo, e envio do resultado.
 - **Servidor atualizado:**
   - `lib/nota.js` refaz pontos, estrelas e nota;
@@ -235,7 +235,7 @@ Monta `index.html`, `ranking.html` e `gestao.html`, e gera `lib/filtro.js`.
 ```bash
 cd test && node gta-fluxo.js
 ```
-Confere 24 mil sorteios (nenhuma resposta negativa ou com mais de duas casas) e o fluxo completo das 6 missões a 1440 e 390 px: erros, dica, pular, pontos e ausência de rolagem lateral.
+Confere 18 mil sorteios (peças necessárias presentes, 4 alternativas distintas e positivas) e o fluxo completo das 6 missões a 1440 e 390 px: arrastar, tocar e soltar, alternativa errada, dica, pular, pontos e ausência de rolagem lateral.
 
 ```bash
 service postgresql start
@@ -264,7 +264,7 @@ npm install && POSTGRES_URL=postgres://enigma:enigma@localhost:5432/enigma ADMIN
   - **Repositório novo na Vercel:** a ferramenta não liga um repositório novo enquanto o app da Vercel no GitHub não tiver acesso a ele; quem libera é o Lucas, no painel.
   - **Build:** `src/build.py` grava `index.html`, `ranking.html`, `gestao.html` e `lib/filtro.js`. Rode sempre antes de enviar mudanças em `src/`.
   - **Respostas visíveis:** nunca deixe a resposta visível em imagens, exemplos de instrução ou dicas. Confira os exemplos contra todas as respostas possíveis do sorteio.
-  - **Celular:** os campos usam `inputmode="decimal"`, que não tem "/" nem "−". Se o GTA precisar de números negativos (Álgebra), resolva isso de propósito, por exemplo com um botão de sinal ou um campo de seleção.
+  - **Sem campo de digitar:** as respostas são arrastar e soltar (etapa A) e múltipla escolha (etapa B). Não dê `transform` (como a animação de tremer) num elemento que contenha o botão fixo do rodapé, porque ele sai do lugar no celular. Por isso só a área da resposta treme.
   - **Supabase pausa após 7 dias sem uso:** se o banco for desse serviço, recoloque o cron de `/api/manter-ativo`.
   - **`position: fixed` dentro de `.screen`:** a animação de entrada das telas usa `animation-fill-mode: backwards` de propósito; com `both`, o transform residual quebraria o rodapé fixo.
   - **Elementos com `display` próprio:** o CSS tem `[hidden]{display:none!important}` global, porque elementos com `display` próprio ignoravam o atributo `hidden`.

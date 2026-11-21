@@ -217,11 +217,38 @@
   .data li span:first-child { color: var(--muted); }
   .data li strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
   .question { font-size: var(--text-lg); color: var(--ink); font-weight: 600; }
+  /* Etapa A: montar a conta */
+  .build__expr { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); padding: var(--s4); margin-bottom: var(--s3); background: var(--night); border: 2px solid var(--cyan); border-radius: var(--radius); font: 400 1.6rem/1.2 var(--font-label); letter-spacing: 0.04em; color: var(--ink); }
+  .tok { white-space: pre; }
+  .slot { min-width: 72px; min-height: 52px; padding: var(--s2) var(--s3); font: 700 1.25rem/1 var(--font-body); color: var(--night); background: rgba(255, 247, 236, 0.08); border: 3px dashed var(--yellow); border-radius: var(--radius); cursor: pointer; }
+  .slot.is-filled { background: var(--yellow); border-style: solid; border-color: var(--night); }
+  .slot.is-over { background: rgba(34, 227, 255, 0.25); border-color: var(--cyan); }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s3); min-height: 56px; }
+  .chip { min-width: 64px; min-height: 52px; padding: var(--s2) var(--s4); font: 700 1.25rem/1 var(--font-body); color: var(--night); background: var(--cream); border: 3px solid var(--night); border-radius: var(--radius); box-shadow: 4px 4px 0 var(--pink); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .chip.is-selected { background: var(--cyan); box-shadow: 4px 4px 0 var(--night); }
+  .chip.is-dragging { opacity: 0.35; }
+  .chip--ghost { position: fixed; z-index: 100; pointer-events: none; transform: translate(-50%, -60%) rotate(-4deg); box-shadow: 6px 6px 0 var(--pink); cursor: grabbing; }
+  /* Etapa B: múltipla escolha */
+  .choice { margin: 0; padding: 0; border: 0; min-width: 0; }
+  .options { display: grid; gap: var(--s3); }
+  .option { position: relative; display: flex; align-items: center; gap: var(--s3); min-height: 56px; padding: var(--s3) var(--s4); background: var(--night); border: 3px solid var(--line-strong); border-radius: var(--radius); cursor: pointer; font-size: var(--text-lg); color: var(--ink); }
+  .option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .option__letter { display: inline-grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; font: 400 1.3rem/1 var(--font-label); color: var(--night); background: var(--yellow); border-radius: 50%; }
+  .option__text { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .option:hover { border-color: var(--cyan); }
+  .option:has(input:checked) { border-color: var(--cyan); background: rgba(34, 227, 255, 0.14); box-shadow: 4px 4px 0 var(--cyan); }
+  .option:has(input:focus-visible) { outline: 3px solid var(--cyan); outline-offset: 3px; }
+  .option.is-wrong { opacity: 0.6; cursor: not-allowed; }
+  .option.is-wrong .option__text { text-decoration: line-through; }
+  .option.is-wrong .option__letter { background: var(--muted); }
+  .option__tag { margin-left: auto; display: inline-flex; align-items: center; gap: var(--s1); font: 400 1rem/1 var(--font-label); letter-spacing: 0.06em; color: var(--err); text-decoration: none; }
+  #m-msg { margin-top: var(--s3); }
   .answer { display: flex; align-items: center; gap: var(--s3); }
   .answer input { flex: 1; width: 100%; min-width: 0; font-size: 1.4rem; font-variant-numeric: tabular-nums; }
   .answer__unit { font: 400 1.3rem/1 var(--font-label); letter-spacing: 0.06em; color: var(--text); }
   .mission__actions { margin-top: var(--s4); }
   .mission__actions .btn { width: 100%; }
+  .msg:not(.is-error):not(.is-ok) { color: var(--muted); }
   .mission__aux { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s2) var(--s4); margin-top: var(--s4); }
   .mission__score { margin: var(--s3) 0 0; font-size: var(--text-sm); color: var(--muted); }
   .shake { animation: shake 360ms; }
@@ -427,17 +454,18 @@
         <ul class="data" id="m-data"></ul>
         <p class="question" id="m-question"></p>
         <form id="m-form" novalidate>
-          <div class="field">
-            <label for="m-input" id="m-label">Sua resposta</label>
-            <div class="answer">
-              <input type="text" id="m-input" inputmode="decimal" autocomplete="off" aria-describedby="m-help m-msg">
-              <span class="answer__unit" id="m-unit"></span>
-            </div>
-            <p class="msg" id="m-help">Só números. Para decimais, use vírgula, com até duas casas.</p>
-            <p class="msg is-error" id="m-msg" aria-live="polite"></p>
+          <div class="build" id="m-build" hidden>
+            <div class="build__expr" id="m-expr" aria-label="Conta para montar"></div>
+            <p class="msg" id="m-build-help">Arraste cada peça até a lacuna certa. Também dá pra tocar na peça e depois na lacuna.</p>
+            <div class="chips" id="m-chips" aria-label="Peças"></div>
           </div>
+          <fieldset class="choice" id="m-choice" hidden>
+            <legend class="sr-only">Alternativas</legend>
+            <div class="options" id="m-options"></div>
+          </fieldset>
+          <p class="msg" id="m-msg" aria-live="polite"></p>
           <div class="mission__actions sticky-actions">
-            <button type="submit" class="btn btn--gold" id="m-confirm">Confirmar
+            <button type="submit" class="btn btn--gold" id="m-confirm"><span id="m-confirm-text">Confirmar</span>
               <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></button>
           </div>
         </form>
@@ -581,7 +609,8 @@
      5. Navegação entre telas
      6. Início e identificação · 7. Mapa · 8. Missão · 9. Conclusão
      10. Servidor (turmas e ranking) · 11. Diálogos · 12. Modo de teste
-   Regra de conteúdo: nenhuma resposta pode ser negativa, e as imagens
+   Respostas: etapa A monta a conta arrastando peças; etapa B é múltipla
+   escolha. Nenhuma resposta pode ser negativa, e as imagens
    não mostram números (os valores mudam a cada jornada).
    ===================================================================== */
 'use strict';
@@ -612,20 +641,6 @@ const icon = (name, cls = 'icon') => `<svg class="${cls}" aria-hidden="true"><us
 const escapeHtml = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 const MISSIONS = [1, 2, 3, 4, 5, 6];
 
-/**
- * Resposta digitada: só inteiro ou decimal com até duas casas (vírgula ou
- * ponto). Sem sinal de menos: nenhuma resposta do jogo é negativa.
- * Devolve NaN fora desse formato.
- */
-function parseDecimal(raw) {
-  let text = String(raw).trim().replace(/\s/g, '');
-  // "1.300" ou "1.300,5": ponto como separador de milhar
-  if (/^\d{1,3}(\.\d{3})+(,\d{1,2})?$/.test(text)) text = text.replace(/\./g, '');
-  text = text.replace(',', '.');
-  return /^\d+(\.\d{1,2})?$/.test(text) ? Number(text) : NaN;
-}
-const matches = (value, answers) => answers.some(a => Math.abs(value - a) <= 0.0101);
-
 function newJourneyId() {
   if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
   return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
@@ -634,25 +649,40 @@ function newJourneyId() {
 /* ---------------------------------------------------------------
    2. MISSÕES
    Cada missão tem: gen() sorteia os valores da jornada; stages(d)
-   devolve as etapas A e B (dados, pergunta, unidade, respostas);
+   devolve as duas etapas:
+     A ("build"): montar a conta arrastando valores para as lacunas;
+     B ("choice"): escolher o resultado entre 4 alternativas.
    solution(d) mostra a resolução quando a missão é pulada.
+   Nenhuma resposta (nem alternativa certa) é negativa.
    --------------------------------------------------------------- */
+const slot = value => ({ slot: String(value) });
+/** Peças da etapa A: as necessárias (com repetição) mais distratores que ainda não estão lá. */
+function makeChips(required, distractors) {
+  const list = required.map(String);
+  distractors.map(String).forEach(v => { if (!list.includes(v)) list.push(v); });
+  return list;
+}
+
 const MISSION = {
   1: {
     title: 'Obra na Laje', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
     brief: 'Chat, olha essa obra! A galera vai instalar uma caixa d\'água cilíndrica na laje e precisa saber quanto cabe nela antes de ligar a bomba. Bora medir?',
-    hint: 'A base do cilindro é um círculo: área = π · r². Depois, volume = área da base × altura. Pra passar de m³ pra litros, multiplica por 1.000. Salva essa dica!',
+    hint: 'A base do cilindro é um círculo: área = π · r² (r é o raio, metade do diâmetro). Depois, volume = área da base × altura. Pra passar de m³ pra litros, multiplica por 1.000. Salva essa dica!',
     alt: 'Laje em obra ao pôr do sol, com uma caixa d\'água cilíndrica azul no centro, andaime, tijolos e baldes.',
     gen() {
       const r = pick([0.5, 0.6, 0.8, 1]), h = pick([1, 1.2, 1.5, 2]);
       const A = round2(3.14 * r * r);
-      return { r, h, A, B: round2(A * h * 1000), Bexato: round2(3.14 * r * r * h * 1000) };
+      return { r, h, A, B: round2(A * h * 1000) };
     },
     stages: d => [
-      { data: [['Raio da base', `${fmt(d.r)} m`], ['Altura da caixa', `${fmt(d.h)} m`], ['Use π', '3,14']],
-        question: 'Qual é a área da base da caixa? Arredonde para duas casas decimais.', unit: 'm²', answers: [d.A] },
-      { data: [['Área da base (etapa A)', `${fmt(d.A)} m²`], ['Altura da caixa', `${fmt(d.h)} m`], ['Conversão', '1 m³ = 1.000 L']],
-        question: 'Quantos litros cabem na caixa d\'água?', unit: 'litros', answers: [d.B, d.Bexato] }
+      { type: 'build', data: [['Raio da base', `${fmt(d.r)} m`], ['Altura da caixa', `${fmt(d.h)} m`], ['Use π', '3,14']],
+        question: 'Monte a conta da área da base da caixa.',
+        template: ['A = ', slot('3,14'), ' · ', slot(fmt(d.r)), '²'],
+        chips: makeChips(['3,14', fmt(d.r)], [fmt(2 * d.r), fmt(d.h), '2']),
+        result: `Área da base: ${fmt(d.A)} m² (arredondada).` },
+      { type: 'choice', data: [['Área da base', `${fmt(d.A)} m²`], ['Altura da caixa', `${fmt(d.h)} m`], ['Conversão', '1 m³ = 1.000 L']],
+        question: 'Quantos litros cabem na caixa d\'água?', unit: 'litros', correct: d.B,
+        distractors: [round2(d.A * d.h), round2(d.A * d.h * 100), round2(3.14 * 4 * d.r * d.r * d.h * 1000)] }
     ],
     solution: d => [
       `Área da base: 3,14 · ${fmt(d.r)}² = ${fmt(d.A)} m².`,
@@ -669,17 +699,21 @@ const MISSION = {
       const x1 = randInt(0, 20 - dx), y1 = randInt(0, 20 - dy);
       const flip = Math.random() < 0.5;
       const P = [x1, flip ? y1 + dy : y1], Q = [x1 + dx, flip ? y1 : y1 + dy];
-      return { P, Q, mx: round2((P[0] + Q[0]) / 2), dist: Math.hypot(dx, dy) };
+      return { P, Q, dx, dy, mx: round2((P[0] + Q[0]) / 2), dist: Math.hypot(dx, dy) };
     },
     stages: d => [
-      { data: [['Pista de skate', `(${d.P[0]}, ${d.P[1]})`], ['Sorveteria', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala', '1 unidade = 1 quarteirão']],
-        question: 'Qual é a coordenada x do ponto médio entre a pista e a sorveteria?', unit: '', answers: [d.mx] },
-      { data: [['Pista de skate', `(${d.P[0]}, ${d.P[1]})`], ['Sorveteria', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala', '1 unidade = 1 quarteirão']],
-        question: 'Qual é a distância em linha reta entre a pista e a sorveteria?', unit: 'quarteirões', answers: [d.dist] }
+      { type: 'build', data: [['Pista de skate', `(${d.P[0]}, ${d.P[1]})`], ['Sorveteria', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala', '1 unidade = 1 quarteirão']],
+        question: 'Monte a conta da coordenada x do ponto médio entre a pista e a sorveteria.',
+        template: ['x = (', slot(d.P[0]), ' + ', slot(d.Q[0]), ') ÷ ', slot('2')], swap: [[0, 1]],
+        chips: makeChips([d.P[0], d.Q[0], 2], [d.P[1], d.Q[1], 4, d.P[0] + d.Q[0], 1]),
+        result: `Ponto médio: x = ${fmt(d.mx)}.` },
+      { type: 'choice', data: [['Pista de skate', `(${d.P[0]}, ${d.P[1]})`], ['Sorveteria', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala', '1 unidade = 1 quarteirão']],
+        question: 'Qual é a distância em linha reta entre a pista e a sorveteria?', unit: 'quarteirões', correct: d.dist,
+        distractors: [d.dx + d.dy, d.dx * d.dx + d.dy * d.dy, Math.abs(d.dx - d.dy)] }
     ],
     solution: d => [
       `Ponto médio: x = (${d.P[0]} + ${d.Q[0]}) ÷ 2 = ${fmt(d.mx)}.`,
-      `Distância: √(${d.Q[0] - d.P[0]}² + ${Math.abs(d.Q[1] - d.P[1])}²) = ${d.dist} quarteirões.`
+      `Distância: √(${d.dx}² + ${d.dy}²) = ${d.dist} quarteirões.`
     ]
   },
   3: {
@@ -692,10 +726,14 @@ const MISSION = {
       return { lado30: pick([40, 60, 70, 90]), a: a * 100, b: b * 100, c: c * 100 };
     },
     stages: d => [
-      { data: [['Triângulo', 'torre, veleiro e boia'], ['Ângulo de 30°', `lado oposto: ${d.lado30} m`], ['Ângulo de 90°', 'lado oposto: ?']],
-        question: 'Quanto mede o lado oposto ao ângulo de 90°?', unit: 'm', answers: [d.lado30 * 2] },
-      { data: [['Torre até o veleiro 1', `${fmtBig(d.a)} m`], ['Torre até o veleiro 2', `${fmtBig(d.b)} m`], ['Ângulo na torre', '60°']],
-        question: 'Qual é a distância entre os dois veleiros?', unit: 'm', answers: [d.c] }
+      { type: 'build', data: [['Triângulo', 'torre, veleiro e boia'], ['Ângulo de 30°', `lado oposto: ${d.lado30} m`], ['Ângulo de 90°', 'lado oposto: x']],
+        question: 'Monte a lei dos senos para achar x, o lado oposto ao ângulo de 90°.',
+        template: ['x ÷ sen 90° = ', slot(d.lado30), ' ÷ sen ', slot('30°')],
+        chips: makeChips([d.lado30, '30°'], ['60°', '90°', d.lado30 / 2]),
+        result: `Como sen 30° = 0,5: x = ${d.lado30 * 2} m.` },
+      { type: 'choice', data: [['Torre até o veleiro 1', `${fmtBig(d.a)} m`], ['Torre até o veleiro 2', `${fmtBig(d.b)} m`], ['Ângulo na torre', '60°']],
+        question: 'Qual é a distância entre os dois veleiros?', unit: 'm', correct: d.c,
+        distractors: [round2(Math.hypot(d.a, d.b)), d.a + d.b, d.b - d.a] }
     ],
     solution: d => [
       `Lei dos senos: x ÷ sen 90° = ${d.lado30} ÷ sen 30°, então x = ${d.lado30} ÷ 0,5 = ${d.lado30 * 2} m.`,
@@ -710,18 +748,22 @@ const MISSION = {
     gen() {
       const R = pick([8, 10, 12, 15]), theta = pick([30, 90, 150, 210, 270, 330]);
       const sin = { 30: 0.5, 90: 1, 150: 0.5, 210: -0.5, 270: -1, 330: -0.5 }[theta];
-      return { R, theta, max: 2 * R + 1, h: round2(R + 1 + R * sin) };
+      return { R, theta, sin, max: 2 * R + 1, h: round2(R + 1 + R * sin) };
     },
     stages: d => [
-      { data: [['Raio da roda', `${d.R} m`], ['Centro da roda', `${d.R + 1} m acima do chão`], ['Altura da cadeira', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`]],
-        question: 'Qual é a altura máxima que uma cadeira alcança?', unit: 'm', answers: [d.max] },
-      { data: [['Altura da cadeira', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`], ['Ângulo do giro agora', `θ = ${d.theta}°`]],
-        question: 'Qual é a altura da cadeira nesse ângulo?', unit: 'm', answers: [d.h] }
+      { type: 'build', data: [['Raio da roda', `${d.R} m`], ['Centro da roda', `${d.R + 1} m acima do chão`], ['Altura da cadeira', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`]],
+        question: 'Monte a conta da altura máxima. Dica do chat: qual é o maior valor do seno?',
+        template: ['h máx = ', slot(d.R + 1), ' + ', slot(d.R), ' · ', slot('1')],
+        chips: makeChips([d.R + 1, d.R, 1], ['0', '0,5', 2 * d.R]),
+        result: `Altura máxima: ${d.max} m.` },
+      { type: 'choice', data: [['Altura da cadeira', `h(θ) = ${d.R + 1} + ${d.R} · sen θ`], ['Ângulo do giro agora', `θ = ${d.theta}°`]],
+        question: 'Qual é a altura da cadeira nesse ângulo?', unit: 'm', correct: d.h,
+        distractors: [round2(d.R + 1 - d.R * d.sin), d.R + 1, d.max, round2(d.R * Math.abs(d.sin)), d.R] }
     ],
     solution: d => {
       const s = { 30: '0,5', 90: '1', 150: '0,5', 210: '−0,5', 270: '−1', 330: '−0,5' }[d.theta];
       return [
-        `Altura máxima: sen θ = 1, então h = ${d.R + 1} + ${d.R} = ${d.max} m.`,
+        `Altura máxima: sen θ = 1, então h = ${d.R + 1} + ${d.R} · 1 = ${d.max} m.`,
         `Em θ = ${d.theta}°: sen ${d.theta}° = ${s}, então h = ${d.R + 1} + ${d.R} · (${s}) = ${fmt(d.h)} m.`
       ];
     }
@@ -736,10 +778,14 @@ const MISSION = {
       return { k, c, p: k / 2, L: k * k / 4 - c };
     },
     stages: d => [
-      { data: [['Lucro por noite', `L(p) = −p² + ${d.k}p − ${d.c}`], ['p', 'preço do lanche, em reais'], ['L', 'lucro, em dezenas de reais']],
-        question: 'Qual preço do lanche dá o lucro máximo?', unit: 'reais', answers: [d.p] },
-      { data: [['Lucro por noite', `L(p) = −p² + ${d.k}p − ${d.c}`], ['Preço do lucro máximo', 'o da etapa A']],
-        question: 'Qual é o lucro máximo, em dezenas de reais?', unit: 'dezenas', answers: [d.L] }
+      { type: 'build', data: [['Lucro por noite', `L(p) = −p² + ${d.k}p − ${d.c}`], ['p', 'preço do lanche, em reais'], ['L', 'lucro, em dezenas de reais']],
+        question: 'Monte a conta do preço que dá o lucro máximo (o p do vértice).',
+        template: ['p = ', slot(d.k), ' ÷ ', slot('2')],
+        chips: makeChips([d.k, 2], [d.c, 4, 1]),
+        result: `Preço do lucro máximo: ${d.p} reais.` },
+      { type: 'choice', data: [['Lucro por noite', `L(p) = −p² + ${d.k}p − ${d.c}`], ['Preço do lucro máximo', `${d.p} reais`]],
+        question: 'Qual é o lucro máximo, em dezenas de reais?', unit: 'dezenas de reais', correct: d.L,
+        distractors: [d.k * d.k / 4, d.k * d.k / 4 + d.c, d.k * d.k / 2 - d.c] }
     ],
     solution: d => [
       `Vértice: p = −${d.k} ÷ (2 · (−1)) = ${d.p} reais.`,
@@ -757,10 +803,14 @@ const MISSION = {
       return { a1, r, n, an: a1 + (n - 1) * r, g1, q, m, gm: g1 * q ** (m - 1) };
     },
     stages: d => [
-      { data: [['1ª fileira', `${d.a1} cadeiras`], ['Cada fileira seguinte', `+${d.r} cadeiras`]],
-        question: `Quantas cadeiras tem a ${d.n}ª fileira?`, unit: 'cadeiras', answers: [d.an] },
-      { data: [['1ª rodada', `${d.g1} convites`], ['Cada convidado repassa para', `${d.q} pessoas`]],
-        question: `Quantos convites são enviados na ${d.m}ª rodada?`, unit: 'convites', answers: [d.gm] }
+      { type: 'build', data: [['1ª fileira', `${d.a1} cadeiras`], ['Cada fileira seguinte', `+${d.r} cadeiras`], ['Fileira procurada', `${d.n}ª`]],
+        question: `Monte a conta das cadeiras da ${d.n}ª fileira.`,
+        template: [`a${d.n} = `, slot(d.a1), ' + (', slot(d.n), ' − 1) · ', slot(d.r)],
+        chips: makeChips([d.a1, d.n, d.r], [d.a1 + d.r, 1]),
+        result: `A ${d.n}ª fileira tem ${d.an} cadeiras.` },
+      { type: 'choice', data: [['1ª rodada', `${d.g1} convites`], ['Cada convidado repassa para', `${d.q} pessoas`]],
+        question: `Quantos convites são enviados na ${d.m}ª rodada?`, unit: 'convites', correct: d.gm,
+        distractors: [d.g1 * d.q ** d.m, d.g1 + (d.m - 1) * d.q, d.q ** (d.m - 1), d.g1 * d.q * d.m] }
     ],
     solution: d => [
       `PA: a${d.n} = ${d.a1} + (${d.n} − 1) · ${d.r} = ${d.an} cadeiras.`,
@@ -768,6 +818,22 @@ const MISSION = {
     ]
   }
 };
+
+/** Alternativas da etapa B: a certa e três erradas distintas e positivas, em ordem embaralhada. */
+function choiceOptions(stage) {
+  const correct = round2(stage.correct);
+  const wrong = [];
+  const add = v => { v = round2(v); if (v > 0 && v !== correct && !wrong.includes(v)) wrong.push(v); };
+  stage.distractors.forEach(add);
+  [correct * 2, correct + 10, round2(correct * 1.5), correct + 1].forEach(add);
+  return shuffle([correct, ...wrong.slice(0, 3)]);
+}
+function shuffle(list) {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [copy[i], copy[j]] = [copy[j], copy[i]]; }
+  return copy;
+}
+
 
 const yt = q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 const khan = q => `https://pt.khanacademy.org/search?page_search_query=${encodeURIComponent(q)}`;
@@ -811,17 +877,18 @@ let S = null;
 
 function freshState() {
   return {
-    v: 1, started: true, jornadaId: newJourneyId(), player: null,
+    v: 2, started: true, jornadaId: newJourneyId(), player: null,
     data: Object.fromEntries(MISSIONS.map(n => [n, MISSION[n].gen()])),
     stage: perMission(0), stageErrors: perMission(0),
     done: perMission(false), skipped: perMission(false), errors: perMission(0), hint: perMission(false),
+    options: perMission(null), tried: Object.fromEntries(MISSIONS.map(n => [n, []])),
     current: 1, activeMs: 0, completed: false, finalMs: 0, submitted: false, usedTest: false
   };
 }
 function loadState() {
   try {
     const data = JSON.parse(localStorage.getItem(STORE_KEY));
-    return data && data.v === 1 && data.data ? data : null;
+    return data && data.v === 2 && data.data ? data : null;
   } catch (e) { return null; }
 }
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* segue sem salvar */ } }
@@ -1059,43 +1126,246 @@ $('missions').addEventListener('click', event => {
 
 /* ---------------------------------------------------------------
    8. MISSÃO
+   Etapa A: montar a conta (arrastar as peças para as lacunas, ou
+   tocar na peça e depois na lacuna). Etapa B: múltipla escolha.
    --------------------------------------------------------------- */
-const STAGE_NAMES = ['Etapa A', 'Etapa B'];
+const STAGE_NAMES = ['Etapa A · Monte a conta', 'Etapa B · Escolha o resultado'];
+const ui = { fills: [], chipOrder: [], selected: null, key: '' };
+
+const currentStage = () => MISSION[S.current].stages(S.data[S.current])[S.stage[S.current]];
+
+/** Prepara a etapa atual: embaralha as peças e guarda as alternativas da etapa B. */
+function prepareStage() {
+  const n = S.current, stage = currentStage();
+  const key = `${S.jornadaId}-${n}-${S.stage[n]}`;
+  if (ui.key === key) return;
+  ui.key = key;
+  ui.selected = null;
+  if (stage.type === 'build') {
+    ui.fills = stage.template.filter(t => typeof t === 'object').map(() => null);
+    ui.chipOrder = shuffle(stage.chips.map((_, i) => i));
+  } else if (!S.options[n]) {
+    S.options[n] = choiceOptions(stage);
+    S.tried[n] = [];
+    save();
+  }
+}
 
 function renderMissao() {
   const n = S.current, M = MISSION[n], d = S.data[n];
-  const stages = M.stages(d);
-  const k = finished(n) ? 1 : S.stage[n];
-  const stage = stages[k];
+  const closed = finished(n);
   $('m-scene').src = IMG.scene[n];
   $('m-scene').alt = M.alt;
   $('m-avatar').src = IMG.avatar;
   $('m-eyebrow').textContent = `Missão ${n} · ${M.area}`;
   $('m-title').textContent = M.title;
   $('m-brief').textContent = M.brief;
-  $('m-steps').innerHTML = STAGE_NAMES.map((name, i) => {
-    const cls = finished(n) || i < S.stage[n] ? 'is-done' : i === k ? 'is-current' : '';
-    return `<li class="${cls}"${i === k && !finished(n) ? ' aria-current="step"' : ''}>${name}</li>`;
+  const k = closed ? 1 : S.stage[n];
+  $('m-steps').innerHTML = ['Etapa A', 'Etapa B'].map((name, i) => {
+    const cls = closed || i < S.stage[n] ? 'is-done' : i === k ? 'is-current' : '';
+    return `<li class="${cls}"${i === k && !closed ? ' aria-current="step"' : ''}>${name}</li>`;
   }).join('');
-  $('m-step-title').textContent = finished(n) ? 'Missão finalizada' : `${STAGE_NAMES[k]} · ${M.topic}`;
-  $('m-data').innerHTML = stage.data.map(([label, value]) => `<li><span>${label}</span><strong>${value}</strong></li>`).join('');
-  $('m-question').textContent = stage.question;
-  $('m-unit').textContent = stage.unit;
-  $('m-input').value = '';
-  $('m-input').removeAttribute('aria-invalid');
-  $('m-label').textContent = 'Sua resposta';
   setMsg('');
-  const closed = finished(n);
-  $('m-input').disabled = closed;
-  $('m-confirm').disabled = closed;
   $('m-hint-text').textContent = S.hint[n] ? 'Ver a dica da Dani de novo' : 'Pedir dica à Dani (−20 pts)';
   $('m-hint-btn').hidden = closed && !S.hint[n];
   $('m-skip').hidden = closed || S.stageErrors[n] < SCORE.skipAfter;
+  $('m-confirm').hidden = closed;
   renderMissionScore();
   if (closed) {
-    $('m-question').textContent = S.done[n] ? `Missão concluída com ${missionPoints(n)} pontos. As respostas eram:` : 'Missão pulada. A resolução:';
+    $('m-build').hidden = true;
+    $('m-choice').hidden = true;
+    $('m-step-title').textContent = 'Missão finalizada';
+    $('m-question').textContent = S.done[n] ? `Missão concluída com ${missionPoints(n)} pontos. A resolução:` : 'Missão pulada. A resolução:';
     $('m-data').innerHTML = M.solution(d).map(line => `<li><span>${escapeHtml(line)}</span></li>`).join('');
+    return;
   }
+  prepareStage();
+  const stage = currentStage();
+  $('m-step-title').textContent = STAGE_NAMES[S.stage[n]];
+  $('m-data').innerHTML = stage.data.map(([label, value]) => `<li><span>${label}</span><strong>${value}</strong></li>`).join('');
+  $('m-question').textContent = stage.question;
+  $('m-build').hidden = stage.type !== 'build';
+  $('m-choice').hidden = stage.type !== 'choice';
+  $('m-confirm-text').textContent = stage.type === 'build' ? 'Conferir conta' : 'Confirmar';
+  if (stage.type === 'build') renderBuild(stage); else renderChoice(stage);
+}
+
+/* --- Etapa A: montar a conta --- */
+function renderBuild(stage) {
+  let s = -1;
+  $('m-expr').innerHTML = stage.template.map(t => {
+    if (typeof t === 'string') return `<span class="tok">${escapeHtml(t)}</span>`;
+    s += 1;
+    const chip = ui.fills[s];
+    const label = chip == null ? '' : stage.chips[chip];
+    return `<button type="button" class="slot${chip == null ? '' : ' is-filled'}" data-slot="${s}"
+      aria-label="Lacuna ${s + 1}: ${chip == null ? 'vazia' : label}${chip == null ? '' : ' (toque para tirar)'}">${escapeHtml(label)}</button>`;
+  }).join('');
+  const used = new Set(ui.fills.filter(v => v != null));
+  $('m-chips').innerHTML = ui.chipOrder.map(i => `<button type="button" class="chip${ui.selected === i ? ' is-selected' : ''}" data-chip="${i}"
+      aria-pressed="${ui.selected === i}" ${used.has(i) ? 'hidden' : ''}>${escapeHtml(stage.chips[i])}</button>`).join('');
+}
+
+function placeChip(chip, slotIdx) {
+  const prev = ui.fills.indexOf(chip);
+  if (prev >= 0) ui.fills[prev] = null;
+  ui.fills[slotIdx] = chip;
+  ui.selected = null;
+  setMsg('');
+  renderBuild(currentStage());
+  const next = ui.fills.indexOf(null);
+  $('live').textContent = `Peça ${currentStage().chips[chip]} colocada na lacuna ${slotIdx + 1}.`;
+  const focusTo = next >= 0 ? $('m-chips').querySelector('.chip:not([hidden])') : $('m-confirm');
+  if (focusTo && !dragState.active) focusTo.focus();
+}
+
+$('m-chips').addEventListener('click', event => {
+  const btn = event.target.closest('[data-chip]');
+  if (!btn || dragState.justDropped) return;
+  const i = Number(btn.dataset.chip);
+  ui.selected = ui.selected === i ? null : i;
+  renderBuild(currentStage());
+  if (ui.selected != null) {
+    $('live').textContent = `Peça ${currentStage().chips[i]} selecionada. Agora toque numa lacuna.`;
+    const empty = $('m-expr').querySelector('.slot:not(.is-filled)');
+    if (empty) empty.focus();
+  }
+});
+$('m-expr').addEventListener('click', event => {
+  const btn = event.target.closest('[data-slot]');
+  if (!btn) return;
+  const s = Number(btn.dataset.slot);
+  if (ui.selected != null) placeChip(ui.selected, s);
+  else if (ui.fills[s] != null) {          // toque numa lacuna cheia devolve a peça
+    ui.fills[s] = null;
+    renderBuild(currentStage());
+    setMsg('');
+  } else {
+    setMsg('Escolhe uma peça primeiro e depois toca na lacuna.', true, true);
+  }
+});
+
+/* Arrastar com o dedo ou o mouse (Pointer Events) */
+const dragState = { active: false, chip: null, ghost: null, startX: 0, startY: 0, justDropped: false };
+$('m-chips').addEventListener('pointerdown', event => {
+  const btn = event.target.closest('[data-chip]');
+  if (!btn || event.button > 0) return;
+  dragState.chip = Number(btn.dataset.chip);
+  dragState.startX = event.clientX; dragState.startY = event.clientY;
+  dragState.source = btn;
+  btn.setPointerCapture(event.pointerId);
+});
+document.addEventListener('pointermove', event => {
+  if (dragState.chip == null) return;
+  if (!dragState.active) {
+    if (Math.hypot(event.clientX - dragState.startX, event.clientY - dragState.startY) < 8) return;
+    dragState.active = true;
+    const ghost = dragState.source.cloneNode(true);
+    ghost.classList.add('chip--ghost');
+    ghost.removeAttribute('id');
+    document.body.appendChild(ghost);
+    dragState.ghost = ghost;
+    dragState.source.classList.add('is-dragging');
+  }
+  dragState.ghost.style.left = `${event.clientX}px`;
+  dragState.ghost.style.top = `${event.clientY}px`;
+  const over = document.elementFromPoint(event.clientX, event.clientY);
+  document.querySelectorAll('.slot.is-over').forEach(el => el.classList.remove('is-over'));
+  const target = over && over.closest('[data-slot]');
+  if (target) target.classList.add('is-over');
+});
+function endDrag(event, cancel) {
+  if (dragState.chip == null) return;
+  const wasActive = dragState.active;
+  if (wasActive) {
+    dragState.ghost.remove();
+    dragState.source.classList.remove('is-dragging');
+    document.querySelectorAll('.slot.is-over').forEach(el => el.classList.remove('is-over'));
+    const over = !cancel && document.elementFromPoint(event.clientX, event.clientY);
+    const target = over && over.closest('[data-slot]');
+    const chip = dragState.chip;
+    dragState.justDropped = true;
+    setTimeout(() => { dragState.justDropped = false; }, 0);
+    dragState.active = false;
+    if (target) placeChip(chip, Number(target.dataset.slot));
+  }
+  dragState.chip = null;
+  dragState.ghost = null;
+}
+document.addEventListener('pointerup', event => endDrag(event, false));
+document.addEventListener('pointercancel', event => endDrag(event, true));
+
+function checkBuild() {
+  const n = S.current, stage = currentStage();
+  if (ui.fills.includes(null)) { setMsg('Preenche todas as lacunas antes de conferir.', true, true); return; }
+  const expected = stage.template.filter(t => typeof t === 'object').map(t => t.slot);
+  const got = ui.fills.map(i => stage.chips[i]);
+  const ok = got.map((v, i) => v === expected[i]);
+  (stage.swap || []).forEach(group => {   // lacunas que podem trocar de lugar (como x₁ + x₂)
+    const e = group.map(i => expected[i]).sort().join('|'), g = group.map(i => got[i]).sort().join('|');
+    if (e === g) group.forEach(i => { ok[i] = true; });
+  });
+  if (ok.every(Boolean)) {
+    S.stage[n] = 1;
+    S.stageErrors[n] = 0;
+    save();
+    renderMissao();
+    setMsg(`Conta certa! ${stage.result} Agora escolhe o resultado da etapa B.`, false);
+    $('live').textContent = 'Conta certa. Etapa B liberada.';
+    const first = document.querySelector('#m-options input');
+    if (first) first.focus();
+    return;
+  }
+  ok.forEach((good, i) => { if (!good) ui.fills[i] = null; });
+  registerError();
+  renderBuild(stage);
+  const wrong = ok.filter(g => !g).length;
+  setMsg(S.stageErrors[n] >= SCORE.skipAfter
+    ? 'Ainda não. Se travar, agora dá pra pular a missão (ela vale 0).'
+    : `${wrong === 1 ? 'Uma peça tava' : `${wrong} peças tavam`} no lugar errado e ${wrong === 1 ? 'voltou' : 'voltaram'} pra bandeja. Confere os dados e tenta de novo.`, true);
+}
+
+/* --- Etapa B: múltipla escolha --- */
+function renderChoice(stage) {
+  const n = S.current;
+  const fmtOpt = v => `${fmtBig(v)}${stage.unit ? ' ' + stage.unit : ''}`;
+  $('m-options').innerHTML = S.options[n].map((v, i) => {
+    const tried = S.tried[n].includes(v);
+    return `<label class="option${tried ? ' is-wrong' : ''}">
+      <input type="radio" name="m-opt" value="${v}" ${tried ? 'disabled' : ''}>
+      <span class="option__letter" aria-hidden="true">${'ABCD'[i]}</span>
+      <span class="option__text">${fmtOpt(v)}</span>
+      ${tried ? `<span class="option__tag">${icon('x', 'icon icon--sm')} errada</span>` : ''}
+    </label>`;
+  }).join('');
+}
+
+function checkChoice() {
+  const n = S.current, stage = currentStage();
+  const picked = document.querySelector('#m-options input:checked');
+  if (!picked) { setMsg('Escolhe uma alternativa primeiro.', true, true); return; }
+  const value = Number(picked.value);
+  if (value === round2(stage.correct)) { completeMission(n, false); return; }
+  S.tried[n].push(value);
+  registerError();
+  renderChoice(stage);
+  setMsg(S.stageErrors[n] >= SCORE.skipAfter
+    ? 'Ainda não. Se travar, agora dá pra pular a missão (ela vale 0).'
+    : pick(['Não foi essa. Confere a conta e tenta outra.', 'Quase! Revisa os dados e escolhe de novo.', 'Essa não, chat. Respira e confere cada passo.']), true);
+}
+
+function registerError() {
+  const n = S.current;
+  S.errors[n] += 1;
+  S.stageErrors[n] += 1;
+  save();
+  // Só a área da resposta treme: um transform no formulário tiraria o botão fixo do rodapé do lugar
+  const box = currentStage().type === 'build' ? $('m-build') : $('m-choice');
+  box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+  box.addEventListener('animationend', () => box.classList.remove('shake'), { once: true });
+  $('m-skip').hidden = S.stageErrors[n] < SCORE.skipAfter;
+  renderMissionScore();
+  renderScore();
 }
 
 function renderMissionScore() {
@@ -1105,51 +1375,17 @@ function renderMissionScore() {
   $('m-score').textContent = `Valendo agora: ${now} pts · tentativas incorretas: ${S.errors[n]}${S.hint[n] ? ' · dica usada' : ''}`;
 }
 
-function setMsg(text, ok) {
+/** Mensagem da etapa: erro (vermelho), acerto (verde) ou aviso neutro, que não conta como erro. */
+function setMsg(text, error, neutral) {
   $('m-msg').textContent = text;
-  $('m-msg').className = `msg ${ok ? 'is-ok' : 'is-error'}`;
+  $('m-msg').className = `msg ${neutral ? '' : error ? 'is-error' : 'is-ok'}`;
 }
 
 $('m-form').addEventListener('submit', event => {
   event.preventDefault();
-  const n = S.current;
-  if (finished(n)) return;
-  const stage = MISSION[n].stages(S.data[n])[S.stage[n]];
-  const value = parseDecimal($('m-input').value);
-  if (Number.isNaN(value)) {
-    $('m-input').setAttribute('aria-invalid', 'true');
-    setMsg($('m-input').value.trim() ? 'Só números: inteiro ou com vírgula, até duas casas. Sem frações.' : 'Digita sua resposta primeiro.');
-    $('m-input').focus();
-    return;
-  }
-  if (matches(value, stage.answers)) {
-    if (S.stage[n] === 0) {
-      S.stage[n] = 1;
-      S.stageErrors[n] = 0;
-      save();
-      renderMissao();
-      setMsg('Acertou! Etapa B liberada. O chat foi à loucura.', true);
-      $('live').textContent = 'Resposta certa. Etapa B liberada.';
-      $('m-input').focus();
-    } else {
-      completeMission(n, false);
-    }
-    return;
-  }
-  S.errors[n] += 1;
-  S.stageErrors[n] += 1;
-  save();
-  $('m-input').setAttribute('aria-invalid', 'true');
-  setMsg(S.stageErrors[n] >= SCORE.skipAfter
-    ? 'Ainda não. Se travar, agora dá pra pular a missão (ela vale 0).'
-    : pick(['Ainda não. Confere a conta e tenta de novo.', 'Quase! Revisa os dados e manda de novo.', 'Não foi dessa vez. Respira e confere cada passo.']));
-  $('m-form').classList.remove('shake'); void $('m-form').offsetWidth; $('m-form').classList.add('shake');
-  $('m-skip').hidden = S.stageErrors[n] < SCORE.skipAfter;
-  renderMissionScore();
-  renderScore();
-  $('m-input').select();
+  if (finished(S.current)) return;
+  if (currentStage().type === 'build') checkBuild(); else checkChoice();
 });
-$('m-input').addEventListener('input', () => { $('m-input').removeAttribute('aria-invalid'); });
 
 /* Dica: −20 pontos, cobrada uma vez por missão */
 $('m-hint-btn').addEventListener('click', () => {
@@ -1190,6 +1426,7 @@ function completeMission(n, skipped) {
   openDialog($('dlg-reward'));
 }
 $('rw-next').addEventListener('click', () => closeDialog($('dlg-reward'), () => show(S.completed ? 'fim' : 'mapa')));
+
 
 /* ---------------------------------------------------------------
    9. CONCLUSÃO
@@ -1315,7 +1552,15 @@ $('test-fab').addEventListener('click', () => {
   const n = S.current;
   if (finished(n)) return;
   S.usedTest = true;
-  $('m-input').value = fmt(MISSION[n].stages(S.data[n])[S.stage[n]].answers[0]);
+  const stage = currentStage();
+  if (stage.type === 'build') {
+    const expected = stage.template.filter(t => typeof t === 'object').map(t => t.slot);
+    const free = stage.chips.map((_, i) => i);
+    ui.fills = expected.map(v => free.splice(free.findIndex(i => stage.chips[i] === v), 1)[0]);
+  } else {
+    const input = [...document.querySelectorAll('#m-options input')].find(el => Number(el.value) === round2(stage.correct));
+    input.checked = true;
+  }
   $('m-form').requestSubmit();
 });
 

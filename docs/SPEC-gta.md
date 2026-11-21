@@ -12,7 +12,11 @@
 
 ## 2. Missões
 
-**Regra geral:** nenhuma resposta pode ser negativa. Os sorteios abaixo garantem respostas positivas. Respostas digitadas continuam sendo inteiro ou decimal com até duas casas, com tolerância de 0,01.
+**Formato das respostas (decidido em 21/11, sem campo de digitar):**
+- **Etapa A: montar a conta (arrastar e soltar).** O aluno arrasta as peças com os valores certos até as lacunas da fórmula. Também dá para tocar na peça e depois na lacuna, o que funciona no teclado e no leitor de tela. Sempre há peças extras como distratores, por exemplo o diâmetro no lugar do raio ou a coordenada y no lugar da x. Ao conferir, as peças erradas voltam para a bandeja, e cada conferência errada conta 1 erro. Depois do acerto, o jogo mostra o resultado da conta.
+- **Etapa B: múltipla escolha.** São 4 alternativas: a certa e 3 erradas tiradas de erros comuns, como esquecer de multiplicar por 1.000, somar os catetos ou trocar PG por PA. Cada alternativa errada conta 1 erro e fica desabilitada.
+
+**Regra geral:** nenhuma resposta pode ser negativa, e as alternativas também são todas positivas. Os sorteios abaixo garantem isso.
 
 | # | Área | Missão | Assunto | Etapa A | Etapa B |
 |---|------|--------|---------|---------|---------|
@@ -87,14 +91,14 @@
 
 - **Armazenamento local:** `localStorage`, nas chaves `gta-glicerio-v1` (jornada) e `gta-glicerio-jogador` (último nome e turma).
 - **Respostas:**
-  - aceita inteiro ou decimal com até duas casas, e ponto como separador de milhar ("1.300");
-  - formato inválido não conta como erro;
-  - tolerância de 0,01;
-  - na Obra na Laje, a etapa B aceita o volume calculado com a área arredondada ou com a área exata.
-- **Modo de teste:** acrescentar `#teste` ao endereço mostra o botão "Avançar (teste)", que resolve a etapa atual. A partida fica marcada como teste.
+  - as alternativas da etapa B são sorteadas uma vez por jornada e ficam salvas, com as erradas já tentadas;
+  - na Obra na Laje, o volume certo usa a área arredondada que aparece nos dados;
+  - no Rolê no Mapa, x₁ e x₂ podem trocar de lugar na conta.
+- **Modo de teste:** acrescentar `#teste` ao endereço mostra o botão "Avançar (teste)", que monta a conta certa ou marca a alternativa certa. A partida fica marcada como teste.
 - **Envio:** o jogo manda erros, pulos e dicas de cada missão, mais o tempo ativo. O servidor recusa partidas abaixo de 30 s fora do modo de teste.
 
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **0.3 (21/11/2026):** respostas sem digitar: etapa A de arrastar e soltar para montar a conta, etapa B de múltipla escolha.
 - **0.2 (21/11/2026):** jogo implementado em `src/` (6 missões, pontuação, ilustrações) e servidor com pontos e estrelas.
