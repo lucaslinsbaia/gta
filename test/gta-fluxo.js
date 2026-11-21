@@ -50,6 +50,9 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await chipBtn(st.need[0]).click(); await p.click('[data-slot="0"]');
     await chipBtn(wrongChip).click(); await p.click('[data-slot="1"]');
     await p.click('#m-confirm'); await p.waitForTimeout(200);
+    assert(await p.isVisible('#dlg-wasted'), 'erro abre a tela wasted');
+    await p.click('#wasted-ok'); await p.waitForTimeout(150);
+    assert(!(await p.isVisible('#dlg-wasted')), 'tentar de novo fecha a tela wasted');
     assert(await p.evaluate(() => S.errors[1]) === 1, 'conta errada conta 1 erro');
     assert(await p.evaluate(() => ui.fills[0] != null && ui.fills[1] == null), 'só a peça errada volta pra bandeja');
     // certo: arrasta a peça certa até a lacuna 2
@@ -64,6 +67,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     // etapa B: uma alternativa errada, depois a dica, depois a certa
     const wrongOpt = await p.evaluate(() => S.options[1].find(v => v !== round2(currentStage().correct)));
     await p.click(`#m-options input[value="${wrongOpt}"]`, { force: true }); await p.click('#m-confirm'); await p.waitForTimeout(150);
+    await p.click('#wasted-ok'); await p.waitForTimeout(150);
     assert(await p.isDisabled(`#m-options input[value="${wrongOpt}"]`), 'alternativa errada fica desabilitada');
     await p.click('#m-hint-btn'); await p.click('#hint-confirm'); await p.waitForTimeout(150); await p.click('#dlg-hint [data-close]');
     await p.click('#test-fab'); await p.waitForTimeout(250); await p.click('#rw-next'); await p.waitForTimeout(200);
@@ -72,10 +76,13 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await p.click('[data-mission="2"]'); await p.waitForTimeout(200);
     for (let i = 0; i < 10; i++) {
       await p.evaluate(() => { const s = currentStage(); ui.fills = ui.fills.map((_, k) => s.chips.findIndex(c => c !== s.template.filter(t => typeof t === 'object')[k].slot)); });
-      await p.click('#m-confirm');
+      await p.click('#m-confirm'); await p.click('#wasted-ok');
     }
     assert(await p.isVisible('#m-skip'), 'pular aparece após 10 erros');
     await p.click('#m-skip'); await p.click('#skip-confirm'); await p.waitForTimeout(200);
+    assert(await p.textContent('#wasted-sub') === 'Missão pulada · 0 pts', 'pular abre a tela wasted');
+    await p.screenshot({ path: `/home/claude/shots/10-wasted-${vp.width}.png` });
+    await p.click('#wasted-ok'); await p.waitForTimeout(200);
     assert(await p.isVisible('#rw-solution'), 'resolução aparece ao pular');
     await p.click('#rw-next'); await p.waitForTimeout(200);
 

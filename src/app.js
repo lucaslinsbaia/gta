@@ -652,6 +652,7 @@ function checkBuild() {
   setMsg(S.stageErrors[n] >= SCORE.skipAfter
     ? 'Ainda não. Se travar, agora dá pra pular a missão (ela vale 0).'
     : `${wrong === 1 ? 'Uma peça tava' : `${wrong} peças tavam`} no lugar errado e ${wrong === 1 ? 'voltou' : 'voltaram'} pra bandeja. Confere os dados e tenta de novo.`, true);
+  wastedForError();
 }
 
 /* --- Etapa B: múltipla escolha --- */
@@ -681,6 +682,7 @@ function checkChoice() {
   setMsg(S.stageErrors[n] >= SCORE.skipAfter
     ? 'Ainda não. Se travar, agora dá pra pular a missão (ela vale 0).'
     : pick(['Não foi essa. Confere a conta e tenta outra.', 'Quase! Revisa os dados e escolhe de novo.', 'Essa não, chat. Respira e confere cada passo.']), true);
+  wastedForError();
 }
 
 function registerError() {
@@ -732,9 +734,30 @@ function openHint() {
   openDialog($('dlg-hint'));
 }
 
+/* Tela "wasted" (modal): aparece a cada erro e ao pular a missão */
+function openWasted({ sub, action, after }) {
+  $('wasted-sub').textContent = sub;
+  $('wasted-ok').textContent = action;
+  if (after) closeCallbacks.set($('dlg-wasted'), after);
+  document.body.classList.add('is-wasted');
+  openDialog($('dlg-wasted'));
+  $('wasted-ok').focus();
+}
+$('dlg-wasted').addEventListener('close', () => document.body.classList.remove('is-wasted'));
+function wastedForError() {
+  const n = S.current;
+  openWasted({
+    sub: S.stageErrors[n] >= SCORE.skipAfter ? '−10 pts · se travar, já dá pra pular' : `−10 pts · tentativa incorreta ${S.stageErrors[n]}`,
+    action: 'Tentar de novo'
+  });
+}
+
 /* Pular: liberado após 10 tentativas incorretas na mesma etapa */
 $('m-skip').addEventListener('click', () => openDialog($('dlg-skip')));
-$('skip-confirm').addEventListener('click', () => closeDialog($('dlg-skip'), () => completeMission(S.current, true)));
+$('skip-confirm').addEventListener('click', () => closeDialog($('dlg-skip'), () => {
+  const n = S.current;
+  openWasted({ sub: 'Missão pulada · 0 pts', action: 'Ver a resolução', after: () => completeMission(n, true) });
+}));
 
 function completeMission(n, skipped) {
   if (skipped) S.skipped[n] = true; else S.done[n] = true;

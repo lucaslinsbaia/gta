@@ -282,6 +282,17 @@
   .solution p { margin: 0 0 var(--s2); }
   .solution p:last-child { margin: 0; }
 
+  /* Tela "wasted": aparece ao errar ou pular. Fundo preto, palavra vermelha
+     grande e o jogo por trás em preto e branco. */
+  .wasted { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--cream); }
+  .wasted::backdrop { background: rgba(0, 0, 0, 0.86); }
+  body.is-wasted #app, body.is-wasted .nav { filter: grayscale(1) brightness(0.6); transition: filter 400ms; }
+  .wasted__inner { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s5); min-height: 100%; padding: var(--s6); text-align: center; animation: wasted-in 700ms var(--ease) both; }
+  .wasted__word { margin: 0; font: 400 clamp(4.5rem, 2rem + 14vw, 11rem)/1 var(--font-display); letter-spacing: 0.02em; color: #E3141B; -webkit-text-stroke: 3px #000; paint-order: stroke fill; text-shadow: 0 0 2px #000, 6px 6px 0 rgba(0, 0, 0, 0.85); }
+  .wasted__sub { margin: 0; font: 400 clamp(1.2rem, 1rem + 1vw, 1.8rem)/1.2 var(--font-label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream); }
+  .wasted__btn { margin-top: var(--s3); border-color: var(--cream); background: rgba(0, 0, 0, 0.6); }
+  @keyframes wasted-in { from { opacity: 0; transform: scale(1.35); } 60% { opacity: 1; } to { transform: scale(1); } }
+
   .test-fab { position: fixed; right: var(--s4); bottom: calc(var(--s4) + 80px); z-index: 30; background: var(--night); }
 
   /* ---------- Responsivo ---------- */
@@ -299,7 +310,18 @@
     .brand__sub, .brand__name { display: none; }
     .score-pill { gap: var(--s2); padding: 2px var(--s2); }
     .stars .icon { width: 13px; height: 13px; }
-    .test-fab { min-height: 40px; padding: var(--s2) var(--s3); font-size: 1rem; }
+    /* Tela "wasted": aparece ao errar ou pular. Fundo preto, palavra vermelha
+     grande e o jogo por trás em preto e branco. */
+  .wasted { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--cream); }
+  .wasted::backdrop { background: rgba(0, 0, 0, 0.86); }
+  body.is-wasted #app, body.is-wasted .nav { filter: grayscale(1) brightness(0.6); transition: filter 400ms; }
+  .wasted__inner { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s5); min-height: 100%; padding: var(--s6); text-align: center; animation: wasted-in 700ms var(--ease) both; }
+  .wasted__word { margin: 0; font: 400 clamp(4.5rem, 2rem + 14vw, 11rem)/1 var(--font-display); letter-spacing: 0.02em; color: #E3141B; -webkit-text-stroke: 3px #000; paint-order: stroke fill; text-shadow: 0 0 2px #000, 6px 6px 0 rgba(0, 0, 0, 0.85); }
+  .wasted__sub { margin: 0; font: 400 clamp(1.2rem, 1rem + 1vw, 1.8rem)/1.2 var(--font-label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream); }
+  .wasted__btn { margin-top: var(--s3); border-color: var(--cream); background: rgba(0, 0, 0, 0.6); }
+  @keyframes wasted-in { from { opacity: 0; transform: scale(1.35); } 60% { opacity: 1; } to { transform: scale(1); } }
+
+  .test-fab { min-height: 40px; padding: var(--s2) var(--s3); font-size: 1rem; }
     .nav { padding: var(--s2) var(--s4); }
     .end__hero { grid-template-columns: minmax(0, 1fr); }
     .end__dani { width: 180px; }
