@@ -1,7 +1,7 @@
 # Handoff: GTA (Geometria, Trigonometria e Álgebra), novo jogo a partir do Enigma de Pitágoras
 
 **Data:** 21/11/2026
-**Status:** aguardando decisão (o repositório no GitHub precisa ser criado pelo Lucas; as decisões de conteúdo e direção de arte estão na seção 6)
+**Status:** aguardando decisão. O repositório `lucaslinsbaia/gta` já existe e tem a base enviada. Falta o Lucas ligá-lo ao projeto da Vercel (passo 1 da seção 5) e decidir o conteúdo e a direção de arte (seção 6).
 
 ## 1. Objetivo
 
@@ -91,16 +91,18 @@ Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e
    - o `src/build.py` adaptado para gravar na raiz do repositório;
    - testes apontando para o `index.html` local;
    - uma **página provisória "Em breve"** no estilo neon como `index.html`.
-3. **Criar o repositório no GitHub foi bloqueado:** a sessão só acessa repositórios já existentes. O Lucas precisa criá-lo (ver próximos passos).
+3. **Repositório no GitHub:** a sessão não consegue criar repositórios (só acessa os que já existem), então o Lucas criou `lucaslinsbaia/gta`, privado e vazio. Em seguida, a sessão o ligou com `add_repo` e enviou a base para a branch `main`.
 4. **A base foi testada:** o build gerou um `index.html` idêntico ao do Enigma, e os testes de fluxo, de nota e do Círculo passaram.
+5. **Ligação com a Vercel bloqueada:** a tentativa de ligar o repositório ao projeto `gta-glicerio` pela ferramenta da Vercel falhou com "To link a GitHub repository, you need to install the GitHub integration first". O app da Vercel no GitHub do Lucas só acessa repositórios escolhidos, e o `gta` ainda não está entre eles. Isso precisa ser feito pelo Lucas no painel (passo 1 da seção 5).
 
 ## 4. Estado atual
 
 - **Funciona:**
   - o projeto `gta-glicerio` existe na Vercel com o domínio reservado;
   - a base de código é a do Enigma, funcionando e testada.
+- **Repositório:** `lucaslinsbaia/gta` existe, com a base enviada na branch `main`.
 - **Ainda não existe:**
-  - o repositório no GitHub;
+  - ligação entre o repositório e o projeto `gta-glicerio` na Vercel;
   - nenhum deploy, então o endereço ainda não abre nada;
   - nada do conteúdo do GTA: o jogo em `src/` ainda é o Enigma inteiro, com textos, imagens e capítulos de trigonometria.
 - **Atenção:** rodar `python3 src/build.py` **substitui** a página provisória `index.html` pelo jogo montado. Até o GTA ter conteúdo próprio, não rode o build antes de enviar, ou o endereço vai mostrar o Enigma.
@@ -108,14 +110,12 @@ Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e
 
 ## 5. Próximos passos
 
-1. **Lucas:** criar em github.com/new um repositório **privado e vazio** (sem README) chamado `gta`. Se o app Claude no GitHub só tiver acesso a repositórios escolhidos, incluir o `gta` em GitHub → Settings → Applications → Claude → Repository access.
-2. **Sessão:** chamar `add_repo` (owner `lucaslinsbaia`, repo `gta`, access `push`) e enviar o conteúdo local:
-   - `git remote add origin https://github.com/lucaslinsbaia/gta.git`;
-   - `git push -u origin main`.
-3. **Ligar o projeto Vercel `gta-glicerio` ao repositório.** A ferramenta `create_git_project` reaproveita o projeto, mas **não religa um projeto já existente**. As opções são:
-   - pedir ao Lucas: Vercel → gta-glicerio → Settings → Git → Connect `lucaslinsbaia/gta`;
-   - ou tentar `update_project` com `gitRepository`.
-   Depois, conferir o deploy com `list_deployments` e abrir https://gta-glicerio.vercel.app (deve mostrar a página "Em breve").
+1. **Lucas: ligar o repositório na Vercel.** No painel da Vercel, abrir o projeto **gta-glicerio** → **Settings** → **Git** → **Connect Git Repository** → GitHub. Se o `gta` não aparecer na lista, clicar em **Adjust GitHub App Permissions** (ou ir em GitHub → Settings → Applications → Vercel → Configure → Repository access) e incluir o `gta`. Depois, escolher `lucaslinsbaia/gta`.
+2. **Sessão: publicar e conferir.**
+   - Fazer qualquer envio para a `main` (ou pedir ao Lucas um **Redeploy**) para gerar o primeiro deploy.
+   - Conferir com `list_deployments` (projeto `gta-glicerio`) e abrir https://gta-glicerio.vercel.app, que deve mostrar a página "Em breve".
+   - Para clonar numa sessão nova: `add_repo` com owner `lucaslinsbaia`, repo `gta` e access `push`.
+3. **Proteção de acesso:** os projetos novos da Vercel vêm com "Vercel Authentication" em `all_except_custom_domains`. O endereço de produção `gta-glicerio.vercel.app` deve abrir sem login, como no Enigma, mas os links de prévia exigem login. Se os alunos esbarrarem em login, revisar em Settings → Deployment Protection.
 4. **Combinar com o Lucas o desenho do jogo** (seção 6) antes de mexer no código. Sugestão de estrutura, com três capítulos e um por assunto:
    - **Geometria:** áreas, perímetros, ângulos;
    - **Trigonometria:** reaproveitar Pitágoras e as razões;
@@ -160,6 +160,7 @@ Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e
 
 **Endereços:**
 - GTA (produção): https://gta-glicerio.vercel.app (projeto Vercel `gta-glicerio`, `prj_1Ne8GTeNnUH106Q3hWiSEImD45yY`)
+- Repositório do GTA: https://github.com/lucaslinsbaia/gta (privado, branch `main`)
 - Enigma: https://enigma-de-pitagoras.vercel.app · `/ranking` · `/gestao` (projeto Vercel `enigma`, `prj_CI5THN1mclShRcKULIG3HT9k7R5a`)
 - Time da Vercel: `team_4LR2S470KBcyUJ1bWw2mIZ7k`
 - Repositório do Enigma: https://github.com/lucaslinsbaia/enigma-de-pitagoras (lá só ficam os arquivos montados; o código-fonte original estava fora do repositório, em `/home/user/enigma/src` da sessão anterior, e foi copiado para este repositório)
@@ -219,6 +220,7 @@ npm install && POSTGRES_URL=postgres://enigma:enigma@localhost:5432/enigma ADMIN
 - **Antes de construir, confirme as perguntas da seção 6**, principalmente público, tópicos e formato. Use AskUserQuestion com opções e uma recomendação.
 - **Armadilhas conhecidas:**
   - **Criar repositório e GraphQL:** a sessão não cria repositórios no GitHub nem usa a API GraphQL; só a REST, em repositórios já ligados com `add_repo`.
+  - **Repositório novo na Vercel:** a ferramenta não liga um repositório novo enquanto o app da Vercel no GitHub não tiver acesso a ele; quem libera é o Lucas, no painel.
   - **Build sobrescreve a página provisória:** `src/build.py` grava `index.html`; não rode antes de ter o conteúdo do GTA, ou o site mostra o Enigma.
   - **Respostas visíveis:** nunca deixe a resposta visível em imagens, exemplos de instrução ou dicas. Confira os exemplos contra todas as respostas possíveis do sorteio.
   - **Celular:** os campos usam `inputmode="decimal"`, que não tem "/" nem "−". Se o GTA precisar de números negativos (Álgebra), resolva isso de propósito, por exemplo com um botão de sinal ou um campo de seleção.
