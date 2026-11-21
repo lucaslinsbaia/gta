@@ -1,11 +1,11 @@
 # Handoff: GTA (Geometria, Trigonometria e Álgebra), novo jogo a partir do Enigma de Pitágoras
 
 **Data:** 21/11/2026
-**Status:** aguardando decisão. O repositório `lucaslinsbaia/gta` já existe e tem a base enviada. O repositório já está ligado ao projeto `gta-glicerio` na Vercel, que publica a `main` automaticamente. Falta decidir o conteúdo e a direção de arte (seção 6).
+**Status:** em andamento. O repositório `lucaslinsbaia/gta` existe e está ligado ao projeto `gta-glicerio` na Vercel, que publica a `main` automaticamente. A página provisória "Em breve" já está no ar. As decisões principais foram tomadas em 21/11 (seção 2, "Decisões do Lucas"); faltam os detalhes da seção 6.
 
 ## 1. Objetivo
 
-Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e Álgebra)**, usando como base técnica e de jogabilidade o jogo **O Enigma de Pitágoras** (escape room de trigonometria, já publicado e em uso com turmas). O GTA tem uma estética urbana inspirada no clima dos jogos de mundo aberto da série GTA (Grand Theft Auto): cores vibrantes, pôr do sol neon e comunicação mais descontraída. Não é uma recriação desse jogo: a ideia é só pegar o clima. O endereço de produção é **https://gta-glicerio.vercel.app**.
+Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3º ano do ensino médio** da escola **Glicério**. O jogo é organizado em **missões** e pontua conforme as missões concluídas. Tem um personagem próprio que dá as dicas, linguagem mais adolescente e visual de **ilustrações tipo pôster**, com clima urbano e neon. A base técnica é o jogo **O Enigma de Pitágoras** (escape room de trigonometria, já publicado e em uso com turmas). O endereço de produção é **https://gta-glicerio.vercel.app**.
 
 ## 2. Contexto essencial
 
@@ -28,7 +28,17 @@ Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e
   - o ranking público fica em `/ranking`.
 - **Testes:** scripts Playwright em `test/`. O Chromium já vem instalado no ambiente em nuvem: `require('playwright')` funciona e não é preciso instalar nada. O servidor local que imita a Vercel é `test/dev-server.mjs`.
 
-**Regras de jogo do Enigma** (ver `docs/SPEC-enigma-de-pitagoras.md`), que valem como ponto de partida:
+**Decisões do Lucas (21/11/2026):**
+1. **Público:** 2º e 3º ano do ensino médio.
+2. **Formato: missões**, no lugar dos capítulos do escape room. A pontuação é dada **de acordo com a missão concluída**: cada missão vale pontos e o total vira a nota.
+3. **Tom:** linguagem mais adolescente. Gírias e humor podem, palavrão não (é um jogo escolar).
+4. **Escola:** "Glicério" é o nome da escola, por isso o endereço `gta-glicerio`. Pode aparecer no jogo, por exemplo "Missões do Glicério" ou o ranking das turmas do Glicério.
+5. **Personagem próprio** que dá as dicas. Precisa ser criado do zero: nome, visual e jeito de falar.
+6. **Arte:** ilustrações tipo pôster. O Lucas autorizou pesquisar o material de divulgação do GTA VI (lançado recentemente) **como referência de estilo**. Os limites estão em "Cuidado com propriedade intelectual", logo abaixo.
+7. **Tudo novo:** banco de dados, painel de gestão, turmas e senha próprios do GTA, sem nada compartilhado com o Enigma. O código do Enigma serve só de base.
+8. **Marca:** usar a sigla **GTA** com uma identidade visual no espírito da franquia. A assinatura por extenso, "Geometria, Trigonometria e Álgebra", aparece **discreta**, sem destaque.
+
+**Regras de jogo do Enigma** (ver `docs/SPEC-enigma-de-pitagoras.md`), que valem como ponto de partida técnico (o formato muda para missões):
 - **Estrutura:** três capítulos. Cada um tem uma cena com pontos de pista e um ponto principal ("Examinar") que abre o mecanismo; resolver o mecanismo libera o capítulo seguinte.
 - **Sorteio:** os triângulos são sorteados a cada jornada (ternas pitagóricas com hipotenusa até 30).
 - **Nota de 0 a 10:**
@@ -53,10 +63,20 @@ Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e
 - **Banco gratuito do Supabase pausa após 7 dias sem uso.** Por isso o Enigma tem uma tarefa diária (cron) em `vercel.json` que chama `/api/manter-ativo`. No GTA o cron foi **tirado de propósito** enquanto não houver banco; recoloque quando ligar o banco.
 - **Imagens sem números:** quando uma cena mostra medidas, elas não podem vir desenhadas na imagem, porque os valores mudam a cada jornada. As medidas aparecem só no texto das pistas.
 
-**Cuidado com propriedade intelectual:**
-- A inspiração é estética: paleta neon e pôr do sol, cidade, tom bem-humorado, "nível de procurado" virando "nível de conhecimento".
-- **Não usar** logotipos, a fonte característica, personagens, mapas, capturas de tela, músicas ou qualquer material da Rockstar Games.
-- O nome "GTA" aqui é um acrônimo próprio (Geometria, Trigonometria e Álgebra). Vale manter o nome por extenso visível e não imitar o logotipo original.
+**Cuidado com propriedade intelectual** (combinado em parte com o Lucas; confirmar o desenho do logo com ele):
+- **Pode:** usar o material do GTA VI como **referência de estilo**. Isso inclui:
+  - ilustração pintada tipo pôster, com cores saturadas e luz de pôr do sol;
+  - composição em painéis com vários personagens e cenas;
+  - cidade litorânea e tipografia condensada e pesada;
+  - "nível de procurado" virando "nível de conhecimento".
+- **Não pode:** copiar ou redesenhar o material oficial. Isso inclui:
+  - o logotipo da franquia ou o seu desenho de letras;
+  - a fonte característica (Pricedown) e o selo "VI";
+  - personagens, artes, mapas, capturas, trailers e músicas da Rockstar Games.
+  
+  Todo personagem, cena e pôster do GTA da escola é original.
+- **Logo:** a sigla "GTA" com letras próprias e cores do jogo, sem calcar o logotipo da Rockstar. Isso evita problema de marca e deixa o jogo com cara própria. A assinatura "Geometria, Trigonometria e Álgebra" fica pequena, sob o logo ou no rodapé.
+- **Fontes:** só fontes livres do Google Fonts, como Anton, Bebas Neue ou Bungee.
 
 ## 3. O que já foi feito
 
@@ -94,6 +114,8 @@ Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e
 3. **Repositório no GitHub:** a sessão não consegue criar repositórios (só acessa os que já existem), então o Lucas criou `lucaslinsbaia/gta`, privado e vazio. Em seguida, a sessão o ligou com `add_repo` e enviou a base para a branch `main`.
 4. **A base foi testada:** o build gerou um `index.html` idêntico ao do Enigma, e os testes de fluxo, de nota e do Círculo passaram.
 5. **Ligação com a Vercel bloqueada:** a tentativa de ligar o repositório ao projeto `gta-glicerio` pela ferramenta da Vercel falhou com "To link a GitHub repository, you need to install the GitHub integration first". O app da Vercel no GitHub do Lucas só acessa repositórios escolhidos, e o `gta` ainda não está entre eles. O Lucas liberou o acesso e ligou o repositório pelo painel (Settings → Git); a partir daí, cada envio para a `main` publica.
+6. **Primeiro deploy no ar:** https://gta-glicerio.vercel.app mostra a página provisória "Em breve" e abre sem login.
+7. **Decisões do Lucas registradas** em 21/11 (seção 2): público, formato em missões, tom, escola, personagem, arte tipo pôster, banco e gestão novos, marca.
 
 ## 4. Estado atual
 
@@ -114,45 +136,53 @@ Criar um novo jogo educativo de matemática, o **GTA (Geometria, Trigonometria e
    - Conferir com `list_deployments` (projeto `gta-glicerio`) e abrir https://gta-glicerio.vercel.app, que deve mostrar a página "Em breve".
    - Para clonar numa sessão nova: `add_repo` com owner `lucaslinsbaia`, repo `gta` e access `push`.
 3. **Proteção de acesso:** os projetos novos da Vercel vêm com "Vercel Authentication" em `all_except_custom_domains`. O endereço de produção `gta-glicerio.vercel.app` deve abrir sem login, como no Enigma, mas os links de prévia exigem login. Se os alunos esbarrarem em login, revisar em Settings → Deployment Protection.
-4. **Combinar com o Lucas o desenho do jogo** (seção 6) antes de mexer no código. Sugestão de estrutura, com três capítulos e um por assunto:
-   - **Geometria:** áreas, perímetros, ângulos;
-   - **Trigonometria:** reaproveitar Pitágoras e as razões;
-   - **Álgebra:** equações do 1º e do 2º grau, sistemas.
-   Ambientação: missões numa cidade fictícia ao pôr do sol.
-5. **Reescrever o conteúdo em `src/`:**
-   - `chapter(n)` e `SEALS` em `app.js`: missões, pistas, mecanismos, textos de erro e de sucesso;
-   - sorteio de valores por jornada para os novos tipos de problema;
-   - `GRADE`, `MISTAKE_TEXT` e `STUDY` (links de estudo dos novos assuntos);
-   - chaves de `localStorage` próprias do GTA;
-   - textos com tom descontraído (gírias leves, sem palavrão).
-6. **Nova direção visual** em `src/style.css`:
-   - paleta neon (roxo, rosa, laranja, ciano, verde ácido);
-   - tipografia de títulos condensada e pesada (por exemplo Anton ou Bebas Neue, do Google Fonts);
-   - contornos e sombras chapadas, como na página provisória `index.html`;
-   - conferir o contraste (WCAG AA) dos textos sobre as cores vivas.
-7. **Imagens novas em `img/`** (cenas, cards, placas e fundos) nos tamanhos da seção 7, sem números desenhados. Pedir ao Lucas as imagens ou a ferramenta que ele prefere para gerá-las.
-8. **Rodar o build e os testes:**
-   - `python3 src/build.py`;
-   - testes em `test/`, que **precisam ser atualizados** porque procuram pistas e textos do Enigma (`data-clue="canto"`, títulos e afins).
-   Conferir no celular (390 px) e no computador (1440 px).
-9. **Banco e ranking**, se o Lucas quiser:
-   - criar o banco em Vercel → gta-glicerio → Storage;
-   - criar `ADMIN_PASSWORD`;
-   - recolocar o cron em `vercel.json`;
+4. **Pesquisar referências de estilo** (o Lucas autorizou). Usar WebSearch nas artes de divulgação do GTA VI e montar um quadro curto de referências: paleta, luz, composição dos pôsteres e tipografia. A pesquisa serve só de inspiração; nada oficial entra no repositório (ver "Cuidado com propriedade intelectual").
+5. **Propor ao Lucas, antes de codar, numa página de rascunho (artifact) ou nas mensagens:**
+   - **logo GTA** original, com a assinatura discreta;
+   - **paleta e tipografia**;
+   - **personagem das dicas:** 2 ou 3 opções de nome, visual e jeito de falar. Exemplo de linha: um "mano das contas" ou uma grafiteira da quebrada que manja de matemática;
+   - **mapa de missões** com os assuntos (seção 6, pergunta 1);
+   - **regra de pontuação** por missão (pergunta 2).
+6. **Reescrever o jogo em `src/`** a partir das decisões:
+   - capítulos viram missões: tela de "mapa da cidade" ou "lista de missões", cada missão com briefing, pistas, desafio e recompensa;
+   - pontuação por missão concluída, refeita também no servidor (`lib/nota.js` e `api/resultados.js`);
+   - personagem das dicas no lugar do diário e das dicas do Enigma;
+   - textos em linguagem adolescente, sem palavrão;
+   - chaves de `localStorage` próprias (por exemplo `gta-glicerio-v1`);
+   - sorteio de valores por jornada para cada tipo de problema;
+   - `STUDY` com links de estudo dos novos assuntos.
+7. **Nova direção visual** em `src/style.css`: paleta neon e pôr do sol, tipografia condensada e pesada, contornos e sombras chapadas, como na página provisória. Conferir o contraste (WCAG AA) dos textos sobre as cores vivas.
+8. **Ilustrações tipo pôster em `img/`** (cenas das missões, cards, personagem, fundos), nos tamanhos da seção 7 e sem números desenhados. Combinar com o Lucas quem gera as imagens (ver seção 6).
+9. **Banco e gestão novos (tudo separado do Enigma):**
+   - criar um banco novo em Vercel → gta-glicerio → Storage;
+   - criar `ADMIN_PASSWORD` própria;
+   - recolocar o cron de `/api/manter-ativo` em `vercel.json`;
    - refazer o deploy;
-   - trocar "O Enigma de Pitágoras" pelos textos do GTA em `src/pages/*` (ranking e gestão).
-10. **Escrever a SPEC do GTA** em `docs/` e manter um registro de mudanças, como no Enigma. Fazer commit e envio a cada etapa.
+   - adaptar `src/pages/*` (ranking e gestão) ao visual e aos textos do GTA. As tabelas nascem sozinhas no banco novo.
+10. **Build e testes:**
+    - `python3 src/build.py`;
+    - atualizar os testes de `test/` para as missões, porque eles procuram pistas e textos do Enigma.
+    Conferir no celular (390 px) e no computador (1440 px). Fazer commit e envio a cada etapa.
+11. **Escrever a SPEC do GTA** em `docs/SPEC-gta.md`, com o registro de mudanças.
 
 ## 6. Perguntas em aberto
 
-1. **Público e conteúdo:** que ano ou série? Quais tópicos de Geometria, Trigonometria e Álgebra entram? É um capítulo por área ou outra divisão?
-2. **Formato do jogo:** manter o escape room em três capítulos com pistas e mecanismos, ou trocar para "missões" com outro ritmo (mais curtas, com tempo, com pontuação)?
-3. **Tom:** até onde vai o "descontraído"? Gírias regionais (o domínio é "glicerio": é o nome da escola ou do bairro)? Personagens próprios, como um "parceiro" que dá as dicas?
-4. **Arte:** quem produz as imagens (Lucas no Figma, geração por IA, ilustração)? Fotorrealista ou ilustração chapada estilo pôster?
-5. **Banco:** novo banco só do GTA, ou o mesmo do Enigma com tabelas separadas? A recomendação é um banco novo, para não misturar turmas e rankings.
-6. **Turmas e gestão:** a mesma senha e as mesmas turmas do Enigma, ou tudo separado?
-7. **Nome e marca:** confirmar que "GTA" fica como acrônimo e que nenhum elemento visual da franquia original será usado.
-8. **Ramo antigo** `wip/fracao-barra-fixa` no repositório do Enigma: apagar? (O Lucas pode apagar pelo GitHub.)
+1. **Assuntos das missões** (2º e 3º ano, seguindo a BNCC). Proposta para validar com o Lucas, com cerca de duas missões por área:
+   - **Geometria:** áreas e volumes (prismas, cilindros, cones), geometria analítica (distância entre pontos, equação da reta, circunferência);
+   - **Trigonometria:** lei dos senos e dos cossenos, ciclo trigonométrico, funções seno e cosseno;
+   - **Álgebra:** funções (afim, quadrática, exponencial, logaritmo), progressões (PA e PG), sistemas e matrizes.
+   
+   Quantas missões no total? Todas liberadas, ou em sequência?
+2. **Pontuação:**
+   - Quanto vale cada missão, e se os valores mudam por dificuldade.
+   - Se erros e dicas descontam (como no Enigma).
+   - Como vira a nota de 0 a 10 para o professor, e se continua a nota mínima por concluir.
+   - Se o ranking mostra pontos, nota ou os dois.
+3. **Personagem:** nome, gênero, visual e bordões. O Lucas escolhe entre opções propostas.
+4. **Imagens:** quem gera as ilustrações tipo pôster? Opções: o Lucas (Figma ou ferramenta de IA dele), a sessão com as ferramentas disponíveis, ou ilustrador. Em que proporção e quantidade?
+5. **Números negativos e outras respostas:** a Álgebra pode pedir respostas negativas, raízes ou pares ordenados. O teclado `inputmode="decimal"` não tem sinal de menos. Definir o formato de resposta (botão ±, campos separados, múltipla escolha).
+6. **Logo:** aprovar o desenho original da sigla GTA antes de aplicá-lo nas telas.
+7. **Ramo antigo do Enigma:** `wip/fracao-barra-fixa` pode ser apagado pelo Lucas no GitHub.
 
 ## 7. Artefatos relevantes
 
@@ -214,8 +244,8 @@ npm install && POSTGRES_URL=postgres://enigma:enigma@localhost:5432/enigma ADMIN
 ## 8. Instruções pra próxima sessão
 
 - **Idioma e tom com o Lucas:** português do Brasil, direto e cordial. Ele valoriza ver o resultado: depois de cada mudança visual, tire capturas de tela (390 px e 1440 px) e mostre. Faça commit e envio ao fim de cada pedido; a Vercel publica sozinha a partir da branch `main`.
-- **Tom do jogo:** descontraído e bem-humorado, de "missão na cidade", mas sem palavrão, violência, crime glamourizado, armas ou drogas. É um jogo escolar. "Procurado" pode virar "nível de conhecimento"; "missão", "parceiro", "quebrada" e "corre" cabem com moderação.
-- **Antes de construir, confirme as perguntas da seção 6**, principalmente público, tópicos e formato. Use AskUserQuestion com opções e uma recomendação.
+- **Tom do jogo:** linguagem adolescente, bem-humorada, de "missão na cidade", com gírias atuais como "mano", "partiu", "tá voando", "brabo", "corre", "quebrada". Sem palavrão, violência, crime glamourizado, armas ou drogas: é um jogo escolar. "Procurado" vira "nível de conhecimento", e as missões são desafios de matemática pela cidade (obra, festa, quadra, loja, viagem), não crimes.
+- **Antes de construir, confirme as perguntas da seção 6**, principalmente assuntos, pontuação e personagem. Use AskUserQuestion com opções e uma recomendação, e mostre rascunhos visuais (artifact) do logo, da paleta e do personagem antes de mexer no jogo.
 - **Armadilhas conhecidas:**
   - **Criar repositório e GraphQL:** a sessão não cria repositórios no GitHub nem usa a API GraphQL; só a REST, em repositórios já ligados com `add_repo`.
   - **Repositório novo na Vercel:** a ferramenta não liga um repositório novo enquanto o app da Vercel no GitHub não tiver acesso a ele; quem libera é o Lucas, no painel.
