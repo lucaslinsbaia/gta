@@ -177,7 +177,7 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
    - nota = pontos ÷ 60, mínimo 5 para quem conclui;
    - o ranking mostra pontos e estrelas.
    Detalhes em `docs/SPEC-gta.md`.
-3. **Personagem:** o Lucas pediu que não siga estereótipos, porque o jogo será aplicado em vários lugares do Brasil (o Glicério fica no Rio Grande do Sul). Opções atuais no canvas: A Nina Vetor (estudante skatista), B Dani Pixel (cria conteúdo e transmite as missões) e C Bit (drone sem gênero). Falta ele escolher.
+3. ~~**Personagem.**~~ **Decidido em 21/11:** **Dani Pixel**. Cria conteúdo de desafios e transmite cada missão como uma live, com o "chat" torcendo. Nome que serve para qualquer gênero; usa fone amarelo e jaqueta magenta e anda sempre com o celular na mão. Fala em linguagem de internet, igual no Brasil todo: "chat, olha isso", "nível desbloqueado", "GG", "salva essa dica". Nada de estereótipo nem de regionalismo: o jogo será aplicado em vários lugares, e o Glicério fica no RS.
 4. **Imagens:** quem gera as ilustrações tipo pôster? Opções: o Lucas (Figma ou ferramenta de IA dele), a sessão com as ferramentas disponíveis, ou ilustrador. Em que proporção e quantidade?
 5. ~~**Números negativos.**~~ **Decidido em 21/11:** nenhuma pergunta pode ter resposta negativa. Os sorteios da SPEC garantem isso, e o teclado continua `inputmode="decimal"`.
 6. ~~**Logo.**~~ **Decidido em 21/11:** direção C, "Listras pôr do sol". É a sigla em Bungee com listras amarelo, laranja, rosa e magenta e contorno creme. A assinatura "Geometria, Trigonometria e Álgebra" fica discreta abaixo.

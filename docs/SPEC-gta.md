@@ -79,9 +79,10 @@
 - **Fontes:** Bungee (logo e selos), Anton (títulos), Bebas Neue (rótulos e placar) e Inter (texto).
 - **Logo (aprovado em 21/11):** "GTA" em Bungee com listras amarelo #FFB02E, laranja #FF5E3A, rosa #FF2E93 e magenta #A3167A, com contorno creme. A assinatura "Geometria, Trigonometria e Álgebra" vai pequena abaixo.
 - **Estilo:** pintura tipo pôster na hora dourada, colagem em painéis, cidade inventada, sem ser de uma região específica (orla, roda-gigante, pista de skate, quadra, obra, food truck). Contornos e sombras chapadas.
+- **Personagem das dicas (aprovado em 21/11): Dani Pixel.** Cria conteúdo de desafios e transmite as missões ao vivo. As dicas vêm como falas da live ("chat, olha só...") e explicam o caminho sem dar a resposta.
 - **Linguagem e personagem:** sem estereótipos nem regionalismos, porque o jogo será aplicado em vários lugares do Brasil.
 - **Limites de propriedade intelectual:** ver HANDOFF, "Cuidado com propriedade intelectual".
 
 ## 5. Registro de mudanças
 
-- **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; linguagem sem regionalismos.
+- **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
