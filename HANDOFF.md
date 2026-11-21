@@ -269,5 +269,6 @@ npm install && POSTGRES_URL=postgres://enigma:enigma@localhost:5432/enigma ADMIN
   - **Supabase pausa após 7 dias sem uso:** se o banco for desse serviço, recoloque o cron de `/api/manter-ativo`.
   - **`position: fixed` dentro de `.screen`:** a animação de entrada das telas usa `animation-fill-mode: backwards` de propósito; com `both`, o transform residual quebraria o rodapé fixo.
   - **Elementos com `display` próprio:** o CSS tem `[hidden]{display:none!important}` global, porque elementos com `display` próprio ignoravam o atributo `hidden`.
+  - **π = 3,14, sempre:** o Lucas pediu para não mexer no valor de π sob hipótese alguma.
   - **Respeitar o pedido de "pare":** se o Lucas pedir para parar, pare na hora e só salve o trabalho em andamento num ramo separado, nunca na `main`.
 - **Nível de detalhe:** mudanças pequenas e testadas, com resumo curto em português no fim, listando o que mudou e o que ele precisa fazer, se houver algo.

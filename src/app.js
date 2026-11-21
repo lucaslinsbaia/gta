@@ -69,25 +69,25 @@ const MISSION = {
   1: {
     title: 'Mercado Público', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
     brief: '{nick}, partiu Mercado Público! Uma banca vai encher um tonel cilíndrico de suco e precisa saber quanto cabe nele. Bora medir?',
-    hint: 'A base do tonel é um círculo: área = π · r · r (r é o raio, a metade do diâmetro). Aqui a gente usa π = 3. Depois, volume = área da base × altura. Pra passar de m³ pra litros, multiplica por 1.000. Salva essa dica!',
+    hint: 'A base do tonel é um círculo: área = π · r · r (r é o raio, a metade do diâmetro), com π = 3,14. Depois, volume = área da base × altura. Pra passar de m³ pra litros, multiplica por 1.000. Salva essa dica!',
     alt: 'Fachada amarela do Mercado Público de Porto Alegre ao pôr do sol, com uma banca de frutas e um tonel de madeira em primeiro plano.',
     gen() {
       const r = pick([0.5, 1, 1.5]), h = pick([1, 2]);
-      const A = round2(3 * r * r);
+      const A = round2(3.14 * r * r);
       return { r, h, A, B: round2(A * h * 1000) };
     },
     stages: d => [
-      { type: 'build', data: [['Raio da base do tonel', `${fmt(d.r)} m`], ['Altura do tonel', `${fmt(d.h)} m`], ['Use π', '3']],
+      { type: 'build', data: [['Raio da base do tonel', `${fmt(d.r)} m`], ['Altura do tonel', `${fmt(d.h)} m`], ['Use π', '3,14']],
         question: 'Monte a conta da área da base do tonel.',
-        template: ['A = ', slot('3'), ' · ', slot(fmt(d.r)), '²'],
-        chips: makeChips(['3', fmt(d.r)], [fmt(2 * d.r), fmt(d.h), '3,14', '2']),
-        result: `Área da base: ${fmt(d.A)} m².` },
+        template: ['A = ', slot('3,14'), ' · ', slot(fmt(d.r)), '²'],
+        chips: makeChips(['3,14', fmt(d.r)], [fmt(2 * d.r), fmt(d.h), '2']),
+        result: `Área da base: ${fmt(d.A)} m² (arredondada para duas casas).` },
       { type: 'choice', data: [['Área da base', `${fmt(d.A)} m²`], ['Altura do tonel', `${fmt(d.h)} m`], ['Conversão', '1 m³ = 1.000 L']],
         question: 'Quantos litros cabem no tonel?', unit: 'litros', correct: d.B,
-        distractors: [round2(d.A * d.h), round2(d.A * d.h * 100), round2(3 * 4 * d.r * d.r * d.h * 1000)] }
+        distractors: [round2(d.A * d.h), round2(d.A * d.h * 100), round2(3.14 * 4 * d.r * d.r * d.h * 1000)] }
     ],
     solution: d => [
-      `Área da base: 3 · ${fmt(d.r)}² = ${fmt(d.A)} m².`,
+      `Área da base: 3,14 · ${fmt(d.r)}² = ${fmt(d.A)} m².`,
       `Volume: ${fmt(d.A)} · ${fmt(d.h)} = ${fmt(round2(d.A * d.h))} m³, ou seja, ${fmtBig(d.B)} litros.`
     ]
   },
