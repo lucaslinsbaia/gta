@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gestão · GTA Missões do Glicério</title>
+<meta name="description" content="Área de gestão do jogo GTA.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Bungee&family=Inter:wght@400;500;600;800&display=swap">
+<style>
+  /* =====================================================================
+     GTA · MISSÕES DO GLICÉRIO — estilos
+     Direção visual: pôster pintado na hora dourada, colagem em painéis,
+     paleta pôr do sol (roxo, magenta, rosa, laranja, amarelo, turquesa),
+     contornos e sombras chapadas. Tipos: Bungee (logo), Anton (títulos),
+     Bebas Neue (rótulos) e Inter (texto).
+     Os nomes de tokens herdados do Enigma (--gold, --gold-text…) continuam
+     valendo porque as páginas de ranking e gestão usam os mesmos.
+     ===================================================================== */
+  :root {
+    --night: #1A0833;
+    --purple: #2B0B4F;
+    --cobalt: #1B1F6B;
+    --magenta: #A3167A;
+    --pink: #FF2E93;
+    --orange: #FF5E3A;
+    --yellow: #FFB02E;
+    --cyan: #22E3FF;
+    --acid: #B6FF3B;
+    --cream: #FFF7EC;
+
+    --bg: var(--night);
+    --bg-raised: #230E42;
+    --panel: var(--purple);
+    --line: rgba(255, 247, 236, 0.16);
+    --line-strong: rgba(255, 247, 236, 0.34);
+    --gold: var(--yellow);
+    --gold-hover: #FFC35E;
+    --btn-primary: var(--pink);
+    --btn-primary-hover: #FF55A8;
+    --gold-text: var(--yellow);
+    --gold-line: rgba(255, 176, 46, 0.55);
+    --ink: var(--cream);
+    --text: #EADDF6;
+    --muted: #BBA8D6;
+    --on-gold: var(--night);
+    --ok: var(--acid);
+    --err: #FF9A80;
+    --err-bg: rgba(255, 94, 58, 0.14);
+    --backdrop: rgba(10, 3, 22, 0.82);
+
+    --font-logo: "Bungee", "Anton", Impact, sans-serif;
+    --font-display: "Anton", Impact, "Arial Narrow", sans-serif;
+    --font-label: "Bebas Neue", "Anton", "Arial Narrow", sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+    --text-2xs: 0.75rem;
+    --text-xs: 0.8125rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-md: clamp(1.4rem, 1.2rem + 0.8vw, 1.8rem);
+    --text-xl: clamp(2rem, 1.4rem + 2.6vw, 3.4rem);
+    --text-2xl: clamp(2.6rem, 1.6rem + 4vw, 4.6rem);
+
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px;
+    --s6: 24px; --s8: 32px; --s10: 40px; --s12: 48px; --s16: 64px;
+
+    --radius: 4px;
+    --edge: 3px solid var(--night);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --stripes: repeating-linear-gradient(180deg, var(--yellow) 0 0.2em, var(--orange) 0.2em 0.4em, var(--pink) 0.4em 0.6em, var(--magenta) 0.6em 0.8em);
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg);
+    background-image: radial-gradient(120% 80% at 50% -10%, rgba(163, 22, 122, 0.45), transparent 60%);
+    background-attachment: fixed;
+    color: var(--text);
+    font: 400 var(--text-base)/1.6 var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; }
+  img { max-width: 100%; display: block; }
+  :focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+  [tabindex="-1"]:focus { outline: none; }
+  .icon { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .icon--sm { width: 15px; height: 15px; }
+  .icon--lg { width: 24px; height: 24px; }
+
+  /* ---------- Tipografia ---------- */
+  .eyebrow { margin: 0 0 var(--s2); font: 400 1.25rem/1 var(--font-label); letter-spacing: 0.12em; color: var(--cyan); text-transform: uppercase; }
+  .hero__title, .title-xl { margin: 0; font: 400 var(--text-xl)/1 var(--font-display); text-transform: uppercase; color: var(--ink); letter-spacing: 0.01em; }
+  .hero__title--sm { font-size: var(--text-xl); }
+  .title-lg { margin: 0 0 var(--s3); font: 400 var(--text-md)/1.15 var(--font-display); text-transform: uppercase; color: var(--ink); }
+  .title-md { margin: 0 0 var(--s3); font: 400 1.6rem/1.1 var(--font-label); letter-spacing: 0.05em; text-transform: uppercase; color: var(--yellow); }
+  .lead { margin: 0 0 var(--s4); color: var(--text); font-size: var(--text-lg); }
+  p { margin: 0 0 var(--s3); }
+
+  /* ---------- Estrutura ---------- */
+  .wrap { width: min(1240px, 100%); margin: 0 auto; padding: var(--s8) var(--s5) var(--s12); }
+  .narrow { max-width: 560px; }
+  main { flex: 1; }
+  .screen { animation: enter 420ms var(--ease) backwards; }
+  @keyframes enter { from { opacity: 0; transform: translateY(10px); } }
+  .card { background: var(--panel); border: 3px solid var(--cream); border-radius: var(--radius); padding: var(--s6); box-shadow: 8px 8px 0 var(--pink); }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); margin-top: var(--s5); }
+
+  /* ---------- Cabeçalho ---------- */
+  .nav { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s5); background: rgba(26, 8, 51, 0.94); border-bottom: 3px solid var(--pink); backdrop-filter: blur(6px); }
+  .brand { display: inline-flex; align-items: center; gap: var(--s3); padding: 0; background: none; border: 0; cursor: pointer; text-align: left; }
+  .brand__mark { font: 400 1.9rem/1 var(--font-logo); background: var(--stripes); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: 1.5px var(--cream); }
+  .brand > .icon { color: var(--yellow); }
+  .brand__name { display: block; font: 400 1.25rem/1 var(--font-label); letter-spacing: 0.08em; color: var(--ink); }
+  .brand__sub { display: block; font-size: var(--text-2xs); color: var(--muted); }
+  .nav__tools { display: flex; align-items: center; gap: var(--s3); }
+  .score-pill { white-space: nowrap; display: inline-flex; align-items: center; gap: var(--s3); padding: var(--s1) var(--s3); background: var(--night); border: 2px solid var(--yellow); border-radius: 999px; font: 400 1.15rem/1.4 var(--font-label); letter-spacing: 0.06em; color: var(--ink); }
+  .score-pill strong { font-weight: 400; color: var(--yellow); }
+  .icon-btn { display: inline-grid; place-items: center; width: 44px; height: 44px; background: var(--purple); border: 2px solid var(--line-strong); border-radius: var(--radius); cursor: pointer; color: var(--ink); }
+  .icon-btn:hover { border-color: var(--cyan); }
+
+  /* Estrelas do nível de conhecimento */
+  .stars { display: inline-flex; gap: 2px; margin: 0; }
+  .stars .icon { width: 16px; height: 16px; stroke-width: 1.5; color: var(--line-strong); }
+  .stars .icon.is-on { color: var(--yellow); fill: var(--yellow); }
+  .stars--lg .icon { width: 34px; height: 34px; }
+
+  /* ---------- Botões ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); min-height: 52px; padding: var(--s3) var(--s6); font: 400 1.35rem/1 var(--font-label); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; border-radius: var(--radius); cursor: pointer; transition: transform 160ms var(--ease), box-shadow 160ms var(--ease); }
+  .btn--gold { background: var(--pink); color: var(--night); border: 3px solid var(--night); box-shadow: 5px 5px 0 var(--cyan); }
+  .btn--gold:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--cyan); }
+  .btn--gold:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--cyan); }
+  .btn--outline { background: transparent; color: var(--ink); border: 3px solid var(--cream); }
+  .btn--outline:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn--sm { min-height: 40px; padding: var(--s2) var(--s4); font-size: 1.1rem; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .link-btn { display: inline-flex; align-items: center; gap: var(--s2); min-height: 44px; padding: 0; background: none; border: 0; color: var(--cyan); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+  .link-btn:hover { color: var(--acid); }
+  .link-btn--muted { color: var(--muted); }
+
+  /* ---------- Capa (colagem) ---------- */
+  .cover-wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--s10); align-items: center; }
+  .cover { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 10px; aspect-ratio: 4 / 5; padding: 12px; background: var(--cream); border-radius: var(--radius); box-shadow: 10px 10px 0 var(--pink); }
+  .cover__panel { position: relative; overflow: hidden; border: var(--edge); background: var(--purple); }
+  .cover__panel img { width: 100%; height: 100%; object-fit: cover; }
+  .cover__panel--dani { grid-row: span 2; }
+  .cover__panel--dani img { object-position: 40% 18%; }
+  .cover__logo { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s2); padding: var(--s3); background: var(--night); border: var(--edge); text-align: center; }
+  .logo { margin: 0; display: flex; flex-direction: column; align-items: center; gap: var(--s2); }
+  .logo__gta { font: 400 clamp(4rem, 2rem + 9vw, 9.5rem)/1 var(--font-logo); background: var(--stripes); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: 3px var(--cream); }
+  .logo__sign { font: 500 clamp(0.6rem, 0.5rem + 0.3vw, 0.8rem)/1.3 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+  .cover__tag { margin: var(--s2) 0 0; font: 400 clamp(1.1rem, 0.9rem + 0.8vw, 1.8rem)/1 var(--font-label); letter-spacing: 0.14em; color: var(--cyan); }
+  .cover__side .title-lg { font-size: var(--text-xl); line-height: 1.05; }
+  .resume { width: 100%; margin: 0; font-size: var(--text-sm); color: var(--muted); }
+
+  /* ---------- Identificação ---------- */
+  .field { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s2); margin-bottom: var(--s3); }
+  .field label { font: 400 1.15rem/1 var(--font-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--yellow); }
+  .field input, .field select { min-height: 52px; padding: var(--s2) var(--s4); font: 500 var(--text-lg)/1.3 var(--font-body); color: var(--ink); background: var(--night); border: 2px solid var(--line-strong); border-radius: var(--radius); }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(34, 227, 255, 0.25); }
+  .field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: var(--err); }
+  .msg { min-height: 0; margin: 0; font-size: var(--text-sm); color: var(--muted); }
+  .msg:empty { display: none; }
+  .msg.is-error { color: var(--err); }
+  .msg.is-ok { color: var(--acid); }
+
+  /* ---------- Dani ---------- */
+  .avatar { width: 72px; height: 72px; flex-shrink: 0; border-radius: 50%; object-fit: cover; border: 3px solid var(--cream); box-shadow: 4px 4px 0 var(--pink); background: var(--purple); }
+  .dani-say { display: flex; align-items: flex-start; gap: var(--s4); }
+  .dani-say__name { display: flex; align-items: center; gap: var(--s2); margin: 0 0 var(--s2); font: 400 1.2rem/1 var(--font-label); letter-spacing: 0.08em; color: var(--ink); }
+  .live { display: inline-block; padding: 3px 6px 1px; font: 400 0.85rem/1 var(--font-label); letter-spacing: 0.1em; color: var(--cream); background: #D4145A; border-radius: 2px; }
+  .bubble { position: relative; margin: 0; padding: var(--s4) var(--s5); background: var(--cream); color: var(--night); border-radius: 14px; font-size: var(--text-lg); line-height: 1.5; border: 3px solid var(--night); box-shadow: 5px 5px 0 var(--cyan); }
+
+  /* ---------- Mapa ---------- */
+  .map-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--s8); align-items: end; margin-bottom: var(--s8); }
+  .missions { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s6); }
+  .mcard { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0; text-align: left; background: var(--purple); border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 7px 7px 0 var(--pink); cursor: pointer; overflow: hidden; transition: transform 160ms var(--ease), box-shadow 160ms var(--ease); }
+  .mcard:hover:not(:disabled) { transform: translate(-3px, -3px); box-shadow: 10px 10px 0 var(--cyan); }
+  .mcard:disabled { cursor: not-allowed; box-shadow: 7px 7px 0 rgba(255, 247, 236, 0.15); }
+  .mcard__img { position: relative; aspect-ratio: 5 / 3; border-bottom: 3px solid var(--cream); overflow: hidden; }
+  .mcard__img img { width: 100%; height: 100%; object-fit: cover; }
+  .mcard:disabled .mcard__img img { filter: grayscale(0.85) brightness(0.45); }
+  .mcard__num { position: absolute; left: var(--s3); top: var(--s3); padding: 4px 10px 2px; font: 400 1.3rem/1 var(--font-label); letter-spacing: 0.08em; color: var(--night); background: var(--yellow); border: 2px solid var(--night); }
+  .mcard__lock { position: absolute; inset: 0; display: grid; place-items: center; color: var(--cream); }
+  .mcard__lock .icon { width: 44px; height: 44px; }
+  .mcard__body { display: flex; flex-direction: column; gap: var(--s1); padding: var(--s4) var(--s5) var(--s5); flex: 1; }
+  .mcard__title { font: 400 1.9rem/1 var(--font-display); text-transform: uppercase; color: var(--ink); }
+  .mcard__topic { font-size: var(--text-sm); color: var(--text); }
+  .mcard__status { display: inline-flex; align-items: center; gap: var(--s2); margin-top: auto; padding-top: var(--s3); font: 400 1.15rem/1 var(--font-label); letter-spacing: 0.08em; color: var(--muted); }
+  .mcard__status.is-done { color: var(--acid); }
+  .mcard__status.is-open { color: var(--cyan); }
+  .mcard__status.is-skip { color: var(--orange); }
+
+  /* ---------- Missão ---------- */
+  .mission { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s8); align-items: start; }
+  .mission__scene { display: grid; gap: var(--s6); }
+  .scene { position: relative; overflow: hidden; border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 8px 8px 0 var(--pink); aspect-ratio: 1510 / 806; background: var(--purple); }
+  .scene img { width: 100%; height: 100%; object-fit: cover; }
+  .scene__label { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--s10) var(--s5) var(--s4); background: linear-gradient(0deg, rgba(26, 8, 51, 0.92), rgba(26, 8, 51, 0)); }
+  .scene__label .eyebrow { margin-bottom: var(--s1); color: var(--yellow); }
+  .steps { list-style: none; display: flex; gap: var(--s2); margin: 0 0 var(--s4); padding: 0; }
+  .steps li { flex: 1; padding: var(--s2) var(--s3) 6px; font: 400 1.05rem/1 var(--font-label); letter-spacing: 0.08em; text-align: center; color: var(--muted); border: 2px solid var(--line-strong); border-radius: var(--radius); }
+  .steps li.is-current { color: var(--night); background: var(--cyan); border-color: var(--cyan); }
+  .steps li.is-done { color: var(--acid); border-color: var(--acid); }
+  .data { list-style: none; margin: 0 0 var(--s4); padding: var(--s3) var(--s4); display: grid; gap: var(--s1); background: var(--night); border: 2px dashed var(--line-strong); border-radius: var(--radius); }
+  .data li { display: flex; justify-content: space-between; gap: var(--s4); font-size: var(--text-base); }
+  .data li span:first-child { color: var(--muted); }
+  .data li strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+  .question { font-size: var(--text-lg); color: var(--ink); font-weight: 600; }
+  .answer { display: flex; align-items: center; gap: var(--s3); }
+  .answer input { flex: 1; width: 100%; min-width: 0; font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+  .answer__unit { font: 400 1.3rem/1 var(--font-label); letter-spacing: 0.06em; color: var(--text); }
+  .mission__actions { margin-top: var(--s4); }
+  .mission__actions .btn { width: 100%; }
+  .mission__aux { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s2) var(--s4); margin-top: var(--s4); }
+  .mission__score { margin: var(--s3) 0 0; font-size: var(--text-sm); color: var(--muted); }
+  .shake { animation: shake 360ms; }
+  @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+  /* ---------- Conclusão ---------- */
+  .end__hero { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: var(--s8); align-items: center; margin-bottom: var(--s8); }
+  .end__dani { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 8px 8px 0 var(--cyan); }
+  .big-pts { margin: var(--s3) 0 var(--s2); font: 400 1.6rem/1 var(--font-label); letter-spacing: 0.06em; color: var(--text); }
+  .big-pts strong { font: 400 clamp(3.2rem, 2rem + 4vw, 5rem)/1 var(--font-logo); color: var(--yellow); }
+  .end__level { margin: var(--s2) 0 0; font: 400 1.4rem/1 var(--font-label); letter-spacing: 0.08em; color: var(--cyan); }
+  .end__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s8); }
+  .end__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+  .end__list li { display: flex; justify-content: space-between; gap: var(--s3); padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+  .end__list strong { font: 400 1.25rem/1 var(--font-label); letter-spacing: 0.06em; color: var(--yellow); white-space: nowrap; }
+  .study { margin: 0 0 var(--s4); }
+  .study h3 { margin: 0 0 var(--s2); font-size: var(--text-base); color: var(--ink); }
+  .study ul { margin: 0; padding-left: var(--s5); }
+  .study a { color: var(--cyan); }
+  .sync { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin-top: var(--s6); padding: var(--s3) var(--s4); border: 2px solid var(--line-strong); border-radius: var(--radius); }
+  .sync p { margin: 0; font-size: var(--text-sm); }
+  .sync.is-error { border-color: var(--err); }
+
+  /* ---------- Diálogos ---------- */
+  .dlg { width: min(520px, calc(100% - 32px)); padding: var(--s6); color: var(--text); background: var(--purple); border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 10px 10px 0 var(--pink); }
+  .dlg::backdrop { background: var(--backdrop); }
+  .dlg__head { margin-bottom: var(--s4); align-items: center; }
+  .dlg__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); margin-top: var(--s5); }
+  .dlg--reward { text-align: left; }
+  .solution { margin-top: var(--s3); padding: var(--s3) var(--s4); background: var(--night); border: 2px dashed var(--line-strong); border-radius: var(--radius); font-size: var(--text-sm); }
+  .solution p { margin: 0 0 var(--s2); }
+  .solution p:last-child { margin: 0; }
+
+  .test-fab { position: fixed; right: var(--s4); bottom: calc(var(--s4) + 80px); z-index: 30; background: var(--night); }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 1000px) {
+    .cover-wrap, .mission, .map-head, .end__grid { grid-template-columns: minmax(0, 1fr); }
+    .cover-wrap { gap: var(--s8); }
+    .missions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* O botão de confirmar fica fixo no rodapé no celular */
+    .sticky-actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; margin: 0; padding: var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom)); background: rgba(26, 8, 51, 0.96); border-top: 3px solid var(--pink); }
+    #s-missao .wrap { padding-bottom: 120px; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: var(--s5) var(--s4) var(--s10); }
+    .missions { grid-template-columns: minmax(0, 1fr); }
+    .brand__sub, .brand__name { display: none; }
+    .score-pill { gap: var(--s2); padding: 2px var(--s2); }
+    .stars .icon { width: 13px; height: 13px; }
+    .test-fab { min-height: 40px; padding: var(--s2) var(--s3); font-size: 1rem; }
+    .nav { padding: var(--s2) var(--s4); }
+    .end__hero { grid-template-columns: minmax(0, 1fr); }
+    .end__dani { width: 180px; }
+    .avatar { width: 56px; height: 56px; }
+    .bubble { font-size: var(--text-base); }
+    .card { padding: var(--s5); box-shadow: 6px 6px 0 var(--pink); }
+    .logo__gta { -webkit-text-stroke: 2px var(--cream); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* ---------- Páginas de ranking e gestão ---------- */
+  a.brand { text-decoration: none; color: inherit; }
+  .page { flex: 1; max-width: 1100px; }
+  .page__lead { max-width: 640px; margin: var(--s3) 0 0; color: var(--text); }
+  .page__meta { margin: var(--s4) 0 0; font-size: var(--text-sm); color: var(--muted); }
+  .filters { display: flex; flex-wrap: wrap; gap: var(--s4); margin-top: var(--s6); align-items: end; }
+  .field { display: grid; gap: var(--s2); min-width: min(220px, 100%); }
+  .field label, .field__label { font-size: var(--text-2xs); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-text); }
+  .field select, .field input[type="text"], .field input[type="password"] {
+    min-height: 46px; padding: var(--s2) var(--s4);
+    font: 400 var(--text-base)/1.3 var(--font-body); color: var(--ink);
+    background: rgba(14, 20, 17, 0.88); border: 1px solid var(--gold-line); border-radius: var(--radius);
+  }
+  .field select:focus, .field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(189, 154, 95, 0.2); }
+  .check { display: inline-flex; align-items: center; gap: var(--s2); min-height: 46px; font-size: var(--text-sm); color: var(--text); cursor: pointer; }
+  .check input { width: 18px; height: 18px; accent-color: var(--btn-primary); }
+  .panel-box { margin-top: var(--s6); padding: var(--s6); background: rgba(18, 23, 21, 0.86); border: 1px solid var(--line-strong); }
+  .panel-box > h2 { margin: 0 0 var(--s4); }
+  .msg { min-height: 1.4em; margin: var(--s2) 0 0; font-size: var(--text-sm); color: var(--muted); }
+  .msg.is-error { color: var(--err); }
+  .msg.is-ok { color: var(--gold-text); }
+  .empty { margin: var(--s6) 0 0; padding: var(--s6); text-align: center; color: var(--muted); border: 1px dashed var(--line-strong); }
+  .tag { display: inline-block; margin-left: var(--s2); padding: 1px 6px; font-size: var(--text-2xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line-strong); vertical-align: middle; }
+
+  /* Tabela: vira lista de cartões em telas estreitas */
+  .table { width: 100%; margin-top: var(--s5); border-collapse: collapse; font-size: var(--text-sm); }
+  .table th { padding: var(--s2) var(--s3); font-size: var(--text-2xs); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-align: left; color: var(--gold-text); border-bottom: 1px solid var(--gold-line); }
+  .table td { padding: var(--s3); border-bottom: 1px solid var(--line); color: var(--text); vertical-align: middle; }
+  .table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .table td.name { color: var(--ink); font-weight: 500; }
+  .table .pos { width: 3.5rem; font: 400 var(--text-lg)/1 var(--font-display); color: var(--muted); }
+  .table tr.is-top .pos { color: var(--gold-text); }
+  .table tr.is-top td.name { color: var(--ink); }
+  .table .grade-cell { font: 400 var(--text-lg)/1 var(--font-display); color: var(--ink); }
+  .table .actions { text-align: right; white-space: nowrap; }
+  .table .actions .link-btn + .link-btn { margin-left: var(--s4); }
+  @media (max-width: 720px) {
+    .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .table, .table tbody, .table tr, .table td { display: block; }
+    .table tr { display: grid; grid-template-columns: auto 1fr auto; gap: var(--s1) var(--s3); padding: var(--s4) 0; border-bottom: 1px solid var(--line); }
+    .table td { padding: 0; border: 0; }
+    .table td[data-label]:not(.pos):not(.name):not(.grade-cell)::before { content: attr(data-label) ": "; color: var(--muted); }
+    .table td.pos { grid-row: span 2; align-self: center; width: auto; min-width: 2.5rem; }
+    .table td.name { grid-column: 2; }
+    .table td.grade-cell { grid-column: 3; grid-row: 1; text-align: right; }
+    .table td:not(.pos):not(.name):not(.grade-cell) { grid-column: 2 / -1; text-align: left; font-size: var(--text-xs); }
+    .table .actions { text-align: left; }
+  }
+
+  /* Gestão */
+  .tabs { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s6); border-bottom: 1px solid var(--line-strong); }
+  .tab { min-height: 44px; padding: var(--s2) var(--s4); background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; font-size: var(--text-sm); }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--gold); }
+  .tab:hover { color: var(--ink); }
+  .row-form { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: end; }
+  .row-form .field { flex: 1 1 220px; }
+  .pub-box { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s4); margin-top: var(--s5); padding: var(--s4) var(--s5); border: 1px solid var(--gold-line); background: rgba(189, 154, 95, 0.06); }
+  .pub-box p { margin: 0; font-size: var(--text-sm); color: var(--text); }
+  .pub-box .pub-actions { display: flex; flex-wrap: wrap; gap: var(--s3); }
+  .login { max-width: 420px; }
+  .foot-note { margin-top: auto; padding: var(--s6) 16px; font-size: var(--text-2xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; }
+  .star-text { color: var(--yellow); letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="/" aria-label="GTA, Missões do Glicério: ir para o jogo">
+    <span class="brand__mark" aria-hidden="true">GTA</span>
+    <span><span class="brand__name">Missões do Glicério</span><span class="brand__sub">Área de gestão</span></span>
+  </a>
+  <button type="button" class="link-btn" id="g-logout" hidden>Sair</button>
+</header>
+<main class="wrap page">
+  <!-- Entrada -->
+  <section id="v-login" hidden>
+    <p class="eyebrow">Área de gestão</p>
+    <h1 class="hero__title hero__title--sm">Entrar na gestão</h1>
+    <p class="page__lead">Crie turmas, acompanhe as partidas e publique o ranking.</p>
+    <form class="panel-box login" id="login-form" novalidate>
+      <div class="field">
+        <label for="login-pwd">Senha</label>
+        <input id="login-pwd" type="password" autocomplete="current-password" required aria-describedby="login-msg">
+      </div>
+      <p class="msg" id="login-msg" aria-live="polite"></p>
+      <button type="submit" class="btn btn--gold">Entrar <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+    </form>
+  </section>
+
+  <!-- Painel -->
+  <section id="v-app" hidden>
+    <p class="eyebrow">Área de gestão</p>
+    <h1 class="hero__title hero__title--sm">Gestão das missões</h1>
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab" role="tab" id="tab-partidas" aria-controls="p-partidas" aria-selected="true">Partidas e publicação</button>
+      <button type="button" class="tab" role="tab" id="tab-turmas" aria-controls="p-turmas" aria-selected="false">Turmas</button>
+      <button type="button" class="tab" role="tab" id="tab-publicados" aria-controls="p-publicados" aria-selected="false">Rankings publicados</button>
+    </div>
+    <p class="msg" id="app-msg" aria-live="polite"></p>
+
+    <div role="tabpanel" id="p-partidas" aria-labelledby="tab-partidas">
+      <div class="filters">
+        <div class="field"><label for="m-dia">Data</label><select id="m-dia"></select></div>
+        <div class="field"><label for="m-turma">Turma</label><select id="m-turma"></select></div>
+        <label class="check"><input type="checkbox" id="m-teste"> Incluir partidas do modo de teste</label>
+      </div>
+      <div class="pub-box" id="m-pub" hidden>
+        <p id="m-pub-text"></p>
+        <div class="pub-actions">
+          <button type="button" class="btn btn--gold btn--sm" id="m-publish">Publicar ranking</button>
+          <button type="button" class="btn btn--outline btn--sm" id="m-unpublish" hidden>Despublicar</button>
+        </div>
+      </div>
+      <table class="table" id="m-table" hidden>
+        <thead><tr><th scope="col">Posição</th><th scope="col">Participante</th><th scope="col">Turma</th><th scope="col" class="num">Pontos</th><th scope="col" class="num">Nota</th><th scope="col" class="num">Erros</th><th scope="col" class="num">Dicas</th><th scope="col" class="num">Tempo</th><th scope="col" class="num">Partidas</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+        <tbody id="m-body"></tbody>
+      </table>
+      <p class="empty" id="m-empty" hidden></p>
+    </div>
+
+    <div role="tabpanel" id="p-turmas" aria-labelledby="tab-turmas" hidden>
+      <form class="panel-box" id="t-form" novalidate>
+        <h2 class="title-md">Nova turma</h2>
+        <div class="row-form">
+          <div class="field">
+            <label for="t-nome">Nome da turma</label>
+            <input id="t-nome" type="text" maxlength="20" placeholder="ex.: 9º B" autocomplete="off" aria-describedby="t-msg">
+          </div>
+          <button type="submit" class="btn btn--gold">Criar turma</button>
+        </div>
+        <p class="msg" id="t-msg" aria-live="polite"></p>
+      </form>
+      <table class="table" id="t-table" hidden>
+        <thead><tr><th scope="col">Turma</th><th scope="col">Situação</th><th scope="col" class="num">Partidas</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+        <tbody id="t-body"></tbody>
+      </table>
+      <p class="empty" id="t-empty" hidden>Nenhuma turma criada. As turmas criadas aqui aparecem para os alunos na tela de identificação do jogo.</p>
+    </div>
+
+    <div role="tabpanel" id="p-publicados" aria-labelledby="tab-publicados" hidden>
+      <table class="table" id="u-table" hidden>
+        <thead><tr><th scope="col">Data</th><th scope="col">Turma</th><th scope="col" class="num">Participantes</th><th scope="col">Publicado em</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+        <tbody id="u-body"></tbody>
+      </table>
+      <p class="empty" id="u-empty" hidden>Nenhum ranking publicado ainda. Publique na aba “Partidas e publicação”.</p>
+    </div>
+  </section>
+</main>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M19 21v-1a5 5 0 0 0-5-5h-4a5 5 0 0 0-5 5v1"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.3L3 16M3 21v-5h5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/></symbol>
+  <symbol id="i-skip" viewBox="0 0 24 24"><path d="m5 4 10 8-10 8zM19 5v14"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 21h18M5 18h14M6 18v-7M10 18v-7M14 18v-7M18 18v-7M4 11h16M12 3 3 8.5V11h18V8.5z"/></symbol>
+</svg>
+<script>
+const $ = id => document.getElementById(id);
+const escapeHtml = text => String(text ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const fmtGrade = n => Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+function fmtTime(ms) {
+  const total = Math.round(ms / 1000), h = Math.floor(total / 3600), m = Math.floor(total / 60) % 60, s = total % 60;
+  const p = n => String(n).padStart(2, '0');
+  return h ? `${h}:${p(m)}:${p(s)}` : `${p(m)}:${p(s)}`;
+}
+function fmtDay(iso, long = true) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  const base = date.toLocaleDateString('pt-BR');
+  return long ? `${base} · ${date.toLocaleDateString('pt-BR', { weekday: 'long' })}` : base;
+}
+const fmtStamp = iso => new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+/* Área de gestão: turmas, partidas do dia e publicação do ranking. */
+/* --- Validação do nome e da turma ---------------------------------
+   1. Tipos de caractere: letras (com acento), números, espaço, hífen,
+      ponto e apóstrofo (a turma aceita também º, ª e barra).
+   2. Lista restritiva: palavrões, insultos e termos ofensivos.
+   A comparação é feita sobre o texto normalizado: minúsculas, sem
+   acentos, números e símbolos trocados pelas letras que imitam
+   (p0rr4 → porra) e letras repetidas reduzidas (porrraaa → pora).
+   - BLOCKED_WORDS: bloqueadas como palavra inteira. Inclui termos curtos
+     que aparecem dentro de nomes reais ("cu" em Cunha, "puto" em Caputo).
+   - BLOCKED_ROOTS: raízes inconfundíveis, procuradas também dentro de
+     palavras e com as letras separadas (c.a.r.a.l.h.o).
+   ------------------------------------------------------------------ */
+const BLOCKED_WORDS = [
+  // português
+  'cu', 'cuzao', 'cuzinho', 'puta', 'puto', 'putinha', 'puteiro', 'putaria', 'pau', 'piroca', 'pica', 'rola',
+  'porra', 'merda', 'merdinha', 'merdinho', 'merdao', 'bosta', 'bostinha', 'foda', 'fodase', 'fodido', 'fodida', 'foder', 'caralho', 'cacete',
+  'buceta', 'boceta', 'xota', 'xoxota', 'xereca', 'pinto', 'pemba', 'brioco', 'rabo',
+  'otario', 'otaria', 'babaca', 'idiota', 'imbecil', 'retardado', 'retardada', 'mongol', 'debil',
+  'corno', 'corna', 'chifrudo', 'viado', 'bicha', 'sapatao', 'traveco', 'vadia', 'vagabunda', 'vagabundo',
+  'piranha', 'prostituta', 'safada', 'safado', 'arrombado', 'arrombada', 'desgracado', 'desgracada',
+  'escroto', 'escrota', 'canalha', 'nojento', 'lixo', 'macaco', 'macaca', 'nazista', 'nazi', 'hitler',
+  // abreviações
+  'fdp', 'vsf', 'vtnc', 'tnc', 'pqp', 'krl', 'crl', 'prr', 'pnc', 'bct', 'tmnc',
+  // inglês
+  'fuck', 'fucker', 'fucking', 'shit', 'bitch', 'dick', 'cock', 'cunt', 'pussy', 'ass', 'asshole',
+  'bastard', 'slut', 'whore', 'fag', 'faggot', 'nigga', 'nigger', 'retard'
+];
+const BLOCKED_ROOTS = [
+  'caralh', 'buceta', 'boceta', 'xoxot', 'punhet', 'arromb', 'filhodaput', 'putaquepariu', 'vaitomarnocu',
+  'merda', 'porra', 'fuck', 'shit', 'bitch', 'cunt', 'nigg', 'faggot', 'asshole'
+];
+
+const LEET = { 0: 'o', 1: 'i', 3: 'e', 4: 'a', 5: 's', 7: 't', 8: 'b', '@': 'a', '$': 's', '!': 'i', 'ø': 'o', 'æ': 'ae', 'ß': 'ss', 'ł': 'l', 'đ': 'd' };
+const collapseRepeats = text => text.replace(/(.)\1+/g, '$1');
+
+/** Texto comparável: minúsculas, sem acentos, com números/símbolos "leet" trocados por letras. */
+function normalizeForFilter(text) {
+  return text.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[0134578@$!øæßłđ]/g, ch => LEET[ch]);
+}
+
+const BLOCKED_WORD_SET = new Set(BLOCKED_WORDS.map(collapseRepeats));
+const BLOCKED_ROOT_LIST = BLOCKED_ROOTS.map(collapseRepeats);
+
+/** true se o texto tem um termo proibido (palavra inteira ou raiz, mesmo com letras separadas). */
+function hasBlockedTerm(text) {
+  const tokens = normalizeForFilter(text).split(/[^a-z]+/).filter(Boolean).map(collapseRepeats);
+  const compact = collapseRepeats(tokens.join(''));
+  return tokens.some(t => BLOCKED_WORD_SET.has(t)) || BLOCKED_ROOT_LIST.some(root => compact.includes(root));
+}
+
+const NAME_CHARS = /^[\p{L}\p{N} .'’-]+$/u;
+const CLASS_CHARS = /^[\p{L}\p{N} .'’ºª°/-]+$/u;
+
+/** Devolve a orientação para o nome, ou '' se estiver tudo certo. */
+function nameProblem(name) {
+  if (!name) return 'Digite seu nome ou apelido para começar.';
+  if (!NAME_CHARS.test(name)) return 'Use só letras, números, espaços, hífen, ponto ou apóstrofo no nome.';
+  if ((name.match(/\p{L}/gu) || []).length < 2) return 'Use pelo menos 2 letras no nome ou apelido.';
+  if (hasBlockedTerm(name)) return 'Esse nome não pode ser usado no jogo. Escolha outro nome ou apelido.';
+  return '';
+}
+
+/** Devolve a orientação para a turma (opcional), ou '' se estiver tudo certo. */
+function classProblem(turma) {
+  if (!turma) return '';
+  if (!CLASS_CHARS.test(turma)) return 'Use só letras, números, espaços e º, ª, hífen ou barra na turma.';
+  if (hasBlockedTerm(turma)) return 'Esse texto não pode ser usado na turma. Revise e tente de novo.';
+  return '';
+}
+
+const TOKEN_KEY = 'enigma-gestao-token';
+let token = null;
+try { token = sessionStorage.getItem(TOKEN_KEY); } catch (e) { /* sem armazenamento */ }
+let painel = { turmas: [], dias: [], publicacoes: [] };
+let atual = { ranking: [], publicacoes: [] };
+
+async function api(acao, dados = {}) {
+  const res = await fetch('/api/admin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: JSON.stringify({ acao, ...dados })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401 && acao !== 'entrar') { logout(data.erro); throw new Error(data.erro); }
+  if (!res.ok) throw new Error(data.erro || 'Algo deu errado. Tente de novo.');
+  return data;
+}
+
+function setMsg(id, text, kind) {
+  const el = $(id);
+  el.textContent = text || '';
+  el.classList.toggle('is-error', kind === 'error');
+  el.classList.toggle('is-ok', kind === 'ok');
+}
+
+function showView(name) {
+  $('v-login').hidden = name !== 'login';
+  $('v-app').hidden = name !== 'app';
+  $('g-logout').hidden = name !== 'app';
+}
+
+function logout(reason) {
+  token = null;
+  try { sessionStorage.removeItem(TOKEN_KEY); } catch (e) { /* ok */ }
+  showView('login');
+  setMsg('login-msg', reason || '', reason ? 'error' : null);
+  $('login-pwd').value = '';
+  $('login-pwd').focus();
+}
+
+$('login-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const senha = $('login-pwd').value;
+  if (!senha) { setMsg('login-msg', 'Digite a senha.', 'error'); return; }
+  setMsg('login-msg', 'Entrando…');
+  try {
+    const data = await api('entrar', { senha });
+    token = data.token;
+    try { sessionStorage.setItem(TOKEN_KEY, token); } catch (e) { /* ok */ }
+    setMsg('login-msg', '');
+    await start();
+  } catch (e) {
+    setMsg('login-msg', e.message, 'error');
+    $('login-pwd').select();
+  }
+});
+$('g-logout').addEventListener('click', () => logout());
+
+/* --- Abas --- */
+const TABS = ['partidas', 'turmas', 'publicados'];
+function selectTab(name) {
+  TABS.forEach(t => {
+    $(`tab-${t}`).setAttribute('aria-selected', String(t === name));
+    $(`p-${t}`).hidden = t !== name;
+  });
+  setMsg('app-msg', '');
+}
+TABS.forEach(t => $(`tab-${t}`).addEventListener('click', () => selectTab(t)));
+
+async function loadPainel() {
+  painel = await api('painel');
+  renderTurmas();
+  renderPublicados();
+  renderFiltros();
+}
+
+/* --- Turmas --- */
+function renderTurmas() {
+  const list = painel.turmas;
+  $('t-table').hidden = !list.length;
+  $('t-empty').hidden = list.length > 0;
+  $('t-body').innerHTML = list.map(t => `<tr>
+    <td class="name" data-label="Turma">${escapeHtml(t.nome)}</td>
+    <td data-label="Situação">${t.ativa ? 'Ativa · aparece no jogo' : 'Arquivada'}</td>
+    <td class="num" data-label="Partidas">${t.partidas}</td>
+    <td class="actions"><button type="button" class="link-btn" data-toggle="${t.id}" data-ativa="${t.ativa ? 0 : 1}">${t.ativa ? 'Arquivar' : 'Reativar'}</button>${t.partidas ? '' : `<button type="button" class="link-btn" data-del-turma="${t.id}">Excluir</button>`}</td>
+  </tr>`).join('');
+}
+
+$('t-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const nome = $('t-nome').value.trim().replace(/\s+/g, ' ');
+  const problem = !nome ? 'Digite o nome da turma.' : classProblem(nome);
+  if (problem) { setMsg('t-msg', problem, 'error'); $('t-nome').focus(); return; }
+  try {
+    await api('criarTurma', { nome });
+    $('t-nome').value = '';
+    setMsg('t-msg', `Turma “${nome}” criada. Ela já aparece na tela de identificação do jogo.`, 'ok');
+    await loadPainel();
+  } catch (e) { setMsg('t-msg', e.message, 'error'); }
+});
+
+$('t-body').addEventListener('click', async event => {
+  const toggle = event.target.closest('[data-toggle]'), del = event.target.closest('[data-del-turma]');
+  try {
+    if (toggle) await api('turmaAtiva', { id: Number(toggle.dataset.toggle), ativa: toggle.dataset.ativa === '1' });
+    if (del) {
+      const t = painel.turmas.find(x => x.id === Number(del.dataset.delTurma));
+      if (!confirm(`Excluir a turma “${t.nome}”?`)) return;
+      await api('excluirTurma', { id: t.id });
+    }
+    if (toggle || del) await loadPainel();
+  } catch (e) { setMsg('t-msg', e.message, 'error'); }
+});
+
+/* --- Partidas e publicação --- */
+function renderFiltros() {
+  const dia = $('m-dia').value, turma = $('m-turma').value;
+  $('m-dia').innerHTML = painel.dias.length
+    ? painel.dias.map(d => `<option value="${d.dia}">${fmtDay(d.dia, false)} · ${d.partidas} partida${d.partidas === 1 ? '' : 's'}</option>`).join('')
+    : '<option value="">Sem partidas ainda</option>';
+  if (painel.dias.some(d => d.dia === dia)) $('m-dia').value = dia;
+  $('m-turma').innerHTML = '<option value="todas">Todas as turmas</option>' +
+    painel.turmas.map(t => `<option value="${t.id}">${escapeHtml(t.nome)}${t.ativa ? '' : ' (arquivada)'}</option>`).join('') +
+    '<option value="sem">Sem turma</option>';
+  if ([...$('m-turma').options].some(o => o.value === turma)) $('m-turma').value = turma;
+  loadPartidas();
+}
+
+async function loadPartidas() {
+  const dia = $('m-dia').value;
+  if (!dia) {
+    $('m-table').hidden = true; $('m-pub').hidden = true;
+    $('m-empty').hidden = false;
+    $('m-empty').textContent = 'Nenhuma partida registrada ainda. Os resultados chegam aqui quando os alunos concluem a jornada.';
+    return;
+  }
+  try {
+    atual = await api('partidas', { dia, turma: $('m-turma').value, incluirTeste: $('m-teste').checked });
+  } catch (e) { setMsg('app-msg', e.message, 'error'); return; }
+  const rows = atual.ranking;
+  $('m-table').hidden = !rows.length;
+  $('m-empty').hidden = rows.length > 0;
+  $('m-empty').textContent = 'Nenhuma partida nesta seleção.';
+  $('m-body').innerHTML = rows.map(r => `<tr class="${r.pos <= 3 ? 'is-top' : ''}">
+    <td class="pos" data-label="Posição">${r.pos}º</td>
+    <td class="name" data-label="Participante">${escapeHtml(r.nome)}${r.teste ? '<span class="tag">teste</span>' : ''}</td>
+    <td data-label="Turma">${escapeHtml(r.turma || (r.turma_texto ? `${r.turma_texto} (não cadastrada)` : 'Sem turma'))}</td>
+    <td class="num grade-cell" data-label="Pontos">${r.pontos}</td>
+    <td class="num" data-label="Nota">${fmtGrade(r.nota)}</td>
+    <td class="num" data-label="Erros">${r.erros}</td>
+    <td class="num" data-label="Dicas">${r.dicas}</td>
+    <td class="num" data-label="Tempo">${fmtTime(r.tempo_ms)}</td>
+    <td class="num" data-label="Partidas">${r.partidas}</td>
+    <td class="actions"><button type="button" class="link-btn" data-del="${r.id}" data-nome="${escapeHtml(r.nome)}">Excluir partida</button></td>
+  </tr>`).join('');
+  renderPubBox(rows.length);
+}
+
+function renderPubBox(count) {
+  const turma = $('m-turma').value;
+  const box = $('m-pub');
+  if (turma === 'sem') {
+    box.hidden = false;
+    $('m-pub-text').textContent = 'Para publicar, escolha “Todas as turmas” ou uma turma cadastrada.';
+    $('m-publish').hidden = true; $('m-unpublish').hidden = true;
+    return;
+  }
+  const turmaId = turma === 'todas' ? null : Number(turma);
+  const pub = atual.publicacoes.find(p => (p.turma_id || null) === turmaId);
+  const escopo = turmaId ? `da turma ${painel.turmas.find(t => t.id === turmaId)?.nome}` : 'de todas as turmas';
+  box.hidden = false;
+  $('m-publish').hidden = !count;
+  $('m-publish').textContent = pub ? 'Atualizar publicação' : 'Publicar ranking';
+  $('m-unpublish').hidden = !pub;
+  $('m-unpublish').dataset.id = pub ? pub.id : '';
+  $('m-pub-text').textContent = pub
+    ? `Ranking ${escopo} publicado em ${fmtStamp(pub.publicada_em)}. Partidas novas só entram quando você atualizar a publicação.`
+    : count ? `O ranking ${escopo} deste dia ainda não foi publicado. Os alunos só veem depois da publicação.` : 'Sem partidas para publicar.';
+}
+
+['m-dia', 'm-turma', 'm-teste'].forEach(id => $(id).addEventListener('change', loadPartidas));
+
+$('m-publish').addEventListener('click', async () => {
+  const turma = $('m-turma').value;
+  try {
+    const { publicacao } = await api('publicar', { dia: $('m-dia').value, turmaId: turma === 'todas' ? null : Number(turma), incluirTeste: $('m-teste').checked });
+    setMsg('app-msg', `Ranking publicado com ${publicacao.total} participante${publicacao.total === 1 ? '' : 's'}.`, 'ok');
+    await loadPainel();
+  } catch (e) { setMsg('app-msg', e.message, 'error'); }
+});
+
+$('m-unpublish').addEventListener('click', async () => {
+  if (!confirm('Despublicar este ranking? Os alunos deixam de vê-lo.')) return;
+  try {
+    await api('despublicar', { id: Number($('m-unpublish').dataset.id) });
+    setMsg('app-msg', 'Ranking despublicado.', 'ok');
+    await loadPainel();
+  } catch (e) { setMsg('app-msg', e.message, 'error'); }
+});
+
+$('m-body').addEventListener('click', async event => {
+  const btn = event.target.closest('[data-del]');
+  if (!btn) return;
+  if (!confirm(`Excluir esta partida de ${btn.dataset.nome}? Se houver outra partida no dia, a próxima melhor pontuação assume o lugar.`)) return;
+  try {
+    await api('excluirPartida', { id: btn.dataset.del });
+    setMsg('app-msg', 'Partida excluída. Se o ranking já estava publicado, atualize a publicação.', 'ok');
+    await loadPainel();
+  } catch (e) { setMsg('app-msg', e.message, 'error'); }
+});
+
+/* --- Publicados --- */
+function renderPublicados() {
+  const list = painel.publicacoes;
+  $('u-table').hidden = !list.length;
+  $('u-empty').hidden = list.length > 0;
+  $('u-body').innerHTML = list.map(p => {
+    const q = new URLSearchParams({ dia: p.dia, ...(p.turma_nome ? { turma: p.turma_nome } : {}) });
+    return `<tr>
+      <td class="name" data-label="Data">${fmtDay(p.dia, false)}</td>
+      <td data-label="Turma">${escapeHtml(p.turma_nome || 'Todas as turmas')}</td>
+      <td class="num" data-label="Participantes">${p.total}</td>
+      <td data-label="Publicado em">${fmtStamp(p.publicada_em)}</td>
+      <td class="actions"><a class="link-btn" href="/ranking?${q}" target="_blank" rel="noopener">Ver</a><button type="button" class="link-btn" data-unpub="${p.id}">Despublicar</button></td>
+    </tr>`;
+  }).join('');
+}
+
+$('u-body').addEventListener('click', async event => {
+  const btn = event.target.closest('[data-unpub]');
+  if (!btn || !confirm('Despublicar este ranking? Os alunos deixam de vê-lo.')) return;
+  try {
+    await api('despublicar', { id: Number(btn.dataset.unpub) });
+    setMsg('app-msg', 'Ranking despublicado.', 'ok');
+    await loadPainel();
+  } catch (e) { setMsg('app-msg', e.message, 'error'); }
+});
+
+async function start() {
+  showView('app');
+  selectTab('partidas');
+  try { await loadPainel(); } catch (e) { if (token) setMsg('app-msg', e.message, 'error'); }
+}
+
+if (token) start(); else logout();
+</script>
+</body>
+</html>

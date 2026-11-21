@@ -7,8 +7,8 @@ function rowHtml(e) {
     <td class="pos" data-label="Posição">${e.pos}º</td>
     <td class="name" data-label="Participante">${escapeHtml(e.nome)}</td>
     <td data-label="Turma">${escapeHtml(e.turma || 'Sem turma')}</td>
-    <td class="num grade-cell" data-label="Nota">${fmtGrade(e.nota)}</td>
-    <td data-label="Conceito">${escapeHtml(e.conceito)}${e.pulados ? ` <span class="tag">${e.pulados} pulado${e.pulados > 1 ? 's' : ''}</span>` : ''}</td>
+    <td class="num grade-cell" data-label="Pontos">${e.pontos ?? 0}</td>
+    <td data-label="Nível"><span class="star-text" aria-label="${e.estrelas ?? 0} de 5 estrelas">${'★'.repeat(e.estrelas ?? 0)}${'☆'.repeat(5 - (e.estrelas ?? 0))}</span>${e.pulados ? ` <span class="tag">${e.pulados} pulada${e.pulados > 1 ? 's' : ''}</span>` : ''}</td>
     <td class="num" data-label="Tentativas incorretas">${e.erros}</td>
     <td class="num" data-label="Dicas">${e.dicas}</td>
     <td class="num" data-label="Tempo">${fmtTime(e.tempoMs)}</td>

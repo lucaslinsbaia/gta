@@ -59,3 +59,4 @@
   .pub-box .pub-actions { display: flex; flex-wrap: wrap; gap: var(--s3); }
   .login { max-width: 420px; }
   .foot-note { margin-top: auto; padding: var(--s6) 16px; font-size: var(--text-2xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; }
+  .star-text { color: var(--yellow); letter-spacing: 0.1em; }

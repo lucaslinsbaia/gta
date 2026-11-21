@@ -148,7 +148,8 @@ async function loadPartidas() {
     <td class="pos" data-label="Posição">${r.pos}º</td>
     <td class="name" data-label="Participante">${escapeHtml(r.nome)}${r.teste ? '<span class="tag">teste</span>' : ''}</td>
     <td data-label="Turma">${escapeHtml(r.turma || (r.turma_texto ? `${r.turma_texto} (não cadastrada)` : 'Sem turma'))}</td>
-    <td class="num grade-cell" data-label="Nota">${fmtGrade(r.nota)}</td>
+    <td class="num grade-cell" data-label="Pontos">${r.pontos}</td>
+    <td class="num" data-label="Nota">${fmtGrade(r.nota)}</td>
     <td class="num" data-label="Erros">${r.erros}</td>
     <td class="num" data-label="Dicas">${r.dicas}</td>
     <td class="num" data-label="Tempo">${fmtTime(r.tempo_ms)}</td>
@@ -203,7 +204,7 @@ $('m-unpublish').addEventListener('click', async () => {
 $('m-body').addEventListener('click', async event => {
   const btn = event.target.closest('[data-del]');
   if (!btn) return;
-  if (!confirm(`Excluir esta partida de ${btn.dataset.nome}? Se houver outra partida no dia, a próxima melhor nota assume o lugar.`)) return;
+  if (!confirm(`Excluir esta partida de ${btn.dataset.nome}? Se houver outra partida no dia, a próxima melhor pontuação assume o lugar.`)) return;
   try {
     await api('excluirPartida', { id: btn.dataset.del });
     setMsg('app-msg', 'Partida excluída. Se o ranking já estava publicado, atualize a publicação.', 'ok');

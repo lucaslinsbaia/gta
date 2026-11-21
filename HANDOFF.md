@@ -125,9 +125,18 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
   - o projeto `gta-glicerio` existe na Vercel com o domínio reservado;
   - a base de código é a do Enigma, funcionando e testada.
 - **Repositório:** `lucaslinsbaia/gta` existe, com a base enviada na branch `main`, e está ligado ao projeto `gta-glicerio` na Vercel.
-- **Ainda não existe:**
-  - nada do conteúdo do GTA: o jogo em `src/` ainda é o Enigma inteiro, com textos, imagens e capítulos de trigonometria.
-- **Atenção:** rodar `python3 src/build.py` **substitui** a página provisória `index.html` pelo jogo montado. Até o GTA ter conteúdo próprio, não rode o build antes de enviar, ou o endereço vai mostrar o Enigma.
+- **Jogo do GTA no ar (21/11):** o `src/` foi reescrito e o `index.html` agora é o jogo:
+  - capa em colagem com o logo C;
+  - identificação e mapa com as 6 missões em sequência;
+  - missões em duas etapas, com dicas da Dani Pixel (−20), "Pular" depois de 10 erros e resolução;
+  - conclusão com pontos, estrelas e links de estudo, e envio do resultado.
+- **Servidor atualizado:**
+  - `lib/nota.js` refaz pontos, estrelas e nota;
+  - a tabela `resultados` ganhou `pontos` e `estrelas`;
+  - ranking e gestão ordenam por pontos;
+  - o ranking público mostra pontos e estrelas, e a gestão mostra também a nota.
+- **Testado** com Postgres local: 2 partidas, publicação e páginas de ranking e gestão.
+- **Imagens antigas do Enigma** continuam em `img/` sem uso. Podem ser apagadas.
 - **Sem banco:** as rotas `/api/*` respondem 503 ("Banco de dados não configurado"). Sem servidor, o jogo funciona sem ranking e esconde o campo Turma.
 
 ## 5. Próximos passos
@@ -163,7 +172,7 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
    - adaptar `src/pages/*` (ranking e gestão) ao visual e aos textos do GTA. As tabelas nascem sozinhas no banco novo.
 10. **Build e testes:**
     - `python3 src/build.py`;
-    - atualizar os testes de `test/` para as missões, porque eles procuram pistas e textos do Enigma.
+    - ~~atualizar os testes~~ feito: `test/gta-fluxo.js` (os testes antigos do Enigma foram para `test/legado-enigma/`).
     Conferir no celular (390 px) e no computador (1440 px). Fazer commit e envio a cada etapa.
 11. **Escrever a SPEC do GTA** em `docs/SPEC-gta.md`, com o registro de mudanças.
 
@@ -224,9 +233,9 @@ python3 src/build.py
 Monta `index.html`, `ranking.html` e `gestao.html`, e gera `lib/filtro.js`.
 
 ```bash
-cd test && node t15.js
+cd test && node gta-fluxo.js
 ```
-Fluxo completo nos três capítulos, no computador e no celular. Outros testes: `t14` (nota), `t7` (Círculo), `t13` (cards), `t28` (rodapé fixo no celular) e `t30` (decimais no celular).
+Confere 24 mil sorteios (nenhuma resposta negativa ou com mais de duas casas) e o fluxo completo das 6 missões a 1440 e 390 px: erros, dica, pular, pontos e ausência de rolagem lateral.
 
 ```bash
 service postgresql start
@@ -253,7 +262,7 @@ npm install && POSTGRES_URL=postgres://enigma:enigma@localhost:5432/enigma ADMIN
 - **Armadilhas conhecidas:**
   - **Criar repositório e GraphQL:** a sessão não cria repositórios no GitHub nem usa a API GraphQL; só a REST, em repositórios já ligados com `add_repo`.
   - **Repositório novo na Vercel:** a ferramenta não liga um repositório novo enquanto o app da Vercel no GitHub não tiver acesso a ele; quem libera é o Lucas, no painel.
-  - **Build sobrescreve a página provisória:** `src/build.py` grava `index.html`; não rode antes de ter o conteúdo do GTA, ou o site mostra o Enigma.
+  - **Build:** `src/build.py` grava `index.html`, `ranking.html`, `gestao.html` e `lib/filtro.js`. Rode sempre antes de enviar mudanças em `src/`.
   - **Respostas visíveis:** nunca deixe a resposta visível em imagens, exemplos de instrução ou dicas. Confira os exemplos contra todas as respostas possíveis do sorteio.
   - **Celular:** os campos usam `inputmode="decimal"`, que não tem "/" nem "−". Se o GTA precisar de números negativos (Álgebra), resolva isso de propósito, por exemplo com um botão de sinal ou um campo de seleção.
   - **Supabase pausa após 7 dias sem uso:** se o banco for desse serviço, recoloque o cron de `/api/manter-ativo`.

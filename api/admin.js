@@ -17,14 +17,14 @@ async function bestOfDay(dia, turma, incluirTeste) {
   const rows = await sql`
     SELECT * FROM (
       SELECT DISTINCT ON (r.nome_chave, COALESCE(r.turma_id, 0))
-        r.id, r.nome, r.turma_id, t.nome AS turma, r.turma_texto, r.nota::float AS nota, r.conceito,
+        r.id, r.nome, r.turma_id, t.nome AS turma, r.turma_texto, r.pontos, r.estrelas, r.nota::float AS nota, r.conceito,
         r.tempo_ms, r.erros, r.dicas, r.pulados, r.teste, r.jogado_em,
         COUNT(*) OVER (PARTITION BY r.nome_chave, COALESCE(r.turma_id, 0)) AS partidas
       FROM resultados r LEFT JOIN turmas t ON t.id = r.turma_id
       WHERE r.dia = ${dia} ${turmaFilter} ${incluirTeste ? sql`` : sql`AND NOT r.teste`}
-      ORDER BY r.nome_chave, COALESCE(r.turma_id, 0), r.nota DESC, r.erros ASC, r.tempo_ms ASC, r.jogado_em ASC
+      ORDER BY r.nome_chave, COALESCE(r.turma_id, 0), r.pontos DESC, r.erros ASC, r.tempo_ms ASC, r.jogado_em ASC
     ) melhores
-    ORDER BY nota DESC, erros ASC, tempo_ms ASC, jogado_em ASC`;
+    ORDER BY pontos DESC, erros ASC, tempo_ms ASC, jogado_em ASC`;
   return rows.map((r, i) => ({ ...r, partidas: Number(r.partidas), pos: i + 1 }));
 }
 
@@ -91,7 +91,7 @@ const actions = {
     const ranking = await bestOfDay(dia, turmaId || 'todas', Boolean(b.incluirTeste));
     if (!ranking.length) throw fail(400, 'Não há partidas para publicar nesse dia.');
     const entradas = ranking.map(r => ({
-      pos: r.pos, nome: r.nome, turma: r.turma || null, nota: r.nota, conceito: r.conceito,
+      pos: r.pos, nome: r.nome, turma: r.turma || null, pontos: r.pontos, estrelas: r.estrelas,
       tempoMs: r.tempo_ms, erros: r.erros, dicas: r.dicas, pulados: r.pulados
     }));
     const [pub] = await sql`

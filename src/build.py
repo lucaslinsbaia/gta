@@ -40,6 +40,6 @@ def make_page(name, title, description, extra_head=''):
             f'<script>\n{common}\n{script}</script>\n</body>\n</html>\n')
     (repo / f'{name}.html').write_text(html)
 
-make_page('ranking', 'Ranking · O Enigma de Pitágoras', 'Ranking publicado da expedição O Enigma de Pitágoras.')
-make_page('gestao', 'Gestão · O Enigma de Pitágoras', 'Área de gestão do jogo.', '<meta name="robots" content="noindex, nofollow">\n')
+make_page('ranking', 'Ranking · GTA Missões do Glicério', 'Ranking publicado das Missões do Glicério (GTA).')
+make_page('gestao', 'Gestão · GTA Missões do Glicério', 'Área de gestão do jogo GTA.', '<meta name="robots" content="noindex, nofollow">\n')
 print('páginas ok')

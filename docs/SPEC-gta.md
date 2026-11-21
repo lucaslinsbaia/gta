@@ -83,6 +83,18 @@
 - **Linguagem e personagem:** sem estereótipos nem regionalismos, porque o jogo será aplicado em vários lugares do Brasil.
 - **Limites de propriedade intelectual:** ver HANDOFF, "Cuidado com propriedade intelectual".
 
-## 5. Registro de mudanças
+## 5. Detalhes de implementação
+
+- **Armazenamento local:** `localStorage`, nas chaves `gta-glicerio-v1` (jornada) e `gta-glicerio-jogador` (último nome e turma).
+- **Respostas:**
+  - aceita inteiro ou decimal com até duas casas, e ponto como separador de milhar ("1.300");
+  - formato inválido não conta como erro;
+  - tolerância de 0,01;
+  - na Obra na Laje, a etapa B aceita o volume calculado com a área arredondada ou com a área exata.
+- **Modo de teste:** acrescentar `#teste` ao endereço mostra o botão "Avançar (teste)", que resolve a etapa atual. A partida fica marcada como teste.
+- **Envio:** o jogo manda erros, pulos e dicas de cada missão, mais o tempo ativo. O servidor recusa partidas abaixo de 30 s fora do modo de teste.
+
+## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **0.2 (21/11/2026):** jogo implementado em `src/` (6 missões, pontuação, ilustrações) e servidor com pontos e estrelas.

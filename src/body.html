@@ -1,26 +1,21 @@
-<div class="scene-bg" id="scene-bg" aria-hidden="true"></div>
-
 <!-- ===================================================================
-     CABEÇALHO: marca, relógio (só durante a jornada), diário e pausa
+     CABEÇALHO: marca e placar (pontos e nível de conhecimento)
      =================================================================== -->
 <header class="nav">
-  <button type="button" class="brand" id="brand" aria-label="O Enigma de Pitágoras: voltar ao início">
-    <svg class="icon" aria-hidden="true"><use href="#i-landmark"/></svg>
+  <button type="button" class="brand" id="brand" aria-label="GTA, Missões do Glicério: voltar ao início">
+    <span class="brand__mark" aria-hidden="true">GTA</span>
     <span>
-      <span class="brand__name">O Enigma de Pitágoras</span>
-      <span class="brand__sub" id="nav-sub">Uma odisseia de escape</span>
+      <span class="brand__name">Missões do Glicério</span>
+      <span class="brand__sub" id="nav-sub">Geometria, Trigonometria e Álgebra</span>
     </span>
   </button>
   <div class="nav__tools">
-    <span class="nav__timer" id="nav-timer" hidden title="Tempo ativo de jornada">
-      <svg class="icon" aria-hidden="true"><use href="#i-hourglass"/></svg>
-      <span id="timer-text" aria-label="Tempo de jornada">00:00</span>
+    <span class="score-pill" id="nav-score" hidden>
+      <span class="score-pill__pts"><strong id="nav-pts">0</strong> pts</span>
+      <span class="stars" id="nav-stars" aria-label="Nível de conhecimento"></span>
     </span>
-    <button type="button" class="icon-btn" id="nav-diary" aria-label="Abrir diário (atalho D)" hidden>
-      <svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>
-    </button>
-    <button type="button" class="icon-btn" id="nav-pause" aria-label="Pausar (atalho Esc)" hidden>
-      <svg class="icon" aria-hidden="true"><use href="#i-pause"/></svg>
+    <button type="button" class="icon-btn" id="nav-map" aria-label="Voltar ao mapa de missões" hidden>
+      <svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>
     </button>
   </div>
 </header>
@@ -28,186 +23,140 @@
 <main id="app">
 
   <!-- ================================================================
-       INÍCIO
+       INÍCIO: capa em colagem tipo pôster
        ================================================================ -->
-  <section class="screen hero-screen" id="s-inicio" aria-labelledby="hero-title">
-    <div class="wrap">
-      <div class="hero">
-        <p class="eyebrow">Os segredos da trigonometria</p>
-        <h1 class="hero__title" id="hero-title">O Enigma<br>de Pitágoras</h1>
-        <p class="hero__subtitle">Entre catetos e ângulos</p>
-        <p class="hero__lead">Uma expedição. Um templo selado há milênios.<br>
-          Reúna os três selos, descubra as razões trigonométricas e decifre o legado de Pitágoras antes do amanhecer.</p>
-        <div class="hero__actions">
-          <button type="button" class="btn btn--gold" id="btn-start">Iniciar jornada
+  <section class="screen" id="s-inicio" aria-labelledby="cover-title">
+    <div class="wrap cover-wrap">
+      <div class="cover" id="cover">
+        <div class="cover__panel cover__panel--dani"><img id="cover-dani" alt="Dani Pixel transmitindo ao vivo com o celular, ao pôr do sol"></div>
+        <div class="cover__panel"><img data-card="4" alt=""></div>
+        <div class="cover__panel"><img data-card="3" alt=""></div>
+        <div class="cover__logo">
+          <h1 class="logo" id="cover-title"><span class="logo__gta">GTA</span>
+            <span class="logo__sign">Geometria, Trigonometria e Álgebra</span></h1>
+          <p class="cover__tag">Missões do Glicério</p>
+        </div>
+        <div class="cover__panel"><img data-card="1" alt=""></div>
+        <div class="cover__panel"><img data-card="2" alt=""></div>
+        <div class="cover__panel"><img data-card="5" alt=""></div>
+        <div class="cover__panel"><img data-card="6" alt=""></div>
+      </div>
+      <div class="cover__side">
+        <p class="eyebrow">Ao vivo agora</p>
+        <p class="title-lg">Seis missões pela cidade. A Dani transmite tudo e o chat tá de olho.</p>
+        <p class="lead">Resolva desafios de geometria, trigonometria e álgebra, junte pontos e suba seu nível de conhecimento.</p>
+        <div class="actions">
+          <button type="button" class="btn btn--gold" id="btn-start">Partiu missão
             <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
           <button type="button" class="btn btn--outline" id="btn-continue" hidden>
-            <span id="btn-continue-text">Continuar expedição</span>
+            <span id="btn-continue-text">Continuar</span>
             <svg class="icon" aria-hidden="true"><use href="#i-play"/></svg></button>
-          <p class="hero__resume" id="resume-info"></p>
-          <a class="link-btn ranking-link" href="/ranking" id="start-ranking" hidden>
+          <p class="resume" id="resume-info"></p>
+          <a class="link-btn" href="/ranking" id="start-ranking" hidden>
             <svg class="icon icon--sm" aria-hidden="true"><use href="#i-trophy"/></svg> Ver ranking</a>
         </div>
-        <p class="hero__meta">
-          <span><svg class="icon icon--sm" aria-hidden="true"><use href="#i-user"/></svg> Um jogador</span>
-          <span>Sem limite de tentativas</span>
-        </p>
       </div>
-    </div>
-    <div class="coords" aria-hidden="true">
-      <p class="coords__place">Crotona</p>
-      <p>39°05′ N · 17°08′ E · 1924</p>
     </div>
   </section>
 
   <!-- ================================================================
-       IDENTIFICAÇÃO (antes de uma nova jornada)
+       IDENTIFICAÇÃO
        ================================================================ -->
-  <section class="screen hero-screen" id="s-identificacao" aria-labelledby="id-title" hidden>
-    <div class="wrap">
-      <div class="hero">
-        <button type="button" class="link-btn link-back" data-go="inicio">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow-left"/></svg> Voltar ao início</button>
-        <p class="eyebrow">Registro da expedição</p>
-        <h1 class="hero__title hero__title--sm" id="id-title">Quem entra no templo?</h1>
-        <p class="hero__lead">Antes de atravessar o portão, registre seu nome no diário da expedição. Ele aparece no seu resultado final.</p>
-        <form class="id-form" id="id-form" novalidate>
-          <div class="id-field">
+  <section class="screen" id="s-identificacao" aria-labelledby="id-title" hidden>
+    <div class="wrap narrow">
+      <div class="card">
+        <p class="eyebrow">Antes de entrar na live</p>
+        <h1 class="title-lg" id="id-title">Quem vai jogar?</h1>
+        <p class="lead">Seu nome aparece no ranking da turma quando o professor publicar.</p>
+        <form id="id-form" novalidate>
+          <div class="id-field field">
             <label for="id-name">Nome ou apelido</label>
-            <input id="id-name" name="name" type="text" autocomplete="nickname" maxlength="40" required aria-describedby="id-name-msg">
-            <p class="id-msg" id="id-name-msg" aria-live="polite"></p>
+            <input type="text" id="id-name" maxlength="40" autocomplete="nickname" aria-describedby="id-name-msg" required>
+            <p class="msg is-error" id="id-name-msg" aria-live="polite"></p>
           </div>
-          <div class="id-field">
+          <div class="id-field field">
             <label for="id-class">Turma</label>
-            <select id="id-class" name="turmaId" required aria-describedby="id-class-hint id-class-msg">
-              <option value="" disabled selected>Selecione sua turma</option>
-            </select>
-            <p class="id-hint" id="id-class-hint" aria-live="polite"></p>
-            <p class="id-msg" id="id-class-msg" aria-live="polite"></p>
+            <select id="id-class" aria-describedby="id-class-hint id-class-msg"></select>
+            <p class="msg" id="id-class-hint"></p>
+            <p class="msg is-error" id="id-class-msg" aria-live="polite"></p>
           </div>
-          <button type="submit" class="btn btn--gold">Começar a expedição
-            <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+          <div class="actions">
+            <button type="submit" class="btn btn--gold">Começar
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+            <button type="button" class="link-btn" id="id-back">Voltar</button>
+          </div>
         </form>
       </div>
     </div>
   </section>
 
   <!-- ================================================================
-       CAPÍTULOS
+       MAPA DE MISSÕES
        ================================================================ -->
-  <section class="screen" id="s-capitulos" aria-labelledby="chap-title" hidden>
+  <section class="screen" id="s-mapa" aria-labelledby="map-title" hidden>
     <div class="wrap">
-      <button type="button" class="link-btn link-back" data-go="inicio">
-        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow-left"/></svg> Voltar ao início</button>
-      <div class="chap-head">
+      <div class="map-head">
         <div>
-          <p class="eyebrow">Três selos. Um único teorema.</p>
-          <h2 class="title-xl" id="chap-title">A jornada dos três selos</h2>
-          <p class="lead" id="chap-lead">Cada selo revela uma parte do teorema. Seu progresso está salvo.</p>
+          <p class="eyebrow" id="map-eyebrow">Mapa da cidade</p>
+          <h1 class="title-xl" id="map-title">Escolha a missão</h1>
         </div>
-        <div class="seal-progress">
-          <p class="label"><span>Selos recuperados</span><b id="seal-count">0 / 3</b></p>
-          <div class="seal-progress__bar" id="seal-bar"><i></i><i></i><i></i></div>
+        <div class="dani-say">
+          <img class="avatar" id="map-avatar" alt="">
+          <p class="bubble" id="map-bubble"></p>
         </div>
       </div>
-      <div class="chap-grid" id="chap-grid"></div>
-      <div class="chap-foot">
-        <p>Os registros e artefatos encontrados acompanham você entre as salas.</p>
-        <button type="button" class="link-btn" data-open="diary">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-book"/></svg> Consultar diário</button>
-      </div>
+      <ol class="missions" id="missions"></ol>
     </div>
   </section>
 
   <!-- ================================================================
-       EXPLORAÇÃO (a mesma tela serve os três capítulos)
+       MISSÃO
        ================================================================ -->
-  <section class="screen" id="s-exploracao" aria-labelledby="ex-title" hidden>
-    <div class="wrap">
-      <div class="room-head">
-        <button type="button" class="icon-btn" data-go="capitulos" aria-label="Voltar aos capítulos">
-          <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
-        <h2 class="title-lg" id="ex-title"></h2>
-        <span class="room-head__tag" id="ex-tag"></span>
-        <p class="room-head__hint"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-scan"/></svg> Selecione os pontos para investigar</p>
-      </div>
-      <div class="explore">
-        <div class="explore__main">
-          <div class="scene" id="ex-scene">
-            <img id="ex-img" alt="" width="1008" height="538">
-            <div id="ex-hotspots"></div>
-          </div>
-          <div class="inventory">
-            <p class="label"><span>Inventário</span><span id="inv-count"></span></p>
-            <div class="inventory__items" id="inv-items"></div>
+  <section class="screen" id="s-missao" aria-labelledby="m-title" hidden>
+    <div class="wrap mission">
+      <div class="mission__scene">
+        <div class="scene">
+          <img id="m-scene" alt="">
+          <div class="scene__label">
+            <p class="eyebrow" id="m-eyebrow"></p>
+            <h1 class="title-xl" id="m-title"></h1>
           </div>
         </div>
-        <aside class="journal" aria-labelledby="ex-panel-title">
-          <div class="journal__top">
-            <p class="eyebrow-sm">Diário de campo</p>
-            <button type="button" class="icon-btn icon-btn--sm" data-open="diary" aria-label="Abrir diário">
-              <svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></button>
+        <div class="dani-say dani-say--brief">
+          <img class="avatar" id="m-avatar" alt="">
+          <div>
+            <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+            <p class="bubble" id="m-brief"></p>
           </div>
-          <h3 class="title-md" id="ex-panel-title"></h3>
-          <p id="ex-panel-intro"></p>
-          <div class="seal-row-wrap">
-            <p class="label"><span>Selos recuperados</span><b id="ex-seal-count"></b></p>
-            <div class="seal-row" id="ex-seals"></div>
-          </div>
-          <hr>
-          <div class="clue" id="ex-clue" aria-live="polite"></div>
-          <p class="note" id="ex-note"></p>
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================================================================
-       ENIGMA (mecanismo do capítulo + diário em pergaminho)
-       ================================================================ -->
-  <section class="screen" id="s-enigma" aria-labelledby="en-title" hidden>
-    <div class="wrap">
-      <div class="enigma-head">
-        <div>
-          <p class="eyebrow" id="en-eyebrow"></p>
-          <h2 class="title-xl" id="en-title"></h2>
-          <p class="lead" id="en-instr"></p>
         </div>
-        <button type="button" class="link-btn" id="btn-back-room">Voltar à sala
-          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
       </div>
-      <div class="enigma">
-        <div class="artifact" id="en-artifact">
-          <p class="artifact__tag" id="en-tag"></p>
-          <div class="mech-block"><div class="plate" id="en-plate"></div></div>
-          <div class="mech-block" id="en-mech"></div>
+      <div class="mission__panel card">
+        <ol class="steps" id="m-steps" aria-label="Etapas da missão"></ol>
+        <h2 class="title-md" id="m-step-title"></h2>
+        <ul class="data" id="m-data"></ul>
+        <p class="question" id="m-question"></p>
+        <form id="m-form" novalidate>
+          <div class="field">
+            <label for="m-input" id="m-label">Sua resposta</label>
+            <div class="answer">
+              <input type="text" id="m-input" inputmode="decimal" autocomplete="off" aria-describedby="m-help m-msg">
+              <span class="answer__unit" id="m-unit"></span>
+            </div>
+            <p class="msg" id="m-help">Só números. Para decimais, use vírgula, com até duas casas.</p>
+            <p class="msg is-error" id="m-msg" aria-live="polite"></p>
+          </div>
+          <div class="mission__actions sticky-actions">
+            <button type="submit" class="btn btn--gold" id="m-confirm">Confirmar
+              <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></button>
+          </div>
+        </form>
+        <div class="mission__aux">
+          <button type="button" class="link-btn" id="m-hint-btn">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-bulb"/></svg> <span id="m-hint-text">Pedir dica à Dani (−20 pts)</span></button>
+          <button type="button" class="link-btn link-btn--muted" id="m-skip" hidden>
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-skip"/></svg> Pular missão</button>
         </div>
-        <aside class="parchment" aria-labelledby="en-diary-title">
-          <div class="parchment__top">
-            <p class="eyebrow-sm" id="en-reg"></p>
-            <svg class="icon" aria-hidden="true"><use href="#i-scroll"/></svg>
-          </div>
-          <h3 class="title-md" id="en-diary-title"></h3>
-          <blockquote id="en-quote"></blockquote>
-          <hr>
-          <p class="eyebrow-sm" id="en-notes-title">Anotações do explorador</p>
-          <div id="en-notes"></div>
-          <div class="seal-row-wrap">
-            <p class="label"><span>Selos recuperados</span><b id="en-seal-count"></b></p>
-            <div class="seal-row" id="en-seals"></div>
-          </div>
-          <p class="parchment__status" id="en-status" aria-live="polite"></p>
-          <button type="button" class="btn btn--gold btn--block" id="btn-confirm"></button>
-          <div class="parchment__actions">
-            <button type="button" class="link-btn" id="btn-clear">Limpar resposta</button>
-            <button type="button" class="link-btn" id="btn-hint">
-              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-bulb"/></svg>
-              <span id="btn-hint-text">Pedir dica · 1 disponível</span></button>
-            <button type="button" class="link-btn link-btn--skip" id="btn-skip" hidden>Pular este mecanismo</button>
-          </div>
-          <div class="hint-box" id="hint-box" role="status" hidden></div>
-          <p class="note" id="en-note"></p>
-        </aside>
+        <p class="mission__score" id="m-score"></p>
       </div>
     </div>
   </section>
@@ -215,189 +164,103 @@
   <!-- ================================================================
        CONCLUSÃO
        ================================================================ -->
-  <section class="screen hero-screen" id="s-conclusao" aria-labelledby="end-title" hidden>
-    <div class="wrap">
-      <div class="hero" style="max-width: 660px">
-        <div class="achievement">
-          <span class="achievement__icon"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg></span>
-          <div>
-            <p class="eyebrow-sm">Conquista desbloqueada</p>
-            <p class="achievement__name">Guardião do teorema</p>
+  <section class="screen" id="s-fim" aria-labelledby="end-title" hidden>
+    <div class="wrap end">
+      <div class="end__hero">
+        <img class="end__dani" id="end-dani" alt="Dani Pixel comemorando o fim da live">
+        <div>
+          <p class="eyebrow">Live encerrada</p>
+          <h1 class="title-xl" id="end-title">GG, <span id="g-name">você</span>!</h1>
+          <p class="lead" id="g-class"></p>
+          <div class="end__score">
+            <p class="big-pts"><strong id="g-pts">0</strong><span> / 600 pts</span></p>
+            <p class="stars stars--lg" id="g-stars"></p>
+            <p class="end__level" id="g-level"></p>
           </div>
         </div>
-        <p class="eyebrow">Expedição concluída</p>
-        <h1 class="hero__title hero__title--sm" id="end-title">O teorema revelou seu segredo.</h1>
-        <p class="hero__lead">Os selos do Triângulo, das Razões e da Harmonia abriram a passagem. Entre catetos, hipotenusa e ângulos, você desvendou o santuário. O legado de Pitágoras está a salvo.</p>
-        <div class="grade">
-          <div class="grade__player">
-            <span class="grade__label">Participante</span>
-            <p class="grade__name" id="g-name">Você</p>
-            <p class="grade__class" id="g-class" hidden></p>
-          </div>
-          <ul class="seal-list grade__seals" id="end-seals" aria-label="Selos recuperados"></ul>
-          <div class="grade__main">
-            <span class="grade__label">Nota final</span>
-            <span class="grade__value"><b id="g-value">10,0</b> <small>de 10</small></span>
-          </div>
-          <span class="grade__concept" id="g-concept">Excelente</span>
-          <ul class="grade__breakdown" id="g-breakdown"></ul>
-          <div class="grade__sync" id="g-sync" hidden>
-            <p id="g-sync-text" aria-live="polite"></p>
-            <button type="button" class="link-btn" id="g-sync-retry" hidden>Tentar de novo</button>
-          </div>
+      </div>
+      <div class="end__grid">
+        <div class="card">
+          <h2 class="title-md">Missões</h2>
+          <ul class="end__list" id="g-list"></ul>
         </div>
-        <div class="stats">
-          <div><b id="st-time">00:00</b><span>Tempo de jornada</span></div>
-          <div><b id="st-seals">3 / 3</b><span>Selos recuperados</span></div>
-          <div><b id="st-hints">0</b><span>Dicas utilizadas</span></div>
-          <div><b id="st-errors">0</b><span>Tentativas incorretas</span></div>
-        </div>
-        <section class="study" id="g-study" aria-labelledby="study-title" hidden>
-          <h2 class="title-md" id="study-title">Para continuar aprendendo</h2>
-          <p class="study__intro">Veja o que revisar em cada capítulo e onde estudar. Os links abrem em outra aba.</p>
+        <div class="card" id="g-study" hidden>
+          <h2 class="title-md">Salva essas dicas de estudo</h2>
+          <p class="lead" id="g-study-lead"></p>
           <div id="g-study-list"></div>
-        </section>
-        <div class="hero__actions hero__actions--row">
-          <button type="button" class="btn btn--gold" id="btn-review">Revisitar capítulos
-            <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
-          <button type="button" class="btn btn--outline" id="btn-again">Nova jornada
-            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
-          <a class="btn btn--outline" href="/ranking" id="end-ranking" hidden>Ver ranking
-            <svg class="icon" aria-hidden="true"><use href="#i-trophy"/></svg></a>
         </div>
-        <p class="note">Sua jornada e todas as descobertas foram salvas no diário.</p>
+      </div>
+      <div class="sync" id="g-sync" hidden>
+        <p id="g-sync-text"></p>
+        <button type="button" class="link-btn" id="g-sync-retry" hidden>Tentar de novo</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn--gold" id="end-again">Jogar de novo
+          <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+        <a class="link-btn" href="/ranking" id="end-ranking" hidden>
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-trophy"/></svg> Ver ranking</a>
       </div>
     </div>
-    <blockquote class="final-quote">“Não há problema que resista a quem aprende a medir.”</blockquote>
   </section>
 </main>
 
-<footer class="foot">
-  <p id="foot-left"></p>
-  <p id="foot-right"></p>
-</footer>
+<!-- Botão do modo de teste (#teste): resolve a etapa atual -->
+<button type="button" class="btn btn--outline btn--sm test-fab" id="test-fab" hidden>Avançar (teste)</button>
 
 <!-- ===================================================================
      DIÁLOGOS
      =================================================================== -->
-<!-- Acerto ou erro do mecanismo -->
-<dialog class="dialog dialog--center" id="dlg-feedback" aria-labelledby="fb-title" aria-describedby="fb-text">
-  <div class="dialog__body">
-    <div id="fb-top"></div>
-    <p class="eyebrow" id="fb-eyebrow"></p>
-    <h2 class="title-md" id="fb-title"></h2>
-    <p class="dialog__text" id="fb-text"></p>
-    <div class="dialog__actions"><button type="button" class="btn btn--gold" id="fb-action"></button></div>
+<dialog class="dlg" id="dlg-hint" aria-labelledby="hint-title">
+  <div class="dlg__head dani-say">
+    <img class="avatar" id="hint-avatar" alt="">
+    <div>
+      <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+      <h2 class="title-md" id="hint-title">Dica da live</h2>
+    </div>
+  </div>
+  <p class="bubble" id="hint-text"></p>
+  <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Dani</button></div>
+</dialog>
+
+<dialog class="dlg" id="dlg-hint-ask" aria-labelledby="hint-ask-title">
+  <h2 class="title-md" id="hint-ask-title">Pedir dica?</h2>
+  <p>A dica da Dani tira 20 pontos desta missão (uma vez só). Depois ela fica aberta até o fim da missão.</p>
+  <div class="dlg__actions">
+    <button type="button" class="btn btn--gold" id="hint-confirm">Quero a dica</button>
+    <button type="button" class="link-btn" data-close>Agora não</button>
   </div>
 </dialog>
 
-<!-- Pista ou selo aberto direto sobre a cena -->
-<dialog class="dialog dialog--clue" id="dlg-clue" aria-labelledby="clue-title" aria-describedby="clue-text">
-  <div class="dialog__body">
-    <div class="dialog__head">
-      <p class="eyebrow-sm" id="clue-meta"></p>
-      <button type="button" class="icon-btn" data-close aria-label="Fechar e voltar à cena"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <p class="clue-new" id="clue-new" hidden><svg class="icon icon--sm" aria-hidden="true"><use href="#i-book"/></svg> Nova pista · adicionada ao diário</p>
-    <h2 class="title-md" id="clue-title"></h2>
-    <p class="clue-quote" id="clue-text"></p>
-    <p class="clue-extra" id="clue-extra"></p>
-    <div class="dialog__actions dialog__actions--row">
-      <button type="button" class="btn btn--gold" data-close>Continuar investigando</button>
-      <button type="button" class="btn btn--outline" id="clue-examine"></button>
-    </div>
+<dialog class="dlg" id="dlg-skip" aria-labelledby="skip-title">
+  <h2 class="title-md" id="skip-title">Pular esta missão?</h2>
+  <p>Ela vai valer 0 ponto. Antes de seguir, você vê a resolução completa.</p>
+  <div class="dlg__actions">
+    <button type="button" class="btn btn--gold" id="skip-confirm">Pular e ver a resolução</button>
+    <button type="button" class="link-btn" data-close>Continuar tentando</button>
   </div>
 </dialog>
 
-<!-- Diário completo -->
-<dialog class="dialog dialog--wide" id="dlg-diary" aria-labelledby="diary-title">
-  <div class="dialog__body">
-    <div class="dialog__head">
-      <div><p class="eyebrow-sm">Registro da expedição</p><h2 class="title-md" id="diary-title">Diário de campo</h2></div>
-      <button type="button" class="icon-btn" data-close aria-label="Fechar diário"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="diary-content"></div>
+<dialog class="dlg" id="dlg-new" aria-labelledby="new-title">
+  <h2 class="title-md" id="new-title">Começar de novo?</h2>
+  <p id="new-text"></p>
+  <div class="dlg__actions">
+    <button type="button" class="btn btn--gold" id="new-confirm">Começar de novo</button>
+    <button type="button" class="link-btn" data-close>Cancelar</button>
   </div>
 </dialog>
 
-<!-- Inventário -->
-<dialog class="dialog dialog--wide" id="dlg-inventory" aria-labelledby="inv-title">
-  <div class="dialog__body">
-    <div class="dialog__head">
-      <div><p class="eyebrow-sm">Selos e registros</p><h2 class="title-md" id="inv-title">Inventário</h2></div>
-      <button type="button" class="icon-btn" data-close aria-label="Fechar inventário"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="inv-content"></div>
-  </div>
+<dialog class="dlg dlg--reward" id="dlg-reward" aria-labelledby="rw-title">
+  <p class="eyebrow" id="rw-eyebrow"></p>
+  <h2 class="title-lg" id="rw-title"></h2>
+  <p class="big-pts" id="rw-pts"></p>
+  <p id="rw-text"></p>
+  <div class="solution" id="rw-solution" hidden></div>
+  <div class="dlg__actions"><button type="button" class="btn btn--gold" id="rw-next"></button></div>
 </dialog>
 
-<!-- Pausa -->
-<dialog class="dialog" id="dlg-pause" aria-labelledby="pause-title">
-  <div class="dialog__body">
-    <p class="eyebrow-sm">Relógio parado</p>
-    <h2 class="title-md" id="pause-title">Expedição pausada</h2>
-    <p class="dialog__text">O tempo de jornada fica parado até você retomar. Seu progresso está salvo.</p>
-    <details>
-      <summary class="link-btn" style="margin-top: 16px">Regras do jogo</summary>
-      <ul class="rules">
-        <li>Recupere, em ordem, os selos do Triângulo, das Razões e da Harmonia.</li>
-        <li>Investigue os pontos destacados: cada pista vai para o diário.</li>
-        <li>Não há limite de tentativas. Errar não remove selos nem pistas.</li>
-        <li>Há uma dica por capítulo. Reler uma dica não gasta outra.</li>
-        <li>O relógio mede o tempo ativo e para quando você pausa ou sai da página.</li>
-        <li>Atalhos: D abre o diário, I abre o inventário e Esc pausa ou fecha a janela aberta.</li>
-      </ul>
-    </details>
-    <div class="dialog__actions dialog__actions--row">
-      <button type="button" class="btn btn--gold" id="pause-resume">Retomar</button>
-      <button type="button" class="btn btn--outline" id="pause-home">Voltar ao início</button>
-    </div>
-  </div>
-</dialog>
+<p class="sr-only" id="live" aria-live="polite"></p>
 
-<!-- Confirmação para pular um mecanismo -->
-<dialog class="dialog" id="dlg-skip" aria-labelledby="skip-title" aria-describedby="skip-text">
-  <div class="dialog__body">
-    <p class="eyebrow-sm">Pular mecanismo</p>
-    <h2 class="title-md" id="skip-title">Pular este mecanismo?</h2>
-    <p class="dialog__text" id="skip-text"></p>
-    <div class="dialog__actions dialog__actions--row">
-      <button type="button" class="btn btn--gold" id="skip-confirm">Ver resolução e pular</button>
-      <button type="button" class="btn btn--outline" data-close>Continuar tentando</button>
-    </div>
-  </div>
-</dialog>
-
-<!-- Confirmação de nova jornada -->
-<dialog class="dialog" id="dlg-new" aria-labelledby="new-title" aria-describedby="new-text">
-  <div class="dialog__body">
-    <p class="eyebrow-sm">Nova jornada</p>
-    <h2 class="title-md" id="new-title">Começar do zero?</h2>
-    <p class="dialog__text" id="new-text"></p>
-    <div class="dialog__actions dialog__actions--row">
-      <button type="button" class="btn btn--gold" id="new-confirm">Começar nova jornada</button>
-      <button type="button" class="btn btn--outline" data-close>Manter expedição</button>
-    </div>
-  </div>
-</dialog>
-
-<!-- Ação principal da exploração, como botão flutuante (FAB) -->
-<button type="button" class="fab" id="fab-main" hidden>
-  <span class="fab__label" id="fab-label"></span>
-  <span class="fab__short" id="fab-short" aria-hidden="true"></span>
-  <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-</button>
-
-<!-- Modo de teste: abra a página com #teste no fim do endereço -->
-<button type="button" class="test-fab" id="test-fab" hidden
-        title="Modo de teste: avança o capítulo com as respostas certas">🧪 Avançar</button>
-
-<!-- Ícones (traço fino, no estilo dos modelos) -->
-<svg width="0" height="0" style="position: absolute" aria-hidden="true">
-  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 21h18M5 18h14M6 18v-7M10 18v-7M14 18v-7M18 18v-7M4 11h16M12 3 3 8.5V11h18V8.5z"/></symbol>
-  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M5 22h14M5 2h14M17 22v-4.2a2 2 0 0 0-.6-1.4L12 12l-4.4 4.4a2 2 0 0 0-.6 1.4V22M7 2v4.2a2 2 0 0 0 .6 1.4L12 12l4.4-4.4A2 2 0 0 0 17 6.2V2"/></symbol>
-  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
-  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
   <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
@@ -406,18 +269,11 @@
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
   <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M19 21v-1a5 5 0 0 0-5-5h-4a5 5 0 0 0-5 5v1"/></symbol>
-  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></symbol>
-  <symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></symbol>
-  <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M15 12h-5M15 8h-5M19 17V5a2 2 0 0 0-2-2H4M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></symbol>
   <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
-  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.7 9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
-  <symbol id="i-feather" viewBox="0 0 24 24"><path d="M12.7 19a2 2 0 0 0 1.4-.6l6.2-6.2a6 6 0 0 0-8.5-8.5l-6.2 6.2A2 2 0 0 0 5 11.3V18a1 1 0 0 0 1 1zM16 8 2 22M17.5 15H9"/></symbol>
-  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></symbol>
-  <symbol id="i-triangle" viewBox="0 0 24 24"><path d="M4 20V4l16 16z"/><path d="M4 15.5h4.5V20"/></symbol>
-  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 1.5V3M10.9 6.7 5 21M13.1 6.7 19 21M7 15.5c3.2 1.4 6.8 1.4 10 0"/></symbol>
-  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
-  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10zM2 21c0-3 1.9-5.4 5.1-6 2.4-.5 4.9-2 5.9-3"/></symbol>
-  <symbol id="i-lyre" viewBox="0 0 24 24"><path d="M8 21h8M9 21C5 18 4 12 6 5.5c1.2 0 2 .8 2 2M15 21c4-3 5-9 3-15.5-1.2 0-2 .8-2 2M6.5 8h11M10 8v10M12 8v10M14 8v10M8.5 18h7"/></symbol>
-  <symbol id="i-triangle" viewBox="0 0 24 24"><path d="M4 20V5l15 15z"/><path d="M4 16h4v4"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.3L3 16M3 21v-5h5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/></symbol>
+  <symbol id="i-skip" viewBox="0 0 24 24"><path d="m5 4 10 8-10 8zM19 5v14"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 21h18M5 18h14M6 18v-7M10 18v-7M14 18v-7M18 18v-7M4 11h16M12 3 3 8.5V11h18V8.5z"/></symbol>
 </svg>
