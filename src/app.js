@@ -456,7 +456,22 @@ renderSound();
 let screen = 'inicio';
 const SCREENS = { inicio: 's-inicio', identificacao: 's-identificacao', mapa: 's-mapa', missao: 's-missao', fim: 's-fim' };
 
+/* Varredura diagonal ao trocar de tela; ao abrir uma missão, segura um instante com o nome do lugar */
+let wipeTimer = 0;
+function playWipe(card) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const el = $('wipe');
+  el.classList.remove('is-on', 'has-card');
+  el.style.setProperty('--hold', card ? '650ms' : '60ms');
+  if (card) { $('wipe-eyebrow').textContent = card.eyebrow; $('wipe-title').textContent = card.title; el.classList.add('has-card'); }
+  void el.offsetWidth;   // reinicia a animação
+  el.classList.add('is-on');
+  clearTimeout(wipeTimer);
+  wipeTimer = setTimeout(() => el.classList.remove('is-on', 'has-card'), (card ? 650 : 60) + 140 + 560);
+}
+
 function show(name) {
+  if (name !== screen) playWipe(name === 'missao' && S ? { eyebrow: MISSION[S.current].area, title: MISSION[S.current].title } : null);
   screen = name;
   Object.entries(SCREENS).forEach(([key, id]) => { $(id).hidden = key !== name; });
   const playing = S && S.started && (name === 'mapa' || name === 'missao' || name === 'fim');
@@ -764,6 +779,11 @@ function renderMissao() {
   $('m-scene').alt = M.alt;
   $('m-avatar').src = IMG.avatar;
   $('m-eyebrow').textContent = M.area;
+  const stageKey = `${n}-${closed ? 'fim' : S.stage[n]}`;
+  if (renderMissao.last && renderMissao.last !== stageKey && renderMissao.last.split('-')[0] === String(n)) {
+    $('m-problem').classList.remove('is-swap'); void $('m-problem').offsetWidth; $('m-problem').classList.add('is-swap');
+  }
+  renderMissao.last = stageKey;
   $('m-title').textContent = M.title;
   const k = closed ? 1 : S.stage[n];
   $('m-steps').innerHTML = STAGE_NAMES.map((name, i) => {

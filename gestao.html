@@ -398,7 +398,43 @@
     .card { padding: var(--s5); box-shadow: 6px 6px 0 var(--pink); }
     .logo__gta { -webkit-text-stroke: 2px var(--cream); }
   }
+  /* ---------- Transições ---------- */
+  .wipe { position: fixed; inset: 0; z-index: 60; pointer-events: none; visibility: hidden; }
+  .wipe.is-on { visibility: visible; }
+  .wipe__layer { position: absolute; inset: 0; clip-path: polygon(-30% 0, 130% 0, 100% 100%, -60% 100%); }
+  .wipe__layer--night { background: var(--night); display: grid; place-items: center; }
+  .wipe__layer--pink { background: var(--pink); }
+  .wipe__layer--cyan { background: var(--cyan); }
+  .wipe.is-on .wipe__layer { animation: wipe-away 520ms cubic-bezier(0.7, 0, 0.2, 1) forwards; animation-delay: calc(var(--hold, 0ms) + var(--lag, 0ms)); }
+  .wipe__layer--pink { --lag: 70ms; }
+  .wipe__layer--cyan { --lag: 140ms; }
+  @keyframes wipe-away { to { clip-path: polygon(130% 0, 160% 0, 130% 100%, 100% 100%); } }
+  .wipe__card { display: flex; flex-direction: column; align-items: center; gap: var(--s2); padding: 0 var(--s5); text-align: center; }
+  .wipe__card:empty, .wipe:not(.has-card) .wipe__card { display: none; }
+  .wipe__eyebrow { font: 400 clamp(1.2rem, 4vw, 1.6rem)/1 var(--font-label); letter-spacing: 0.14em; text-transform: uppercase; color: var(--yellow); }
+  .wipe__title { font: 400 clamp(2.6rem, 11vw, 5.5rem)/0.95 var(--font-display); text-transform: uppercase; color: var(--cream); text-shadow: 5px 5px 0 var(--pink); }
+  .wipe.is-on .wipe__eyebrow { animation: wipe-text 420ms var(--ease) both; }
+  .wipe.is-on .wipe__title { animation: wipe-text 480ms 80ms var(--ease) both; }
+  @keyframes wipe-text { from { opacity: 0; transform: translateX(-40px) skewX(-8deg); } }
+  /* Troca de etapa: o quadro do problema entra pela direita */
+  .is-swap { animation: swap-in 380ms var(--ease) both; }
+  @keyframes swap-in { from { opacity: 0; transform: translateX(28px); } }
+  /* Modais entram com um leve salto */
+  .dlg[open] { animation: dlg-in 260ms var(--ease) both; }
+  .dlg[open]::backdrop { animation: fade-in 200ms ease both; }
+  @keyframes dlg-in { from { opacity: 0; transform: translateY(14px) scale(0.96); } }
+  @keyframes fade-in { from { opacity: 0; } }
+  /* Cards do mapa aparecem em sequência */
+  #s-mapa:not([hidden]) .mcard { animation: card-in 420ms var(--ease) backwards; }
+  .missions > li:nth-child(2) .mcard { animation-delay: 50ms; }
+  .missions > li:nth-child(3) .mcard { animation-delay: 100ms; }
+  .missions > li:nth-child(4) .mcard { animation-delay: 150ms; }
+  .missions > li:nth-child(5) .mcard { animation-delay: 200ms; }
+  .missions > li:nth-child(6) .mcard { animation-delay: 250ms; }
+  @keyframes card-in { from { opacity: 0; transform: translateY(18px); } }
+
   @media (prefers-reduced-motion: reduce) {
+    .wipe { display: none; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 

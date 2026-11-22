@@ -23,6 +23,15 @@
   </div>
 </header>
 
+<!-- Transição entre telas: faixas diagonais que varrem a tela; ao entrar numa missão, mostram o nome do lugar -->
+<div class="wipe" id="wipe" aria-hidden="true">
+  <div class="wipe__layer wipe__layer--cyan"></div>
+  <div class="wipe__layer wipe__layer--pink"></div>
+  <div class="wipe__layer wipe__layer--night">
+    <div class="wipe__card"><span class="wipe__eyebrow" id="wipe-eyebrow"></span><span class="wipe__title" id="wipe-title"></span></div>
+  </div>
+</div>
+
 <main id="app">
 
   <!-- ================================================================
