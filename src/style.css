@@ -346,6 +346,11 @@
     #s-missao .wrap { padding-bottom: 120px; }
   }
   @media (max-width: 640px) {
+    /* Capa no celular: textos centralizados e botões com a largura toda */
+    .cover__side { text-align: center; }
+    .cover__side .actions { flex-direction: column; align-items: stretch; }
+    .cover__side .actions .btn { width: 100%; justify-content: center; }
+    .cover__side .actions .link-btn { align-self: center; }
     .wrap { padding: var(--s5) var(--s4) var(--s10); }
     /* Carrossel 3D: rolagem lateral com snap; o JS gira e afasta os cards laterais */
     .missions { display: flex; gap: 0; margin: 0 calc(-1 * var(--s4)); padding: var(--s4) calc(14vw + 5vw) var(--s6); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; position: relative; }
