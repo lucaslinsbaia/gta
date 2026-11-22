@@ -1123,6 +1123,7 @@ async function buildShareImage() {
   return new Promise(resolve => cv.toBlob(resolve, 'image/png'));
 }
 
+/** Celular (toque) com suporte a compartilhar arquivos: só "Compartilhar". Senão: "Salvar imagem" e "E-mail". */
 async function prepareShare() {
   $('share-msg').textContent = '';
   share.blob = null;
@@ -1130,12 +1131,14 @@ async function prepareShare() {
     share.blob = await buildShareImage();
     if (share.url) URL.revokeObjectURL(share.url);
     share.url = URL.createObjectURL(share.blob);
-    $('share-preview').src = share.url;
-  } catch (e) {
-    $('share-msg').textContent = 'Não deu pra gerar a imagem neste navegador. Você ainda pode mandar o link por WhatsApp ou e-mail.';
-  }
+  } catch (e) { /* sem imagem: fica só o e-mail com o texto e o link */ }
   const file = share.blob && new File([share.blob], 'gta-resultado.png', { type: 'image/png' });
-  $('share-native').hidden = !(file && navigator.canShare && navigator.canShare({ files: [file] }));
+  const canShareFile = Boolean(file && navigator.canShare && navigator.canShare({ files: [file] }));
+  const mobile = window.matchMedia('(pointer: coarse)').matches;
+  const useNative = mobile && canShareFile;
+  $('share-native').hidden = !useNative;
+  $('share-save').hidden = useNative || !share.blob;
+  $('share-mail').hidden = useNative;
 }
 const shareFileName = () => `gta-${(S.player ? S.player.name : 'resultado').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'resultado'}.png`;
 
@@ -1144,7 +1147,7 @@ async function nativeShare() {
   const file = new File([share.blob], shareFileName(), { type: 'image/png' });
   if (!(navigator.canShare && navigator.canShare({ files: [file] }))) return false;
   try { await navigator.share({ files: [file], text: shareText(), title: 'Meu resultado no GTA' }); }
-  catch (e) { if (e.name !== 'AbortError') $('share-msg').textContent = 'Não deu pra abrir o compartilhamento. Salve a imagem e poste pelo app.'; }
+  catch (e) { if (e.name !== 'AbortError') $('share-msg').textContent = 'Não deu pra abrir o compartilhamento. Tente de novo.'; }
   return true;
 }
 function saveImage() {
@@ -1152,23 +1155,11 @@ function saveImage() {
   const a = document.createElement('a');
   a.href = share.url; a.download = shareFileName();
   document.body.appendChild(a); a.click(); a.remove();
-  $('share-msg').textContent = 'Imagem salva! Ela fica na pasta de downloads ou na galeria do aparelho.';
 }
 $('share-native').addEventListener('click', nativeShare);
 $('share-save').addEventListener('click', saveImage);
-$('share-whats').addEventListener('click', async () => {
-  if (await nativeShare()) return;   // no celular, o menu do aparelho manda a imagem junto
-  window.open(`https://wa.me/?text=${encodeURIComponent(shareText())}`, '_blank', 'noopener');
-  $('share-msg').textContent = 'O WhatsApp abre com o texto e o link. Pra mandar a imagem junto, salve antes e anexe na conversa.';
-});
 $('share-mail').addEventListener('click', () => {
   location.href = `mailto:?subject=${encodeURIComponent('Meu resultado no GTA, Edição Porto Alegre')}&body=${encodeURIComponent(shareText())}`;
-  $('share-msg').textContent = 'O e-mail abre com o texto e o link. Pra mandar a imagem, salve antes e anexe.';
-});
-$('share-insta').addEventListener('click', async () => {
-  if (await nativeShare()) return;   // no celular, escolha Instagram (Stories ou Feed) no menu
-  saveImage();
-  $('share-msg').textContent = 'O Instagram não recebe imagens direto do navegador do computador. A imagem foi salva: poste pelo app no celular, nos Stories ou no Feed.';
 });
 
 /* ---------------------------------------------------------------

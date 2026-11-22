@@ -293,16 +293,10 @@
   .study ul { margin: 0; padding-left: var(--s5); }
   .study a { color: var(--cyan); }
   /* Exportar o resultado */
-  .share { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--s6); align-items: center; margin-top: var(--s8); }
-  .share__preview img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border: 3px solid var(--cream); border-radius: var(--radius); background: var(--night); }
+  .share { margin-top: var(--s8); }
+  .share .title-md { margin-bottom: var(--s3); }
   .share__actions { display: flex; flex-wrap: wrap; gap: var(--s3); }
-  .share .lead { margin-bottom: var(--s4); }
-  .share .msg { margin-top: var(--s3); }
-  @media (max-width: 640px) {
-    .share { grid-template-columns: minmax(0, 1fr); }
-    .share__preview { width: 160px; margin: 0 auto; }
-    .share__actions .btn { flex: 1 1 140px; }
-  }
+  @media (max-width: 640px) { .share__actions .btn { flex: 1 1 100%; } }
   .sync { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin-top: var(--s6); padding: var(--s3) var(--s4); border: 2px solid var(--line-strong); border-radius: var(--radius); }
   .sync p { margin: 0; font-size: var(--text-sm); }
   .sync.is-error { border-color: var(--err); }
@@ -588,24 +582,19 @@
           <div id="g-study-list"></div>
         </div>
       </div>
-      <!-- Exportar o resultado: imagem no formato de story -->
-      <div class="card share" id="g-share">
-        <div class="share__preview"><img id="share-preview" alt="Prévia da imagem do seu resultado"></div>
-        <div class="share__body">
-          <h2 class="title-md">Mostra pra galera</h2>
-          <p class="lead">A imagem do seu resultado já está pronta: poste nos Stories, mande no WhatsApp, por e-mail ou salve no aparelho.</p>
-          <div class="share__actions">
-            <button type="button" class="btn btn--gold" id="share-native" hidden>Compartilhar
-              <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg></button>
-            <button type="button" class="btn btn--outline btn--sm" id="share-save">
-              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg> Salvar imagem</button>
-            <button type="button" class="btn btn--outline btn--sm" id="share-whats">WhatsApp</button>
-            <button type="button" class="btn btn--outline btn--sm" id="share-mail">
-              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-mail"/></svg> E-mail</button>
-            <button type="button" class="btn btn--outline btn--sm" id="share-insta">Instagram</button>
-          </div>
-          <p class="msg" id="share-msg" aria-live="polite"></p>
+      <!-- Exportar o resultado (imagem no formato de story). Celular: só "Compartilhar" (menu do aparelho).
+           Computador: "Salvar imagem" e "E-mail". -->
+      <div class="share" id="g-share">
+        <h2 class="title-md">Mostra pra galera</h2>
+        <div class="share__actions">
+          <button type="button" class="btn btn--gold" id="share-native" hidden>Compartilhar
+            <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg></button>
+          <button type="button" class="btn btn--gold" id="share-save" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg> Salvar imagem</button>
+          <button type="button" class="btn btn--outline" id="share-mail" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg> E-mail</button>
         </div>
+        <p class="msg is-error" id="share-msg" aria-live="polite"></p>
       </div>
       <div class="sync" id="g-sync" hidden>
         <p id="g-sync-text"></p>
@@ -1959,6 +1948,7 @@ async function buildShareImage() {
   return new Promise(resolve => cv.toBlob(resolve, 'image/png'));
 }
 
+/** Celular (toque) com suporte a compartilhar arquivos: só "Compartilhar". Senão: "Salvar imagem" e "E-mail". */
 async function prepareShare() {
   $('share-msg').textContent = '';
   share.blob = null;
@@ -1966,12 +1956,14 @@ async function prepareShare() {
     share.blob = await buildShareImage();
     if (share.url) URL.revokeObjectURL(share.url);
     share.url = URL.createObjectURL(share.blob);
-    $('share-preview').src = share.url;
-  } catch (e) {
-    $('share-msg').textContent = 'Não deu pra gerar a imagem neste navegador. Você ainda pode mandar o link por WhatsApp ou e-mail.';
-  }
+  } catch (e) { /* sem imagem: fica só o e-mail com o texto e o link */ }
   const file = share.blob && new File([share.blob], 'gta-resultado.png', { type: 'image/png' });
-  $('share-native').hidden = !(file && navigator.canShare && navigator.canShare({ files: [file] }));
+  const canShareFile = Boolean(file && navigator.canShare && navigator.canShare({ files: [file] }));
+  const mobile = window.matchMedia('(pointer: coarse)').matches;
+  const useNative = mobile && canShareFile;
+  $('share-native').hidden = !useNative;
+  $('share-save').hidden = useNative || !share.blob;
+  $('share-mail').hidden = useNative;
 }
 const shareFileName = () => `gta-${(S.player ? S.player.name : 'resultado').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'resultado'}.png`;
 
@@ -1980,7 +1972,7 @@ async function nativeShare() {
   const file = new File([share.blob], shareFileName(), { type: 'image/png' });
   if (!(navigator.canShare && navigator.canShare({ files: [file] }))) return false;
   try { await navigator.share({ files: [file], text: shareText(), title: 'Meu resultado no GTA' }); }
-  catch (e) { if (e.name !== 'AbortError') $('share-msg').textContent = 'Não deu pra abrir o compartilhamento. Salve a imagem e poste pelo app.'; }
+  catch (e) { if (e.name !== 'AbortError') $('share-msg').textContent = 'Não deu pra abrir o compartilhamento. Tente de novo.'; }
   return true;
 }
 function saveImage() {
@@ -1988,23 +1980,11 @@ function saveImage() {
   const a = document.createElement('a');
   a.href = share.url; a.download = shareFileName();
   document.body.appendChild(a); a.click(); a.remove();
-  $('share-msg').textContent = 'Imagem salva! Ela fica na pasta de downloads ou na galeria do aparelho.';
 }
 $('share-native').addEventListener('click', nativeShare);
 $('share-save').addEventListener('click', saveImage);
-$('share-whats').addEventListener('click', async () => {
-  if (await nativeShare()) return;   // no celular, o menu do aparelho manda a imagem junto
-  window.open(`https://wa.me/?text=${encodeURIComponent(shareText())}`, '_blank', 'noopener');
-  $('share-msg').textContent = 'O WhatsApp abre com o texto e o link. Pra mandar a imagem junto, salve antes e anexe na conversa.';
-});
 $('share-mail').addEventListener('click', () => {
   location.href = `mailto:?subject=${encodeURIComponent('Meu resultado no GTA, Edição Porto Alegre')}&body=${encodeURIComponent(shareText())}`;
-  $('share-msg').textContent = 'O e-mail abre com o texto e o link. Pra mandar a imagem, salve antes e anexe.';
-});
-$('share-insta').addEventListener('click', async () => {
-  if (await nativeShare()) return;   // no celular, escolha Instagram (Stories ou Feed) no menu
-  saveImage();
-  $('share-msg').textContent = 'O Instagram não recebe imagens direto do navegador do computador. A imagem foi salva: poste pelo app no celular, nos Stories ou no Feed.';
 });
 
 /* ---------------------------------------------------------------

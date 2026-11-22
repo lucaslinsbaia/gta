@@ -199,24 +199,19 @@
           <div id="g-study-list"></div>
         </div>
       </div>
-      <!-- Exportar o resultado: imagem no formato de story -->
-      <div class="card share" id="g-share">
-        <div class="share__preview"><img id="share-preview" alt="Prévia da imagem do seu resultado"></div>
-        <div class="share__body">
-          <h2 class="title-md">Mostra pra galera</h2>
-          <p class="lead">A imagem do seu resultado já está pronta: poste nos Stories, mande no WhatsApp, por e-mail ou salve no aparelho.</p>
-          <div class="share__actions">
-            <button type="button" class="btn btn--gold" id="share-native" hidden>Compartilhar
-              <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg></button>
-            <button type="button" class="btn btn--outline btn--sm" id="share-save">
-              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg> Salvar imagem</button>
-            <button type="button" class="btn btn--outline btn--sm" id="share-whats">WhatsApp</button>
-            <button type="button" class="btn btn--outline btn--sm" id="share-mail">
-              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-mail"/></svg> E-mail</button>
-            <button type="button" class="btn btn--outline btn--sm" id="share-insta">Instagram</button>
-          </div>
-          <p class="msg" id="share-msg" aria-live="polite"></p>
+      <!-- Exportar o resultado (imagem no formato de story). Celular: só "Compartilhar" (menu do aparelho).
+           Computador: "Salvar imagem" e "E-mail". -->
+      <div class="share" id="g-share">
+        <h2 class="title-md">Mostra pra galera</h2>
+        <div class="share__actions">
+          <button type="button" class="btn btn--gold" id="share-native" hidden>Compartilhar
+            <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg></button>
+          <button type="button" class="btn btn--gold" id="share-save" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg> Salvar imagem</button>
+          <button type="button" class="btn btn--outline" id="share-mail" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg> E-mail</button>
         </div>
+        <p class="msg is-error" id="share-msg" aria-live="polite"></p>
       </div>
       <div class="sync" id="g-sync" hidden>
         <p id="g-sync-text"></p>

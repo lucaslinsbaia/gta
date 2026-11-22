@@ -112,8 +112,9 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     assert(r[2] <= vp.width, `sem rolagem lateral em ${vp.width} px`);
     assert(!errs.length, 'erros de JavaScript: ' + errs.join(' | '));
     await p.waitForTimeout(800);
-    const shareInfo = await p.evaluate(() => [share.blob ? share.blob.size : 0, document.getElementById('share-preview').naturalWidth, document.getElementById('share-preview').naturalHeight]);
+    const shareInfo = await p.evaluate(async () => { const img = await loadImage(share.url); return [share.blob ? share.blob.size : 0, img.naturalWidth, img.naturalHeight]; });
     assert(shareInfo[0] > 50000 && shareInfo[1] === 1080 && shareInfo[2] === 1920, 'gera a imagem do resultado: ' + shareInfo);
+    assert(await p.isVisible('#share-save') && await p.isVisible('#share-mail') && !(await p.isVisible('#share-native')), 'sem compartilhar nativo: salvar e e-mail');
     const [dl] = await Promise.all([p.waitForEvent('download'), p.click('#share-save')]);
     assert(/^gta-ana\.png$/.test(dl.suggestedFilename()), 'salvar baixa gta-ana.png, veio ' + dl.suggestedFilename());
     if (vp.width === 1440) await dl.saveAs('/home/claude/shots/30-cartao.png');
