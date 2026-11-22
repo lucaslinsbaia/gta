@@ -906,7 +906,7 @@ function starsFor(points) {
   if (points >= 240) return 2;
   return points > 0 ? 1 : 0;
 }
-const LEVEL = { 0: 'Começando', 1: 'Aquecendo', 2: 'Em evolução', 3: 'Mandando bem', 4: 'Brabo das contas', 5: 'Lenda do Glicério' };
+const LEVEL = { 0: 'Começando', 1: 'Aquecendo', 2: 'Em evolução', 3: 'Mandando bem', 4: 'Brabo das contas', 5: 'Lenda de Porto Alegre' };
 const gradeFrom = points => Math.max(5, Math.round(points / 6) / 10);
 const starsHtml = (n, cls = 'icon') => Array.from({ length: 5 }, (_, i) => icon('star', `${cls}${i < n ? ' is-on' : ''}`)).join('');
 
