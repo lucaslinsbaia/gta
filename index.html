@@ -296,7 +296,7 @@
   .share { margin-top: var(--s8); }
   .share .title-md { margin-bottom: var(--s3); }
   .share__actions { display: flex; flex-wrap: wrap; gap: var(--s3); }
-  @media (max-width: 640px) { .share__actions .btn { flex: 1 1 100%; } }
+  @media (max-width: 640px) { .share__actions .btn, #end-again { flex: 1 1 100%; width: 100%; } }
   .sync { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin-top: var(--s6); padding: var(--s3) var(--s4); border: 2px solid var(--line-strong); border-radius: var(--radius); }
   .sync p { margin: 0; font-size: var(--text-sm); }
   .sync.is-error { border-color: var(--err); }
@@ -601,7 +601,7 @@
         <button type="button" class="link-btn" id="g-sync-retry" hidden>Tentar de novo</button>
       </div>
       <div class="actions">
-        <button type="button" class="btn btn--gold" id="end-again">Jogar de novo
+        <button type="button" class="btn btn--outline" id="end-again">Novo jogo
           <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
         <a class="link-btn" href="/ranking" id="end-ranking" hidden>
           <svg class="icon icon--sm" aria-hidden="true"><use href="#i-trophy"/></svg> Ver ranking</a>
