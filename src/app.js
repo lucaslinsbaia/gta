@@ -629,7 +629,7 @@ function renderMapa() {
   const tip = first
     ? `Fala, ${nick()}! Eu sou a Isa e vou te ajudar a completar as missões de hoje. Ao final, você consegue chegar ao aeroporto e fugir da cidade. Bora?`
     : stuckBeforeAirport() ? `Ih, ${nick()}, faltou estrela pra liberar o Aeroporto: você fez ${starsFor(totalPoints())} e precisava de ${STARS_TO_FLY}. Mas de boa: dá pra finalizar a live e sua nota vale do mesmo jeito.`
-    : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão da live. Bora decolar?`
+    : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão antes de escapar. Bora decolar?`
       : next ? `Mandou bem até aqui! Próxima parada: ${MISSION[next].title}. Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   // A fala abre sozinha quando muda (início, depois de cada missão); senão, o avatar fica pulsando
