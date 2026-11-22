@@ -1029,8 +1029,147 @@ function renderFim() {
   $('g-study-list').innerHTML = review.map(n => `<div class="study"><h3>${MISSION[n].title} · ${MISSION[n].topic}</h3><ul>${STUDY[n]
     .map(([label, url]) => `<li><a href="${url}" target="_blank" rel="noopener">${label}</a></li>`).join('')}</ul></div>`).join('');
   syncResult();
+  prepareShare();
 }
 $('end-again').addEventListener('click', () => show('identificacao'));
+
+/* ---------------------------------------------------------------
+   EXPORTAR O RESULTADO
+   Desenha um cartão 1080 × 1920 (formato de story) num canvas, com o
+   logo, a Dani, o nome, os pontos, as estrelas e as missões. Depois:
+   compartilhar pelo menu do aparelho (Instagram, WhatsApp, e-mail…),
+   salvar a imagem, ou abrir WhatsApp/e-mail com o texto e o link.
+   --------------------------------------------------------------- */
+const share = { blob: null, url: '' };
+const gameUrl = () => (/^https?:$/.test(location.protocol) ? location.origin : 'https://gta-glicerio.vercel.app');
+function shareText() {
+  const pts = totalPoints(), stars = starsFor(pts);
+  return `Fiz ${pts} pontos e ${stars} ${stars === 1 ? 'estrela' : 'estrelas'} no GTA, Edição Porto Alegre! Bora tentar? ${gameUrl()}`;
+}
+const loadImage = src => new Promise((resolve, reject) => { const img = new Image(); img.onload = () => resolve(img); img.onerror = reject; img.src = src; });
+
+function drawStar(ctx, cx, cy, r, filled) {
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rad = i % 2 ? r * 0.45 : r;
+    ctx.lineTo(cx + rad * Math.cos(a), cy + rad * Math.sin(a));
+  }
+  ctx.closePath();
+  ctx.fillStyle = filled ? '#FFB02E' : 'rgba(255,247,236,0.18)';
+  ctx.fill();
+  ctx.lineWidth = 4; ctx.strokeStyle = '#1A0833'; ctx.stroke();
+}
+function fitFont(ctx, text, family, max, width) {
+  let size = max;
+  do { ctx.font = `${size}px ${family}`; size -= 4; } while (ctx.measureText(text).width > width && size > 24);
+}
+
+async function buildShareImage() {
+  try { await Promise.all(['96px Anton', '40px "Bebas Neue"', '40px Inter', '56px "Permanent Marker"', '700 40px Inter'].map(f => document.fonts.load(f))); } catch (e) { /* segue com as fontes do sistema */ }
+  const W = 1080, H = 1920, cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  // Fundo: noite roxa com faixa de pôr do sol
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#1B1F6B'); bg.addColorStop(0.35, '#2B0B4F'); bg.addColorStop(0.7, '#1A0833'); bg.addColorStop(1, '#A3167A');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#FF2E93'; ctx.fillRect(0, 0, W, 14); ctx.fillRect(0, H - 14, W, 14);
+  // Logo GTA (o mesmo contorno do sprite) e o nome escrito à mão
+  const sym = document.getElementById('logo-gta');
+  const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${sym.getAttribute('viewBox')}">${sym.innerHTML}</svg>`;
+  try {
+    const logo = await loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(logoSvg));
+    const lw = 520, lh = lw * logo.height / logo.width || lw * 0.46;
+    ctx.save(); ctx.shadowColor = '#FF2E93'; ctx.shadowOffsetX = 12; ctx.shadowOffsetY = 12;
+    ctx.drawImage(logo, (W - lw) / 2, 70, lw, lh); ctx.restore();
+  } catch (e) { ctx.fillStyle = '#FFF7EC'; ctx.font = '200px Anton'; ctx.textAlign = 'center'; ctx.fillText('GTA', W / 2, 260); }
+  ctx.textAlign = 'center';
+  ctx.save(); ctx.translate(W / 2, 360); ctx.rotate(-0.04);
+  ctx.fillStyle = '#FFB02E'; ctx.font = '52px "Permanent Marker", cursive'; ctx.fillText('Edição Porto Alegre', 0, 0); ctx.restore();
+  // Dani
+  try {
+    const dani = await loadImage(IMG.dani);
+    const dw = 440, dh = 550, dx = (W - dw) / 2, dy = 420;
+    ctx.fillStyle = '#FF2E93'; ctx.fillRect(dx + 18, dy + 18, dw, dh);
+    ctx.drawImage(dani, dx, dy, dw, dh);
+    ctx.lineWidth = 10; ctx.strokeStyle = '#FFF7EC'; ctx.strokeRect(dx, dy, dw, dh);
+  } catch (e) { /* sem a foto, o cartão segue */ }
+  // Nome, pontos, estrelas e nível
+  const pts = totalPoints(), stars = starsFor(pts);
+  const name = `GG, ${S.player ? S.player.name : 'você'}!`;
+  ctx.fillStyle = '#FFF7EC'; fitFont(ctx, name.toUpperCase(), 'Anton, Impact, sans-serif', 110, W - 120);
+  ctx.fillText(name.toUpperCase(), W / 2, 1100);
+  ctx.fillStyle = '#FFB02E'; ctx.font = '170px Anton, Impact, sans-serif';
+  const ptsText = String(pts), ptsW = ctx.measureText(ptsText).width;
+  ctx.font = '64px "Bebas Neue", Impact, sans-serif'; const restW = ctx.measureText(' / 600 PTS').width;
+  const x0 = (W - ptsW - restW) / 2;
+  ctx.textAlign = 'left';
+  ctx.font = '170px Anton, Impact, sans-serif'; ctx.fillText(ptsText, x0, 1280);
+  ctx.fillStyle = '#EADDF6'; ctx.font = '64px "Bebas Neue", Impact, sans-serif'; ctx.fillText(' / 600 PTS', x0 + ptsW, 1280);
+  ctx.textAlign = 'center';
+  for (let i = 0; i < 5; i++) drawStar(ctx, W / 2 + (i - 2) * 96, 1355, 40, i < stars);
+  ctx.fillStyle = '#22E3FF'; ctx.font = '58px "Bebas Neue", Impact, sans-serif';
+  ctx.fillText(`NÍVEL: ${LEVEL[stars].toUpperCase()}`, W / 2, 1450);
+  // Missões
+  ctx.textAlign = 'left';
+  MISSIONS.forEach((n, i) => {
+    const y = 1540 + i * 52;
+    const val = n === LAST && S.noAirport ? 'não liberada' : S.skipped[n] ? 'pulada' : `${missionPoints(n)} pts`;
+    ctx.fillStyle = '#EADDF6'; ctx.font = '36px Inter, sans-serif'; ctx.fillText(`${n}. ${MISSION[n].title}`, 140, y);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#FFF7EC'; ctx.font = '700 36px Inter, sans-serif'; ctx.fillText(val, W - 140, y); ctx.textAlign = 'left';
+  });
+  ctx.textAlign = 'center'; ctx.fillStyle = '#FFF7EC'; ctx.font = '700 34px Inter, sans-serif';
+  ctx.fillText(gameUrl().replace(/^https?:\/\//, ''), W / 2, H - 50);
+  return new Promise(resolve => cv.toBlob(resolve, 'image/png'));
+}
+
+async function prepareShare() {
+  $('share-msg').textContent = '';
+  share.blob = null;
+  try {
+    share.blob = await buildShareImage();
+    if (share.url) URL.revokeObjectURL(share.url);
+    share.url = URL.createObjectURL(share.blob);
+    $('share-preview').src = share.url;
+  } catch (e) {
+    $('share-msg').textContent = 'Não deu pra gerar a imagem neste navegador. Você ainda pode mandar o link por WhatsApp ou e-mail.';
+  }
+  const file = share.blob && new File([share.blob], 'gta-resultado.png', { type: 'image/png' });
+  $('share-native').hidden = !(file && navigator.canShare && navigator.canShare({ files: [file] }));
+}
+const shareFileName = () => `gta-${(S.player ? S.player.name : 'resultado').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'resultado'}.png`;
+
+async function nativeShare() {
+  if (!share.blob) return false;
+  const file = new File([share.blob], shareFileName(), { type: 'image/png' });
+  if (!(navigator.canShare && navigator.canShare({ files: [file] }))) return false;
+  try { await navigator.share({ files: [file], text: shareText(), title: 'Meu resultado no GTA' }); }
+  catch (e) { if (e.name !== 'AbortError') $('share-msg').textContent = 'Não deu pra abrir o compartilhamento. Salve a imagem e poste pelo app.'; }
+  return true;
+}
+function saveImage() {
+  if (!share.url) return;
+  const a = document.createElement('a');
+  a.href = share.url; a.download = shareFileName();
+  document.body.appendChild(a); a.click(); a.remove();
+  $('share-msg').textContent = 'Imagem salva! Ela fica na pasta de downloads ou na galeria do aparelho.';
+}
+$('share-native').addEventListener('click', nativeShare);
+$('share-save').addEventListener('click', saveImage);
+$('share-whats').addEventListener('click', async () => {
+  if (await nativeShare()) return;   // no celular, o menu do aparelho manda a imagem junto
+  window.open(`https://wa.me/?text=${encodeURIComponent(shareText())}`, '_blank', 'noopener');
+  $('share-msg').textContent = 'O WhatsApp abre com o texto e o link. Pra mandar a imagem junto, salve antes e anexe na conversa.';
+});
+$('share-mail').addEventListener('click', () => {
+  location.href = `mailto:?subject=${encodeURIComponent('Meu resultado no GTA, Edição Porto Alegre')}&body=${encodeURIComponent(shareText())}`;
+  $('share-msg').textContent = 'O e-mail abre com o texto e o link. Pra mandar a imagem, salve antes e anexe.';
+});
+$('share-insta').addEventListener('click', async () => {
+  if (await nativeShare()) return;   // no celular, escolha Instagram (Stories ou Feed) no menu
+  saveImage();
+  $('share-msg').textContent = 'O Instagram não recebe imagens direto do navegador do computador. A imagem foi salva: poste pelo app no celular, nos Stories ou no Feed.';
+});
 
 /* ---------------------------------------------------------------
    10. SERVIDOR: turmas e envio do resultado

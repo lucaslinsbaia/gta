@@ -101,6 +101,11 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **1.5 (21/11/2026):** exportar o resultado na tela final. O jogo desenha num canvas um cartão 1080 × 1920 (formato de story) com o logo, a Dani, o nome, os pontos, as estrelas, o nível e as missões.
+  - **Compartilhar:** usa o menu do aparelho (Web Share com arquivo) e aparece só onde há suporte, em geral no celular. Por ele chegam Instagram, WhatsApp e e-mail com a imagem.
+  - **Salvar imagem:** baixa o PNG.
+  - **WhatsApp e E-mail:** sem o menu do aparelho, abrem com o texto e o link.
+  - **Instagram:** sem o menu do aparelho, salva a imagem e orienta a postar pelo app, porque o Instagram não recebe imagem do navegador do computador.
 - **1.4 (21/11/2026):** explicação da matéria em cada etapa (campo `learn` de cada missão). Ao acertar a fórmula, abre "Entenda a matéria" com o conceito e a conta com os números da partida. Ao concluir a missão, a recompensa explica a etapa "Resolva o problema". Ao errar, a tela "wasted" mostra o conceito, sem a resposta.
 - **1.3 (21/11/2026):** a 2ª etapa da Usina continua na chaminé (cabo de luzes com Pitágoras), no lugar do veleiro.
 - **1.2 (21/11/2026):** desenhos com os dados sorteados em todas as missões (cilindro, plano cartesiano, fileiras e convites, triângulo retângulo, barra de ocupação e ingresso, rota do avião), sem mostrar a resposta.
