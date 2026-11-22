@@ -5,6 +5,8 @@ const GAME = 'file://' + require('path').resolve(__dirname, '../index.html');
 const { chromium } = require('playwright');
 /* Fecha o recado da Dani no mapa, se estiver aberto (ele flutua sobre os cards) */
 const closeTip = async p => { if (await p.isVisible('#map-tip')) await p.click('#map-tip-close'); };
+// No celular o mapa é um carrossel: centraliza o card antes de tocar nele
+const openCard = async (p, n) => { await p.evaluate(n => carousel.center(MISSIONS.indexOf(n), false), n); await p.waitForTimeout(80); await p.click(`[data-mission="${n}"]`); };
 const closeMTip = async p => { if (await p.isVisible('#m-tip')) await p.click('#m-tip-close'); };
 const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.exitCode = 1; } };
 
@@ -53,7 +55,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     assert(await p.evaluate(() => screen) === 'mapa' && !(await p.isVisible('#map-tip')), 'tocar fora só fecha o recado, sem abrir a missão');
 
     // Missão 1: monta a conta errado (1 erro), depois certo por toque e por arrastar; erra 1 alternativa; usa dica → 100 − 20 − 20 = 60
-    await closeTip(p); await p.click('[data-mission="1"]'); await p.waitForTimeout(200);
+    await closeTip(p); await openCard(p, 1); await p.waitForTimeout(200);
     assert(await p.isVisible('#m-tip'), 'a descrição abre no tooltip na primeira visita');
     await p.waitForTimeout(400);
     const typed = await p.evaluate(() => [document.getElementById('m-tip-text').textContent.length, missionTip.text.length]);
@@ -97,7 +99,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await p.click('#test-fab'); await p.waitForTimeout(250); await p.click('#rw-next'); await p.waitForTimeout(200);
 
     // Missão 2: 10 erros na conta liberam o "Pular"
-    await closeTip(p); await p.click('[data-mission="2"]'); await p.waitForTimeout(200); await closeMTip(p);
+    await closeTip(p); await openCard(p, 2); await p.waitForTimeout(200); await closeMTip(p);
     for (let i = 0; i < 10; i++) {
       await p.evaluate(() => { const s = currentStage(); ui.fills = ui.fills.map((_, k) => s.chips.findIndex(c => c !== s.template.filter(t => typeof t === 'object')[k].slot)); });
       await p.click('#m-confirm'); await p.click('#wasted-ok');
@@ -113,7 +115,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     // Missões 3 a 5 no modo de teste, fora de ordem; depois a 6 libera
     for (const n of [5, 3, 4, 6]) {
       if (n === 6) assert(!(await p.isDisabled('[data-mission="6"]')), 'o Aeroporto libera depois das outras 5');
-      await closeTip(p); await p.click(`[data-mission="${n}"]`); await p.waitForTimeout(150); await closeMTip(p);
+      await closeTip(p); await openCard(p, n); await p.waitForTimeout(150); await closeMTip(p);
       await p.click('#test-fab'); await p.waitForTimeout(150); await p.click('#test-fab'); await p.waitForTimeout(200);
       await p.click('#rw-next'); await p.waitForTimeout(200);
     }

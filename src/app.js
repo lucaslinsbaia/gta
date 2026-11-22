@@ -586,9 +586,8 @@ function renderMapa() {
         : open ? `<span class="mcard__status is-open">${icon('play', 'icon icon--sm')} ${S.stage[n] || S.errors[n] ? 'Em andamento' : 'Disponível'} · até 100 pts</span>`
           : `<span class="mcard__status">${icon('lock', 'icon icon--sm')} ${othersFinished() ? `Precisa de ${STARS_TO_FLY} estrelas · você tem ${starsFor(totalPoints())}` : `Termine as outras 5 e junte ${STARS_TO_FLY} estrelas`}</span>`;
     return `<li><button type="button" class="mcard" data-mission="${n}" ${open ? '' : 'disabled'}
-        aria-label="Missão ${n}: ${M.title}. ${M.topic}. ${open ? (finished(n) ? 'Ver de novo' : 'Jogar') : `Bloqueada: termine as outras 5 missões e junte ${STARS_TO_FLY} estrelas para liberar`}">
+        aria-label="${M.title}. ${M.topic}. ${open ? (finished(n) ? 'Ver de novo' : 'Jogar') : `Bloqueada: termine as outras 5 missões e junte ${STARS_TO_FLY} estrelas para liberar`}">
       <span class="mcard__img"><img src="${IMG.card[n]}" alt="">
-        <span class="mcard__num">Missão ${n}</span>
         ${open ? '' : `<span class="mcard__lock">${icon('lock')}</span>`}</span>
       <span class="mcard__body">
         <span class="eyebrow">${M.area}</span>
@@ -597,8 +596,47 @@ function renderMapa() {
         ${status}
       </span></button></li>`;
   }).join('');
+  $('missions-dots').innerHTML = MISSIONS.map((n, i) => `<button type="button" class="carousel-dot" data-dot="${i}" aria-label="Ir para ${MISSION[n].title}"></button>`).join('');
   $('map-finish').hidden = !stuckBeforeAirport();
+  requestAnimationFrame(() => carousel.center(Math.max(0, MISSIONS.indexOf(next ?? MISSIONS[0])), false));
 }
+
+/* Carrossel 3D das missões no celular: rolagem nativa com snap; cada card gira e
+   encolhe conforme se afasta do centro. Tocar num card lateral só traz ele para o centro. */
+const carousel = (() => {
+  const mq = window.matchMedia('(max-width: 640px)');
+  const track = $('missions');
+  const items = () => [...track.children];
+  const offset = li => (li.offsetLeft + li.offsetWidth / 2 - track.scrollLeft - track.clientWidth / 2) / li.offsetWidth;
+  let frame = 0;
+  function update() {
+    frame = 0;
+    const list = items();
+    if (!mq.matches) { list.forEach(li => { li.style.transform = li.style.opacity = li.style.zIndex = ''; }); return; }
+    let active = 0, best = Infinity;
+    list.forEach((li, i) => {
+      const d = offset(li), a = Math.min(Math.abs(d), 2);
+      if (a < best) { best = a; active = i; }
+      li.style.transform = `perspective(900px) translateZ(${-a * 90}px) rotateY(${Math.max(-1.5, Math.min(1.5, d)) * -32}deg)`;
+      li.style.opacity = String(1 - a * 0.28);
+      li.style.zIndex = String(10 - Math.round(a * 3));
+    });
+    document.querySelectorAll('.carousel-dot').forEach((dot, i) => { dot.classList.toggle('is-active', i === active); dot.setAttribute('aria-current', i === active ? 'true' : 'false'); });
+  }
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+  function center(i, smooth = true) {
+    const li = items()[i];
+    if (!li) return;
+    if (mq.matches) track.scrollTo({ left: li.offsetLeft + li.offsetWidth / 2 - track.clientWidth / 2, behavior: smooth && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto' });
+    update();
+  }
+  const isSide = li => mq.matches && Math.abs(offset(li)) > 0.3;
+  track.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  mq.addEventListener('change', schedule);
+  $('missions-dots').addEventListener('click', event => { const dot = event.target.closest('[data-dot]'); if (dot) center(Number(dot.dataset.dot)); });
+  return { center, update, isSide, index: li => items().indexOf(li) };
+})();
 
 /* Tooltip da Dani (mapa e missões): texto digitado, fecha no ×, no Esc ou tocando fora.
    Fechado, o avatar pulsa e reabre o tooltip. */
@@ -667,7 +705,10 @@ $('map-finish-btn').addEventListener('click', () => {
 });
 $('missions').addEventListener('click', event => {
   const btn = event.target.closest('[data-mission]');
-  if (!btn || btn.disabled) return;
+  if (!btn) return;
+  const li = btn.closest('li');
+  if (event.detail !== 0 && carousel.isSide(li)) { carousel.center(carousel.index(li)); return; }   // card lateral: só centraliza (teclado abre direto)
+  if (btn.disabled) return;
   S.current = Number(btn.dataset.mission);
   save();
   show('missao');
@@ -710,7 +751,7 @@ function renderMissao() {
   $('m-scene').src = IMG.scene[n];
   $('m-scene').alt = M.alt;
   $('m-avatar').src = IMG.avatar;
-  $('m-eyebrow').textContent = `Missão ${n} · ${M.area}`;
+  $('m-eyebrow').textContent = M.area;
   $('m-title').textContent = M.title;
   const k = closed ? 1 : S.stage[n];
   $('m-steps').innerHTML = STAGE_NAMES.map((name, i) => {

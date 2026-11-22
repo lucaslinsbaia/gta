@@ -214,7 +214,7 @@
   .mcard__img { position: relative; aspect-ratio: 5 / 3; border-bottom: 3px solid var(--cream); overflow: hidden; }
   .mcard__img img { width: 100%; height: 100%; object-fit: cover; }
   .mcard:disabled .mcard__img img { filter: grayscale(0.85) brightness(0.45); }
-  .mcard__num { position: absolute; left: var(--s3); top: var(--s3); padding: 4px 10px 2px; font: 400 1.3rem/1 var(--font-label); letter-spacing: 0.08em; color: var(--night); background: var(--yellow); border: 2px solid var(--night); }
+  .carousel-dots { display: none; }
   .mcard__lock { position: absolute; inset: 0; display: grid; place-items: center; color: var(--cream); }
   .mcard__lock .icon { width: 44px; height: 44px; }
   .mcard__body { display: flex; flex-direction: column; gap: var(--s1); padding: var(--s4) var(--s5) var(--s5); flex: 1; }
@@ -358,7 +358,14 @@
   }
   @media (max-width: 640px) {
     .wrap { padding: var(--s5) var(--s4) var(--s10); }
-    .missions { grid-template-columns: minmax(0, 1fr); }
+    /* Carrossel 3D: rolagem lateral com snap; o JS gira e afasta os cards laterais */
+    .missions { display: flex; gap: 0; margin: 0 calc(-1 * var(--s4)); padding: var(--s4) calc(14vw + 5vw) var(--s6); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; position: relative; }
+    .missions::-webkit-scrollbar { display: none; }
+    .missions > li { position: relative; flex: 0 0 72vw; margin: 0 -5vw; scroll-snap-align: center; transform-origin: 50% 50%; will-change: transform; transition: opacity 120ms linear; }
+    .missions .mcard:hover:not(:disabled) { transform: none; box-shadow: 7px 7px 0 var(--pink); }
+    .carousel-dots { display: flex; justify-content: center; gap: var(--s2); margin-top: var(--s2); }
+    .carousel-dot { width: 10px; height: 10px; padding: 0; border: 2px solid var(--cream); border-radius: 50%; background: transparent; cursor: pointer; transition: width 160ms var(--ease), background 160ms var(--ease); }
+    .carousel-dot.is-active { width: 28px; border-radius: 6px; background: var(--pink); border-color: var(--pink); }
     .brand__sub, .brand__name { display: none; }
     .score-pill { gap: var(--s2); padding: 2px var(--s2); }
     .stars .icon { width: 13px; height: 13px; }
