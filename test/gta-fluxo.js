@@ -44,7 +44,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.goto(GAME + '#teste'); await p.evaluate(() => localStorage.clear()); await p.reload(); await p.waitForTimeout(400);
     await p.click('#btn-start'); await p.fill('#id-name', 'Ana'); await p.click('#id-form button[type=submit]'); await p.waitForTimeout(300);
-    assert(!(await p.isDisabled('[data-mission="5"]')), 'missões 1 a 5 começam abertas');
+    assert(!(await p.isDisabled('[data-mission="1"]')) && await p.isDisabled('[data-mission="2"]') && await p.isDisabled('[data-mission="5"]'), 'só a primeira missão começa aberta');
     assert(await p.isDisabled('[data-mission="6"]'), 'o Aeroporto começa bloqueado');
     assert(await p.isVisible('#map-tip'), 'o recado da Dani abre sozinho no mapa');
     await p.click('#map-tip-close');
@@ -98,6 +98,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await p.click('#m-hint-btn'); await p.click('#hint-confirm'); await p.waitForTimeout(150); await p.click('#dlg-hint [data-close]');
     await p.click('#test-fab'); await p.waitForTimeout(250); await p.click('#rw-next'); await p.waitForTimeout(200);
 
+    assert(!(await p.isDisabled('[data-mission="2"]')), 'terminar a 1 libera a 2');
     // Missão 2: 10 erros na conta liberam o "Pular"
     await closeTip(p); await openCard(p, 2); await p.waitForTimeout(200); await closeMTip(p);
     for (let i = 0; i < 10; i++) {
@@ -112,8 +113,10 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     assert(await p.isVisible('#rw-solution'), 'resolução aparece ao pular');
     await p.click('#rw-next'); await p.waitForTimeout(200);
 
-    // Missões 3 a 5 no modo de teste, fora de ordem; depois a 6 libera
-    for (const n of [5, 3, 4, 6]) {
+    // Missões 3 a 5 no modo de teste, em sequência: cada uma libera a próxima; depois a 6
+    for (const n of [3, 4, 5, 6]) {
+      assert(!(await p.isDisabled(`[data-mission="${n}"]`)), `a missão ${n} libera depois da anterior`);
+      if (n < 5) assert(await p.isDisabled(`[data-mission="${n + 1}"]`), `a missão ${n + 1} continua bloqueada`);
       if (n === 6) assert(!(await p.isDisabled('[data-mission="6"]')), 'o Aeroporto libera depois das outras 5');
       await closeTip(p); await openCard(p, n); await p.waitForTimeout(150); await closeMTip(p);
       await p.click('#test-fab'); await p.waitForTimeout(150); await p.click('#test-fab'); await p.waitForTimeout(200);
