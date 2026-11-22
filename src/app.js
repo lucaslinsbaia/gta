@@ -9,7 +9,8 @@
      5. Navegação entre telas
      6. Início e identificação · 7. Mapa · 8. Missão · 9. Conclusão
      10. Servidor (turmas e ranking) · 11. Diálogos · 12. Modo de teste
-   Respostas: etapa A monta a conta arrastando peças; etapa B é múltipla
+   Respostas: "Relembre a fórmula" (etapa A) monta a conta arrastando peças;
+   "Resolva o problema" (etapa B) é múltipla
    escolha. Nenhuma resposta pode ser negativa, e as imagens
    não mostram números (os valores mudam a cada jornada).
    ===================================================================== */
@@ -497,7 +498,7 @@ $('missions').addEventListener('click', event => {
    Etapa A: montar a conta (arrastar as peças para as lacunas, ou
    tocar na peça e depois na lacuna). Etapa B: múltipla escolha.
    --------------------------------------------------------------- */
-const STAGE_NAMES = ['Etapa A · Monte a conta', 'Etapa B · Escolha o resultado'];
+const STAGE_NAMES = ['Relembre a fórmula', 'Resolva o problema'];
 const ui = { fills: [], chipOrder: [], selected: null, key: '' };
 
 const currentStage = () => MISSION[S.current].stages(S.data[S.current])[S.stage[S.current]];
@@ -528,7 +529,7 @@ function renderMissao() {
   $('m-eyebrow').textContent = `Missão ${n} · ${M.area}`;
   $('m-title').textContent = M.title;
   const k = closed ? 1 : S.stage[n];
-  $('m-steps').innerHTML = ['Etapa A', 'Etapa B'].map((name, i) => {
+  $('m-steps').innerHTML = STAGE_NAMES.map((name, i) => {
     const cls = closed || i < S.stage[n] ? 'is-done' : i === k ? 'is-current' : '';
     return `<li class="${cls}"${i === k && !closed ? ' aria-current="step"' : ''}>${name}</li>`;
   }).join('');
@@ -677,8 +678,8 @@ function checkBuild() {
     S.stageErrors[n] = 0;
     save();
     renderMissao();
-    setMsg(`Conta certa! ${stage.result} Agora escolhe o resultado da etapa B.`, false);
-    $('live').textContent = 'Conta certa. Etapa B liberada.';
+    setMsg(`Fórmula certa! ${stage.result} Agora resolva o problema.`, false);
+    $('live').textContent = 'Fórmula certa. Agora resolva o problema.';
     const first = document.querySelector('#m-options input');
     if (first) first.focus();
     return;
