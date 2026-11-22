@@ -134,58 +134,59 @@ async function compose(c, size = 512) {
   return out;
 }
 
-/* ---------- Tela "Crie seu personagem" ---------- */
-let cfg = { ...DEFAULT }, tab = 'personagem';
+/* ---------- Tela "Crie seu personagem" (stepper) ---------- */
+let cfg = { ...DEFAULT }, gender = 'f';
 const el = id => document.getElementById(id);
-const TABS = [['personagem', 'Personagem'], ['cores', 'Cores'], ['fundo', 'Fundo']];
-const FACE = [16, 4, 96];
-const charBtn = ch => `<button type="button" class="av-opt" data-g="char" data-v="${ch.id}" aria-pressed="${cfg.char === ch.id}"><canvas width="128" height="128" data-char="${ch.id}" aria-hidden="true"></canvas><span>${ch.label}</span></button>`;
 const sw = (g, i, col, on, name) => `<button type="button" class="av-sw" data-g="${g}" data-v="${i}" aria-pressed="${on}" aria-label="${name}" title="${name}" style="background:${col}"></button>`;
 const origSw = g => `<button type="button" class="av-sw av-sw--orig" data-g="${g}" data-v="" aria-pressed="${cfg[g] === null}" aria-label="Cor original do desenho" title="Original">✦</button>`;
-function renderTabs() { el('av-tabs').innerHTML = TABS.map(([id, n]) => `<button type="button" class="av-tab" role="tab" data-t="${id}" aria-selected="${id === tab}">${n}</button>`).join(''); }
-function renderPanel() {
-  let h = '';
-  if (tab === 'personagem') h = `<h2>Feminino</h2><div class="av-grid">${CHARS.filter(c => c.id[0] === 'f').map(charBtn).join('')}</div>
-    <h2>Masculino</h2><div class="av-grid">${CHARS.filter(c => c.id[0] === 'm').map(charBtn).join('')}</div>`;
-  if (tab === 'cores') {
-    const scarf = cfg.char === 'f8';
-    h = `<h2>Pele</h2><div class="av-sws">${origSw('skin')}${SKIN.map((c, i) => sw('skin', i, c, cfg.skin === i, `Tom ${i + 1}`)).join('')}</div>
-    <h2>${scarf ? 'Lenço' : 'Cabelo'}</h2><div class="av-sws">${origSw('hair')}${(scarf ? SCARF : HAIR).map((c, i) => sw('hair', i, c, cfg.hair === i, (scarf ? NOMES_LENCO : NOMES_CABELO)[i])).join('')}</div>
-    <h2>Olhos</h2><div class="av-sws">${origSw('eyes')}${EYE.map((c, i) => sw('eyes', i, c, cfg.eyes === i, NOMES_OLHO[i])).join('')}</div>
-    <h2>Óculos</h2><div class="av-toggle" role="group" aria-label="Óculos">
+/** Etapa 1: abas Feminino / Masculino e só os retratos do gênero escolhido */
+function renderChars() {
+  el('av-gtabs').innerHTML = [['f', 'Feminino'], ['m', 'Masculino']].map(([g, n]) => `<button type="button" class="av-tab" role="tab" data-gender="${g}" aria-selected="${g === gender}">${n}</button>`).join('');
+  el('av-chars').innerHTML = CHARS.filter(c => c.id[0] === gender).map(ch => `<button type="button" class="av-opt av-opt--char" data-g="char" data-v="${ch.id}" aria-pressed="${cfg.char === ch.id}" aria-label="Personagem ${ch.label.toLowerCase()}"><canvas width="128" height="128" data-char="${ch.id}" aria-hidden="true"></canvas></button>`).join('');
+  el('av-chars').querySelectorAll('canvas[data-char]').forEach(cv => paint(cv, { char: cv.dataset.char }, [12, 0, 104]));
+}
+/** Etapa 2: cores e óculos, refletidos no personagem */
+function renderColors() {
+  const scarf = cfg.char === 'f8';
+  el('av-colors').innerHTML = `<h2 class="av-h">Pele</h2><div class="av-sws">${origSw('skin')}${SKIN.map((c, i) => sw('skin', i, c, cfg.skin === i, `Tom ${i + 1}`)).join('')}</div>
+    <h2 class="av-h">${scarf ? 'Lenço' : 'Cabelo'}</h2><div class="av-sws">${origSw('hair')}${(scarf ? SCARF : HAIR).map((c, i) => sw('hair', i, c, cfg.hair === i, (scarf ? NOMES_LENCO : NOMES_CABELO)[i])).join('')}</div>
+    <h2 class="av-h">Olhos</h2><div class="av-sws">${origSw('eyes')}${EYE.map((c, i) => sw('eyes', i, c, cfg.eyes === i, NOMES_OLHO[i])).join('')}</div>
+    <h2 class="av-h">Óculos</h2><div class="av-toggle" role="group" aria-label="Óculos">
       <button type="button" class="btn btn--outline btn--sm" data-g="glasses" data-v="0" aria-pressed="${!cfg.glasses}">Sem óculos</button>
       <button type="button" class="btn btn--outline btn--sm" data-g="glasses" data-v="1" aria-pressed="${cfg.glasses}">Com óculos</button></div>`;
-  }
-  if (tab === 'fundo') h = `<h2>Onde você está</h2><div class="av-grid">${Object.entries(BG_NAMES).map(([n, name]) => `<button type="button" class="av-opt av-opt--bg" data-g="bg" data-v="${n}" aria-pressed="${cfg.bg === Number(n)}"><canvas width="128" height="128" data-bg="${n}" aria-hidden="true"></canvas><span>${name}</span></button>`).join('')}</div>`;
-  el('av-panel').innerHTML = h;
-  el('av-panel').querySelectorAll('canvas[data-char]').forEach(cv => paint(cv, { ...cfg, char: cv.dataset.char, hair: cv.dataset.char === 'f8' && cfg.char !== 'f8' ? null : cfg.hair }, FACE));
-  el('av-panel').querySelectorAll('canvas[data-bg]').forEach(cv => bgCanvas(Number(cv.dataset.bg)).then(bg => { if (bg) { const x = cv.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(bg, 0, 0, cv.width, cv.height); } }));
+}
+/** Etapa 3: cenário */
+function renderBgs() {
+  el('av-bgs').innerHTML = Object.entries(BG_NAMES).map(([n, name]) => `<button type="button" class="av-opt av-opt--bg" data-g="bg" data-v="${n}" aria-pressed="${cfg.bg === Number(n)}"><canvas width="128" height="128" data-bg="${n}" aria-hidden="true"></canvas><span>${name}</span></button>`).join('');
+  el('av-bgs').querySelectorAll('canvas[data-bg]').forEach(cv => bgCanvas(Number(cv.dataset.bg)).then(bg => { if (bg) { const x = cv.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(bg, 0, 0, cv.width, cv.height); } }));
 }
 function update() {
   paint(el('av-canvas'), cfg);
   bgCanvas(cfg.bg).then(bg => { if (bg) el('av-mirror').style.backgroundImage = `url(${bg.toDataURL()})`; });
 }
-const any = n => Math.floor(Math.random() * n);
 function setup() {
-  el('av-tabs').addEventListener('click', e => { const t = e.target.closest('[data-t]'); if (!t) return; tab = t.dataset.t; renderTabs(); renderPanel(); });
-  el('av-panel').addEventListener('click', e => {
+  el('av-gtabs').addEventListener('click', e => { const t = e.target.closest('[data-gender]'); if (!t) return; gender = t.dataset.gender; renderChars(); });
+  const pickHandler = e => {
     const b = e.target.closest('[data-g]'); if (!b) return;
     const g = b.dataset.g, v = b.dataset.v;
-    if (g === 'char') { if ((v === 'f8') !== (cfg.char === 'f8')) cfg.hair = null; cfg.char = v; }
-    else if (g === 'glasses') cfg.glasses = v === '1';
-    else if (g === 'bg') cfg.bg = Number(v);
-    else cfg[g] = v === '' ? null : Number(v);
-    update(); renderPanel();
-  });
-  el('av-random').addEventListener('click', () => {
-    cfg = normalize({ char: CHARS[any(CHARS.length)].id, skin: any(SKIN.length), hair: Math.random() < 0.4 ? null : any(HAIR.length), eyes: Math.random() < 0.5 ? null : any(EYE.length), glasses: Math.random() < 0.3, bg: cfg.bg });
-    update(); renderPanel();
-  });
+    if (g === 'char') { if ((v === 'f8') !== (cfg.char === 'f8')) cfg.hair = null; cfg.char = v; renderChars(); }
+    else if (g === 'glasses') { cfg.glasses = v === '1'; renderColors(); }
+    else if (g === 'bg') { cfg.bg = Number(v); renderBgs(); }
+    else { cfg[g] = v === '' ? null : Number(v); renderColors(); }
+    update();
+  };
+  ['av-chars', 'av-colors', 'av-bgs'].forEach(id => el(id).addEventListener('click', pickHandler));
   CHARS.forEach(c => charData(c.id));   // decodifica os retratos de antemão
 }
+/** Leva o espelho do personagem para a etapa aberta (2 ou 3) */
+function placeMirror(step) {
+  const slot = document.querySelector(`.av-mirror-slot[data-mirror="${step}"]`);
+  el('av-mirror').hidden = !slot;
+  if (slot) slot.append(el('av-mirror'));
+}
 return {
-  setup, compose, paint, normalize,
-  load(c) { cfg = normalize(c); tab = 'personagem'; renderTabs(); renderPanel(); update(); },
+  setup, compose, paint, normalize, placeMirror,
+  load(c) { cfg = normalize(c); gender = cfg.char[0]; renderChars(); renderColors(); renderBgs(); update(); },
   get: () => ({ ...cfg }),
 };
 })();

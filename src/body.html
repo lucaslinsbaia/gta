@@ -74,41 +74,65 @@
        ================================================================ -->
   <section class="screen" id="s-identificacao" aria-labelledby="id-title" hidden>
     <div class="wrap creator">
-      <div class="creator__main">
-        <p class="eyebrow">Antes de entrar na live</p>
-        <h1 class="title-lg" id="id-title">Crie seu personagem</h1>
-        <p class="lead">Ele vai com você por Porto Alegre e aparece no seu resultado.</p>
-        <form id="id-form" novalidate>
-          <div class="id-field field">
-            <label for="id-name">Nome ou apelido</label>
-            <input type="text" id="id-name" maxlength="40" autocomplete="nickname" aria-describedby="id-name-msg" required>
-            <p class="msg is-error" id="id-name-msg" aria-live="polite"></p>
+      <form id="id-form" novalidate>
+        <!-- Stepper: 1 nome e personagem base, 2 cores e óculos, 3 cenário -->
+        <ol class="stepper" id="av-steps" aria-label="Etapas">
+          <li data-step="1"><span>1</span> Personagem</li>
+          <li data-step="2"><span>2</span> Visual</li>
+          <li data-step="3"><span>3</span> Cenário</li>
+        </ol>
+
+        <div class="av-step" data-step="1">
+          <p class="eyebrow">Antes de entrar na live</p>
+          <h1 class="title-lg" id="id-title" tabindex="-1">Crie seu personagem</h1>
+          <div class="id-row">
+            <div class="id-field field">
+              <label for="id-name">Nome ou apelido</label>
+              <input type="text" id="id-name" maxlength="40" autocomplete="nickname" aria-describedby="id-name-msg" required>
+              <p class="msg is-error" id="id-name-msg" aria-live="polite"></p>
+            </div>
+            <div class="id-field field">
+              <label for="id-class">Turma</label>
+              <select id="id-class" aria-describedby="id-class-hint id-class-msg"></select>
+              <p class="msg" id="id-class-hint"></p>
+              <p class="msg is-error" id="id-class-msg" aria-live="polite"></p>
+            </div>
           </div>
-          <div class="id-field field">
-            <label for="id-class">Turma</label>
-            <select id="id-class" aria-describedby="id-class-hint id-class-msg"></select>
-            <p class="msg" id="id-class-hint"></p>
-            <p class="msg is-error" id="id-class-msg" aria-live="polite"></p>
+          <h2 class="av-h">Escolha seu personagem</h2>
+          <div class="av-tabs" role="tablist" id="av-gtabs" aria-label="Gênero do personagem"></div>
+          <div class="av-grid av-grid--chars" id="av-chars" role="tabpanel"></div>
+        </div>
+
+        <div class="av-step av-split" data-step="2" hidden>
+          <div class="av-mirror-slot" data-mirror="2"></div>
+          <div>
+            <h1 class="title-lg" tabindex="-1">Deixe com a sua cara</h1>
+            <p class="lead">Ajuste a pele, o cabelo, os olhos e os óculos.</p>
+            <div id="av-colors"></div>
           </div>
-          <!-- Espelho: o personagem com as cores escolhidas, sobre o cenário -->
-          <div class="av-mirror" id="av-mirror">
-            <canvas id="av-canvas" width="128" height="128" role="img" aria-label="Seu personagem"></canvas>
+        </div>
+
+        <div class="av-step av-split" data-step="3" hidden>
+          <div class="av-mirror-slot" data-mirror="3"></div>
+          <div>
+            <h1 class="title-lg" tabindex="-1">Escolha o cenário</h1>
+            <p class="lead">Onde o seu personagem aparece no resultado.</p>
+            <div class="av-grid" id="av-bgs"></div>
           </div>
-          <div class="av-presets">
-            <button type="button" class="btn btn--outline btn--sm" id="av-random">Sortear personagem</button>
-          </div>
-          <!-- Rodapé fixo com o botão de começar -->
-          <div class="fixed-footer">
-            <button type="button" class="link-btn" id="id-back">Voltar</button>
-            <button type="submit" class="btn btn--gold">Bora jogar
-              <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
-          </div>
-        </form>
-      </div>
-      <section class="av-closet" aria-label="Opções do personagem">
-        <div class="av-tabs" role="tablist" id="av-tabs"></div>
-        <div class="av-panel" id="av-panel" role="tabpanel"></div>
-      </section>
+        </div>
+
+        <!-- Espelho: o personagem com as cores escolhidas, sobre o cenário (vai para a etapa aberta) -->
+        <div class="av-mirror" id="av-mirror" hidden>
+          <canvas id="av-canvas" width="128" height="128" role="img" aria-label="Seu personagem"></canvas>
+        </div>
+
+        <!-- Rodapé fixo -->
+        <div class="fixed-footer">
+          <button type="button" class="link-btn" id="id-back">Voltar</button>
+          <button type="submit" class="btn btn--gold" id="id-next"><span id="id-next-text">Próximo</span>
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+        </div>
+      </form>
     </div>
   </section>
 

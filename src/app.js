@@ -526,7 +526,23 @@ $('btn-start').addEventListener('click', () => {
 });
 $('new-confirm').addEventListener('click', () => closeDialog($('dlg-new'), () => show('identificacao')));
 $('btn-continue').addEventListener('click', () => show(S.completed ? 'fim' : 'mapa'));
-$('id-back').addEventListener('click', () => show('inicio'));
+/* Stepper da criação do personagem: 1 nome e personagem, 2 visual, 3 cenário */
+let idStep = 1;
+function setIdStep(n) {
+  idStep = n;
+  document.querySelectorAll('#s-identificacao .av-step').forEach(s => { s.hidden = Number(s.dataset.step) !== n; });
+  document.querySelectorAll('#av-steps li').forEach(li => {
+    const k = Number(li.dataset.step);
+    li.classList.toggle('is-done', k < n);
+    if (k === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+  });
+  AVATAR.placeMirror(n);
+  $('id-next-text').textContent = n < 3 ? 'Próximo' : 'Bora jogar';
+  window.scrollTo(0, 0);
+  const h = document.querySelector(`#s-identificacao .av-step[data-step="${n}"] h1`);
+  if (h && n > 1) h.focus({ preventScroll: true });
+}
+$('id-back').addEventListener('click', () => { if (idStep > 1) setIdStep(idStep - 1); else show('inicio'); });
 
 function lastPlayer() {
   try { return JSON.parse(localStorage.getItem(PLAYER_KEY)) || null; } catch (e) { return null; }
@@ -543,6 +559,7 @@ function renderIdentificacao() {
   const last = lastPlayer();
   $('id-name').value = last ? last.name : '';
   AVATAR.load(last && last.avatar);
+  setIdStep(1);
   renderClassField(last);
   API.ready.then(() => { if (screen === 'identificacao') renderClassField(lastPlayer()); });
   setFieldMessage($('id-name'), $('id-name-msg'), '');
@@ -576,11 +593,12 @@ $('id-form').addEventListener('submit', async event => {
     : '';
   setFieldMessage($('id-name'), $('id-name-msg'), nameMsg);
   setFieldMessage($('id-class'), $('id-class-msg'), classMsg);
-  if (nameMsg || classMsg) { (nameMsg ? $('id-name') : $('id-class')).focus(); return; }
+  if (nameMsg || classMsg) { setIdStep(1); (nameMsg ? $('id-name') : $('id-class')).focus(); return; }
+  if (idStep < 3) { setIdStep(idStep + 1); return; }
   checkingName = true;
   const serverMsg = await serverNameProblem(name);
   checkingName = false;
-  if (serverMsg) { setFieldMessage($('id-name'), $('id-name-msg'), serverMsg); $('id-name').focus(); return; }
+  if (serverMsg) { setIdStep(1); setFieldMessage($('id-name'), $('id-name-msg'), serverMsg); $('id-name').focus(); return; }
   const player = { name, turma, turmaId, avatar: AVATAR.get() };
   try { localStorage.setItem(PLAYER_KEY, JSON.stringify(player)); } catch (e) { /* segue sem lembrar */ }
   S = freshState();
