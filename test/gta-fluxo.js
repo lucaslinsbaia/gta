@@ -44,7 +44,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.goto(GAME + '#teste'); await p.evaluate(() => localStorage.clear()); await p.reload(); await p.waitForTimeout(400);
     await p.click('#btn-start'); await p.fill('#id-name', 'Ana'); await p.click('#id-form button[type=submit]'); await p.waitForTimeout(300);
-    assert(await p.evaluate(() => !!(S.player.avatar && S.player.avatar.hair && S.player.avatar.bg === 4)), 'o personagem vai junto com o jogador, com a Usina de fundo por padrão');
+    assert(await p.evaluate(() => !!(S.player.avatar && S.player.avatar.char && S.player.avatar.bg === 4)), 'o personagem vai junto com o jogador, com a Usina de fundo por padrão');
     assert(!(await p.isDisabled('[data-mission="1"]')) && await p.isDisabled('[data-mission="2"]') && await p.isDisabled('[data-mission="5"]'), 'só a primeira missão começa aberta');
     assert(await p.isDisabled('[data-mission="6"]'), 'o Aeroporto começa bloqueado');
     assert(await p.isVisible('#map-tip'), 'o recado da Isa abre sozinho no mapa');
