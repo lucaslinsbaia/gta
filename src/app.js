@@ -20,8 +20,8 @@
    1. IMAGENS E UTILITÁRIOS
    --------------------------------------------------------------- */
 const IMG = {
-  dani: '__IMG_gta_dani_pixel__',
-  avatar: '__IMG_gta_dani_avatar__',
+  dani: '__IMG_gta_isa_retrato__',
+  avatar: '__IMG_gta_isa_avatar__',
   card: {
     1: '__IMG_gta_card_m1_mercado__', 2: '__IMG_gta_card_m2_redencao__', 3: '__IMG_gta_card_m3_beirario__',
     4: '__IMG_gta_card_m4_gasometro__', 5: '__IMG_gta_card_m5_arena__', 6: '__IMG_gta_card_m6_aeroporto__'
