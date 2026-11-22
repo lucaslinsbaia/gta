@@ -947,7 +947,7 @@ const MISSION = {
     },
     stages: d => [
       { type: 'build', data: [['Raio da base do tonel', `${fmt(d.r)} m`], ['Altura do tonel', `${fmt(d.h)} m`], ['Use π', '3,14']],
-        question: 'Monte a conta da área da base do tonel.',
+        question: 'Relembre a fórmula para calcular a área da base do cilindro.',
         template: ['A = ', slot('3,14'), ' · ', slot(fmt(d.r)), '²'],
         chips: makeChips(['3,14', fmt(d.r)], [fmt(2 * d.r), fmt(d.h), '2']),
         result: `Área da base: ${fmt(d.A)} m² (arredondada para duas casas).` },
