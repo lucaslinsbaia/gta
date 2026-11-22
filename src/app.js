@@ -81,6 +81,100 @@ function cylinderSvg(r, h) {
   </svg>`;
 }
 
+/* Desenhos das missões (SVG). k = etapa (0: Relembre a fórmula, 1: Resolva o problema).
+   Mostram os dados sorteados, nunca a resposta. */
+const T = (x, y, txt, color = '#FFF7EC', size = 15, anchor = 'middle', weight = 700) =>
+  `<text x="${x}" y="${y}" text-anchor="${anchor}" font-family="Inter, sans-serif" font-size="${size}" font-weight="${weight}" fill="${color}">${txt}</text>`;
+const svgWrap = (w, h, label, inner) => `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}">${inner}</svg>`;
+
+/** Redenção: plano com os dois pontos; na etapa B, os catetos do triângulo. */
+function planeSvg(d, k) {
+  const u = 13, ox = 22, oy = 182, px = x => ox + x * u, py = y => oy - y * u;
+  let grid = '';
+  for (let i = 0; i <= 12; i++) {
+    grid += `<line x1="${px(i)}" y1="${py(0)}" x2="${px(i)}" y2="${py(12)}" stroke="rgba(255,247,236,0.12)"/>`;
+    grid += `<line x1="${px(0)}" y1="${py(i)}" x2="${px(12)}" y2="${py(i)}" stroke="rgba(255,247,236,0.12)"/>`;
+  }
+  const axes = `<line x1="${px(0)}" y1="${py(0)}" x2="${px(12.6)}" y2="${py(0)}" stroke="#FFF7EC" stroke-width="2"/><line x1="${px(0)}" y1="${py(0)}" x2="${px(0)}" y2="${py(12.6)}" stroke="#FFF7EC" stroke-width="2"/>`
+    + T(px(12.6) + 6, py(0) + 5, 'x', '#BBA8D6', 13, 'start') + T(px(0), py(12.6) - 6, 'y', '#BBA8D6', 13);
+  const [x1, y1] = d.P, [x2, y2] = d.Q;
+  const legs = k === 1
+    ? `<path d="M${px(x1)} ${py(y1)} L${px(x2)} ${py(y1)} L${px(x2)} ${py(y2)}" fill="none" stroke="#FFB02E" stroke-width="2.5" stroke-dasharray="6 4"/>
+       <line x1="${px(x1)}" y1="${py(y1)}" x2="${px(x2)}" y2="${py(y2)}" stroke="#FF2E93" stroke-width="3"/>
+       ${T((px(x1) + px(x2)) / 2, py(y1) + (y2 > y1 ? -8 : 17), d.dx, '#FFB02E', 13)}
+       ${T(px(x2) + 10, (py(y1) + py(y2)) / 2 + 4, d.dy, '#FFB02E', 13, 'start')}`
+    : `<line x1="${px(x1)}" y1="${py(y1)}" x2="${px(x2)}" y2="${py(y2)}" stroke="#22E3FF" stroke-width="2" stroke-dasharray="5 5"/>`;
+  const dot = (x, y, c, name) => `<circle cx="${px(x)}" cy="${py(y)}" r="6" fill="${c}" stroke="#1A0833" stroke-width="2"/>`
+    + T(px(x) + (x > 8 ? -9 : 9), py(y) + (y > 10 ? 18 : -9), name, c, 13, x > 8 ? 'end' : 'start');
+  return svgWrap(210, 200, `Plano cartesiano com o lago dos pedalinhos em (${x1}, ${y1}) e a banca do Brique em (${x2}, ${y2})`,
+    grid + axes + legs + dot(x1, y1, '#22E3FF', 'Lago') + dot(x2, y2, '#B6FF3B', 'Brique'));
+}
+
+/** Beira-Rio: fileiras crescendo (PA) ou convites se multiplicando (PG). */
+function stadiumSvg(d, k) {
+  if (k !== 1) {
+    const rows = [d.a1, d.a1 + d.r, d.a1 + 2 * d.r], maxW = 150, unit = maxW / (d.a1 + 2 * d.r + 2);
+    let out = '';
+    rows.forEach((v, i) => {
+      const y = 150 - i * 34, w = v * unit;
+      out += `<rect x="${105 - w / 2}" y="${y}" width="${w}" height="20" rx="3" fill="#FF2E93" opacity="${0.55 + i * 0.15}"/>` + T(190, y + 15, v, '#FFF7EC', 14, 'end') + T(10, y + 15, `${i + 1}ª`, '#BBA8D6', 13, 'start');
+    });
+    out += T(105, 40, '⋮', '#BBA8D6', 20) + `<rect x="30" y="8" width="150" height="20" rx="3" fill="none" stroke="#FFB02E" stroke-width="2.5" stroke-dasharray="6 4"/>`
+      + T(105, 23, '?', '#FFB02E', 16) + T(10, 23, `${d.n}ª`, '#FFB02E', 13, 'start');
+    return svgWrap(200, 180, `Fileiras da arquibancada: a 1ª tem ${d.a1} cadeiras e cada fileira acima tem ${d.r} a mais; a ${d.n}ª é a pergunta`, out);
+  }
+  let out = '', y = 26;
+  for (let round = 1; round < d.m; round++) {
+    const count = d.g1 * d.q ** (round - 1), size = Math.min(10, 150 / count);
+    let dots = '';
+    for (let i = 0; i < count; i++) dots += `<circle cx="${40 + i * (125 / count) + size / 2}" cy="${y}" r="${Math.max(2.2, Math.min(size, 125 / count) / 2 - 0.8)}" fill="#22E3FF"/>`;
+    out += T(10, y + 5, `${round}ª`, '#BBA8D6', 13, 'start') + dots + T(198, y + 5, count, '#FFF7EC', 14, 'end');
+    y += 40;
+  }
+  out += T(10, y + 5, `${d.m}ª`, '#FFB02E', 13, 'start') + T(115, y + 6, `× ${d.q} … ?`, '#FFB02E', 16);
+  return svgWrap(205, y + 20, `Convites por rodada: ${d.g1} na 1ª rodada e cada pessoa repassa para ${d.q}; a ${d.m}ª rodada é a pergunta`, out);
+}
+
+/** Usina do Gasômetro: chaminé (seno de 30°) ou veleiro (Pitágoras). */
+function triangleSvg(d, k) {
+  const tri = (a, b, c, angle) => `<path d="M20 150 L180 150 L180 40 Z" fill="rgba(34,227,255,0.16)" stroke="#FFF7EC" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M168 150 V138 H180" fill="none" stroke="#FFF7EC" stroke-width="2"/>
+    ${angle ? `<path d="M58 150 A38 38 0 0 0 54 132" fill="none" stroke="#FFB02E" stroke-width="2.5"/>${T(70, 143, angle, '#FFB02E', 13, 'start')}` : ''}
+    ${T(100, 174, a, '#FFF7EC', 16)}${T(188, 100, b, '#FF2E93', 16, 'start')}${T(88, 84, c, '#22E3FF', 16, 'end')}`;
+  if (k !== 1) {
+    return svgWrap(300, 185, `Triângulo retângulo: a linha do chão até o topo da chaminé mede ${d.L} m e faz 30° com o chão; a altura h é a pergunta`,
+      `<rect x="176" y="34" width="8" height="116" fill="#A33A2A"/>` + tri('chão', 'h = ?', `${d.L} m`, '30°'));
+  }
+  return svgWrap(300, 185, `Triângulo retângulo: o veleiro está ${fmtBig(d.a)} m a leste e ${fmtBig(d.b)} m ao norte do mirante; a distância é a pergunta`,
+    tri(`leste: ${fmtBig(d.a)} m`, `norte: ${fmtBig(d.b)} m`, 'd = ?', '') + `<path d="M172 30 L188 30 L180 18 Z" fill="#FFF7EC"/>`);
+}
+
+/** Arena: ocupação em % (etapa A) ou ingresso com desconto (etapa B). */
+function percentSvg(d, k) {
+  if (k !== 1) {
+    const w = 200 * d.p / 100;
+    return svgWrap(220, 90, `Barra de ocupação da Arena: ${d.p}% de ${fmtBig(d.C)} lugares`,
+      `<rect x="10" y="30" width="200" height="30" rx="4" fill="rgba(255,247,236,0.1)" stroke="#FFF7EC" stroke-width="2"/>
+       <rect x="10" y="30" width="${w}" height="30" rx="4" fill="#22E3FF"/>${T(10 + w / 2, 51, `${d.p}%`, '#1A0833', 15)}
+       ${T(10, 20, '0', '#BBA8D6', 12, 'start')}${T(210, 20, `100% = ${fmtBig(d.C)}`, '#BBA8D6', 12, 'end')}${T(110, 82, 'público = ?', '#FFB02E', 14)}`);
+  }
+  return svgWrap(220, 110, `Ingresso de ${d.P} reais com desconto de ${d.dsc}%`,
+    `<path d="M15 20 H205 V45 A12 12 0 0 0 205 69 V94 H15 V69 A12 12 0 0 0 15 45 Z" fill="#FFF7EC" stroke="#1A0833" stroke-width="2"/>
+     <line x1="150" y1="24" x2="150" y2="90" stroke="#1A0833" stroke-dasharray="4 4"/>
+     ${T(82, 55, 'INGRESSO', '#2B0B4F', 14)}${T(82, 80, `R$ ${d.P}`, '#2B0B4F', 20, 'middle', 800)}
+     ${T(174, 62, `−${d.dsc}%`, '#D4145A', 14, 'middle', 800)}`);
+}
+
+/** Aeroporto: distância voada no tempo (etapa A) ou distância até a próxima parada (etapa B). */
+function flightSvg(d, k) {
+  const plane = (x, y) => `<path d="M${x} ${y} l16 -4 l-6 -10 h5 l10 9 l14 -3 c5 -1 5 5 0 6 l-14 3 l-10 9 h-5 l6 -10 z" fill="#FFF7EC"/>`;
+  const line = (label, time) => `<line x1="20" y1="60" x2="200" y2="60" stroke="#22E3FF" stroke-width="3" stroke-dasharray="8 6"/>
+    <circle cx="20" cy="60" r="6" fill="#B6FF3B"/><circle cx="200" cy="60" r="6" fill="#FF2E93"/>
+    ${T(110, 90, label, '#FFF7EC', 15)}${T(110, 112, time, '#FFB02E', 15)}`;
+  if (k !== 1) return svgWrap(220, 120, `O avião voa ${d.D} km em ${d.t} minutos`, line(`${d.D} km`, `${d.t} min`) + plane(150, 52));
+  return svgWrap(220, 120, `Faltam ${fmtBig(d.K)} km até a próxima parada, a ${d.v} km por minuto`, line(`${fmtBig(d.K)} km`, '? min') + plane(30, 52));
+}
+
 const MISSION = {
   1: {
     title: 'Mercado Público', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
@@ -130,6 +224,7 @@ const MISSION = {
         question: 'Qual é a distância em linha reta entre o lago e a banca, em unidades do mapa?', unit: 'unidades', correct: d.dist,
         distractors: [d.dx + d.dy, d.dx * d.dx + d.dy * d.dy, Math.abs(d.dx - d.dy)] }
     ],
+    figure: (d, k) => planeSvg(d, k),
     solution: d => [
       `Ponto médio: x = (${d.P[0]} + ${d.Q[0]}) ÷ 2 = ${fmt(d.mx)}.`,
       `Distância: √(${d.dx}² + ${d.dy}²) = ${d.dist} unidades do mapa, ou ${d.dist * 10} m.`
@@ -155,6 +250,7 @@ const MISSION = {
         question: `Quantas pessoas recebem o convite na ${d.m}ª rodada?`, unit: 'pessoas', correct: d.gm,
         distractors: [d.g1 * d.q ** d.m, d.g1 + (d.m - 1) * d.q, d.q ** (d.m - 1), d.g1 * d.q * d.m] }
     ],
+    figure: (d, k) => stadiumSvg(d, k),
     solution: d => [
       `PA: a${d.n} = ${d.a1} + (${d.n} − 1) · ${d.r} = ${d.an} cadeiras.`,
       `PG: a${d.m} = ${d.g1} · ${d.q}^${d.m - 1} = ${d.gm} pessoas.`
@@ -179,6 +275,7 @@ const MISSION = {
         question: 'Qual é a distância em linha reta do mirante até o veleiro?', unit: 'm', correct: d.c,
         distractors: [d.a + d.b, d.b - d.a, d.c + 100, d.a * 2] }
     ],
+    figure: (d, k) => triangleSvg(d, k),
     solution: d => [
       `Altura: h = ${d.L} · sen 30° = ${d.L} · 0,5 = ${d.L / 2} m.`,
       `Distância: d² = ${fmtBig(d.a)}² + ${fmtBig(d.b)}² = ${fmtBig(d.c * d.c)}, então d = ${fmtBig(d.c)} m.`
@@ -204,6 +301,7 @@ const MISSION = {
         question: 'Quanto o estudante paga no ingresso, já com o desconto?', unit: 'reais', correct: d.final,
         distractors: [d.P * d.dsc / 100, d.P - d.dsc, d.P + d.P * d.dsc / 100] }
     ],
+    figure: (d, k) => percentSvg(d, k),
     solution: d => [
       `Público: ${fmtBig(d.C)} · ${d.p} ÷ 100 = ${fmtBig(d.pub)} pessoas.`,
       `Desconto: ${d.P} · ${d.dsc} ÷ 100 = ${fmt(d.P * d.dsc / 100)} reais, então o ingresso sai por ${d.P} − ${fmt(d.P * d.dsc / 100)} = ${fmt(d.final)} reais.`
@@ -228,6 +326,7 @@ const MISSION = {
         question: 'Quantos minutos faltam para chegar à próxima parada?', unit: 'min', correct: d.T,
         distractors: [d.K / d.D, d.T * 2, d.T + d.t, d.K / 10] }
     ],
+    figure: (d, k) => flightSvg(d, k),
     solution: d => [
       `Razão: ${d.D} km ÷ ${d.t} min = ${d.v} km por minuto.`,
       `Regra de três: ${fmtBig(d.K)} km ÷ ${d.v} km por minuto = ${d.T} minutos.`
@@ -556,7 +655,7 @@ function renderMissao() {
   $('m-confirm').hidden = closed;
   renderMissionScore();
   $('m-figure').hidden = !M.figure;
-  $('m-figure').innerHTML = M.figure ? M.figure(d) : '';
+  $('m-figure').innerHTML = M.figure ? M.figure(d, closed ? 1 : S.stage[n]) : '';
   if (closed) {
     $('m-build').hidden = true;
     $('m-expr').hidden = true;

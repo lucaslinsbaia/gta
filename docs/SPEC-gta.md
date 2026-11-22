@@ -101,6 +101,7 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **1.2 (21/11/2026):** desenhos com os dados sorteados em todas as missões (cilindro, plano cartesiano, fileiras e convites, triângulo retângulo, barra de ocupação e ingresso, rota do avião), sem mostrar a resposta.
 - **1.1 (21/11/2026):** as etapas aparecem para o aluno como "Relembre a fórmula" (A) e "Resolva o problema" (B).
 - **1.0 (21/11/2026):** descrição da missão em modal com animação de digitação; o avatar da Dani sobre a cena reabre a descrição.
 - **0.9 (21/11/2026):** "Álgebra" vira "Aritmética" no nome do jogo e nas missões: Arena com porcentagem e Aeroporto com razão, proporção e regra de três. O Beira-Rio mantém PA e PG.
