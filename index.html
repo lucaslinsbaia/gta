@@ -947,7 +947,7 @@ const MISSION = {
     },
     stages: d => [
       { type: 'build', data: [['Raio da base do tonel', `${fmt(d.r)} m`], ['Altura do tonel', `${fmt(d.h)} m`], ['Use π', '3,14']],
-        question: 'Relembre a fórmula para calcular a área da base do cilindro.',
+        title: 'Relembre a fórmula para calcular a área da base do cilindro', question: 'Monte a conta da área da base do tonel.',
         template: ['A = ', slot('3,14'), ' · ', slot(fmt(d.r)), '²'],
         chips: makeChips(['3,14', fmt(d.r)], [fmt(2 * d.r), fmt(d.h), '2']),
         result: `Área da base: ${fmt(d.A)} m² (arredondada para duas casas).` },
@@ -976,7 +976,7 @@ const MISSION = {
     },
     stages: d => [
       { type: 'build', data: [['Lago dos pedalinhos', `(${d.P[0]}, ${d.P[1]})`], ['Banca do Brique', `(${d.Q[0]}, ${d.Q[1]})`], ['Escala do mapa', '1 unidade = 10 m']],
-        question: 'Relembre a fórmula para calcular a coordenada x do ponto médio entre o lago e o Brique.',
+        title: 'Relembre a fórmula para calcular a coordenada x do ponto médio entre o lago e o Brique', question: 'Monte a conta da coordenada x do ponto de encontro (o ponto médio).',
         template: ['x = (', slot(d.P[0]), ' + ', slot(d.Q[0]), ') ÷ ', slot('2')], swap: [[0, 1]],
         chips: makeChips([d.P[0], d.Q[0], 2], [d.P[1], d.Q[1], 4, d.P[0] + d.Q[0], 1]),
         result: `Ponto médio: x = ${fmt(d.mx)}.` },
@@ -1003,7 +1003,7 @@ const MISSION = {
     },
     stages: d => [
       { type: 'build', data: [['1ª fileira do setor', `${d.a1} cadeiras`], ['Cada fileira acima', `+${d.r} cadeiras`], ['Fileira procurada', `${d.n}ª`]],
-        question: `Relembre a fórmula para calcular o termo geral da PA e descobrir quantas cadeiras tem a ${d.n}ª fileira.`,
+        title: `Relembre a fórmula para calcular o termo geral da PA e descobrir quantas cadeiras tem a ${d.n}ª fileira`, question: `Monte a conta das cadeiras da ${d.n}ª fileira.`,
         template: [`a${d.n} = `, slot(d.a1), ' + (', slot(d.n), ' − 1) · ', slot(d.r)],
         chips: makeChips([d.a1, d.n, d.r], [d.a1 + d.r, 1]),
         result: `A ${d.n}ª fileira tem ${d.an} cadeiras.` },
@@ -1030,7 +1030,7 @@ const MISSION = {
     },
     stages: d => [
       { type: 'build', data: [['Linha do chão até o topo da chaminé', `${d.L} m (hipotenusa)`], ['Ângulo com o chão', '30°'], ['Tabela', 'sen 30° = 0,5 · cos 30° ≈ 0,87']],
-        question: 'Relembre a fórmula para calcular a altura da chaminé usando o seno de 30°.',
+        title: 'Relembre a fórmula para calcular a altura da chaminé usando o seno de 30°', question: 'Monte a conta da altura da chaminé (o cateto oposto ao ângulo de 30°).',
         template: ['h = ', slot(d.L), ' · ', slot('0,5')],
         chips: makeChips([d.L, '0,5'], ['0,87', 30, 2]),
         result: `A chaminé tem ${d.h} m de altura.` },
@@ -1057,7 +1057,7 @@ const MISSION = {
     },
     stages: d => [
       { type: 'build', data: [['Lugares na Arena', `${fmtBig(d.C)}`], ['Ocupação hoje', `${d.p}%`]],
-        question: 'Relembre a fórmula para calcular a porcentagem do público presente no jogo.',
+        title: 'Relembre a fórmula para calcular a porcentagem do público presente no jogo', question: 'Monte a conta de quantas pessoas vieram ao jogo.',
         template: ['público = ', slot(fmtBig(d.C)), ' · ', slot(d.p), ' ÷ ', slot(100)],
         chips: makeChips([fmtBig(d.C), d.p, 100], [10, 100 - d.p, '1.000']),
         result: `Vieram ${fmtBig(d.pub)} pessoas ao jogo.` },
@@ -1083,7 +1083,7 @@ const MISSION = {
     },
     stages: d => [
       { type: 'build', data: [['Distância voada', `${d.D} km`], ['Tempo', `${d.t} minutos`]],
-        question: 'Relembre a fórmula para calcular a razão entre distância e tempo (km por minuto).',
+        title: 'Relembre a fórmula para calcular a razão entre distância e tempo (km por minuto)', question: 'Monte a conta de quantos quilômetros o avião voa em 1 minuto.',
         template: ['km por minuto = ', slot(d.D), ' ÷ ', slot(d.t)],
         chips: makeChips([d.D, d.t], [60, d.D + d.t, d.t * 2]),
         result: `O avião voa ${d.v} km por minuto.` },
@@ -1632,7 +1632,7 @@ function renderMissao() {
   }
   prepareStage();
   const stage = currentStage();
-  $('m-step-title').textContent = STAGE_NAMES[S.stage[n]];
+  $('m-step-title').textContent = stage.title || STAGE_NAMES[S.stage[n]];   // título da seção: enunciado da fórmula; aba segue "Relembre a fórmula"
   $('m-data').innerHTML = stage.data.map(([label, value]) => `<li><span>${label}</span><strong>${value}</strong></li>`).join('');
   $('m-question').textContent = stage.question;
   $('m-build').hidden = stage.type !== 'build';
