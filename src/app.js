@@ -317,7 +317,7 @@ const MISSION = {
   },
   6: {
     title: 'Aeroporto Salgado Filho', area: 'Aritmética', topic: 'Razão, proporção e regra de três',
-    brief: 'Muito bem, você chegou até o aeroporto. Para escapar, precisamos correr em direção ao avião na velocidade certa. Tu consegue descobrir?',
+    brief: 'Muito bem, {nick}! Você chegou até o aeroporto. Para escapar, precisamos correr em direção ao avião na velocidade certa. Você consegue descobrir?',
     hint: 'Razão: quilômetros ÷ minutos dá quantos km o avião anda em 1 minuto. Regra de três: se em 1 minuto ele anda v km, pra andar a distância toda ele leva distância ÷ v minutos.',
     alt: 'Aeroporto ao pôr do sol, com terminal envidraçado, torre de controle e um avião subindo logo depois da decolagem.',
     gen() {
@@ -325,20 +325,20 @@ const MISSION = {
       return { v, t, D: v * t, T, K: v * T };
     },
     stages: d => [
-      { type: 'build', data: [['Distância voada', `${d.D} km`], ['Tempo', `${d.t} minutos`]],
-        title: 'Relembre a fórmula para calcular a razão entre distância e tempo (km por minuto)', question: 'Monte a conta de quantos quilômetros o avião voa em 1 minuto.',
+      { type: 'build', data: [['Distância percorrida', `${d.D} km`], ['Tempo', `${d.t} minutos`]],
+        title: 'Relembre a fórmula para calcular a razão entre distância e tempo (km por minuto)', question: `O avião está decolando e, na pista, percorre ${d.D} km em ${d.t} minutos. Monte a conta de quantos quilômetros ele percorre em 1 minuto.`,
         template: ['km por minuto = ', slot(d.D), ' ÷ ', slot(d.t)],
         chips: makeChips([d.D, d.t], [60, d.D + d.t, d.t * 2]),
-        result: `O avião voa ${d.v} km por minuto.` },
-      { type: 'choice', data: [['Velocidade', `${d.v} km por minuto`], ['Distância até a próxima parada', `${fmtBig(d.K)} km`]],
-        question: 'Quantos minutos faltam para chegar à próxima parada?', unit: 'min', correct: d.T,
+        result: `O avião anda ${d.v} km por minuto.` },
+      { type: 'choice', data: [['Velocidade do avião', `${d.v} km por minuto`], ['Distância até o destino', `${fmtBig(d.K)} km`]],
+        question: 'Você conseguiu chegar ao avião! Em quantos minutos você chegará ao seu destino?', unit: 'min', correct: d.T,
         distractors: [d.K / d.D, d.T * 2, d.T + d.t, d.K / 10] }
     ],
     figure: (d, k) => flightSvg(d, k),
     learn: ["Razão é a comparação de duas grandezas por divisão. Quilômetros divididos por minutos dá a velocidade: quantos quilômetros o avião anda em 1 minuto.", "Regra de três: com a velocidade constante, distância e tempo são proporcionais. Se em 1 minuto o avião anda v km, para a distância toda ele leva distância ÷ v minutos."],
     solution: d => [
       `Razão: ${d.D} km ÷ ${d.t} min = ${d.v} km por minuto.`,
-      `Regra de três: ${fmtBig(d.K)} km ÷ ${d.v} km por minuto = ${d.T} minutos.`
+      `Regra de três: ${fmtBig(d.K)} km até o destino ÷ ${d.v} km por minuto = ${d.T} minutos.`
     ]
   }
 };
@@ -511,7 +511,7 @@ function renderInicio() {
   const count = MISSIONS.filter(finished).length;
   if (S.completed) {
     $('btn-continue-text').textContent = 'Ver meu resultado';
-    $('resume-info').textContent = `${S.player ? S.player.name + ' · ' : ''}${totalPoints()} pts · live encerrada`;
+    $('resume-info').textContent = `${S.player ? S.player.name + ' · ' : ''}${totalPoints()} pts · missão cumprida`;
   } else {
     $('btn-continue-text').textContent = 'Continuar';
     $('resume-info').textContent = `${S.player ? S.player.name + ' · ' : ''}${count} de 6 missões · ${totalPoints()} pts`;
@@ -1162,6 +1162,8 @@ function renderFim() {
   if (S.player && S.player.avatar) AVATAR.compose(AVATAR.normalize(S.player.avatar), 640).then(cv => { $('end-dani').src = cv.toDataURL('image/png'); $('end-dani').classList.add('is-square'); $('end-dani').alt = `Personagem de ${S.player.name}`; });
   $('g-name').textContent = S.player ? S.player.name : 'você';
   $('g-class').textContent = S.player && S.player.turma ? `Turma ${S.player.turma}` : '';
+  // Sem o Aeroporto (faltaram estrelas), o aluno não escapou: a frase muda, a nota vale igual
+  $('g-tagline').textContent = S.noAirport ? 'Fim de jogo. Desta vez o aeroporto ficou de fora, mas sua nota está garantida.' : 'Missão cumprida. Você conseguiu escapar!';
   $('g-pts').textContent = pts;
   $('g-stars').innerHTML = starsHtml(stars);
   $('g-stars').setAttribute('aria-label', `${stars} de 5 estrelas`);
