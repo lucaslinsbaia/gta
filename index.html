@@ -186,7 +186,24 @@
   .bubble { position: relative; margin: 0; padding: var(--s4) var(--s5); background: var(--cream); color: var(--night); border-radius: 14px; font-size: var(--text-lg); line-height: 1.5; border: 3px solid var(--night); box-shadow: 5px 5px 0 var(--cyan); }
 
   /* ---------- Mapa ---------- */
-  .map-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--s8); align-items: end; margin-bottom: var(--s8); }
+  .map-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s8); }
+  .map-dani { position: relative; flex-shrink: 0; }
+  .avatar-btn.avatar-btn--inline { position: relative; top: auto; right: auto; }
+  /* Tooltip da Dani: flutua sobre o conteúdo, preso ao avatar */
+  .tip { position: absolute; top: calc(100% + 16px); right: 0; z-index: 12; width: min(380px, calc(100vw - 32px)); padding: var(--s4) var(--s5) var(--s5); background: var(--cream); color: var(--night); border: 3px solid var(--night); border-radius: 14px; box-shadow: 6px 6px 0 var(--cyan); animation: tip-in 260ms var(--ease) both; }
+  .tip::before { content: ""; position: absolute; top: -13px; right: 30px; width: 20px; height: 20px; background: var(--cream); border-left: 3px solid var(--night); border-top: 3px solid var(--night); transform: rotate(45deg); }
+  .tip .dani-say__name { color: var(--night); margin-bottom: var(--s2); padding-right: var(--s8); }
+  .tip__text { margin: 0; font-size: var(--text-lg); line-height: 1.5; min-height: 3em; }
+  .tip__close { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 40px; height: 40px; padding: 0; background: none; border: 0; border-radius: 50%; color: var(--night); cursor: pointer; }
+  .tip__close:hover { background: rgba(26, 8, 51, 0.08); }
+  @keyframes tip-in { from { opacity: 0; transform: translateY(-8px) scale(0.97); } }
+  /* Avatar pulsando: chama atenção para reabrir a fala */
+  .avatar-btn.is-pulse .avatar { animation: avatar-pulse 1.6s ease-out infinite; }
+  @keyframes avatar-pulse {
+    0% { box-shadow: 4px 4px 0 var(--pink), 0 0 0 0 rgba(255, 46, 147, 0.75); }
+    70% { box-shadow: 4px 4px 0 var(--pink), 0 0 0 16px rgba(255, 46, 147, 0); }
+    100% { box-shadow: 4px 4px 0 var(--pink), 0 0 0 0 rgba(255, 46, 147, 0); }
+  }
   .map-finish { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s8); box-shadow: 8px 8px 0 var(--yellow); }
   .map-finish .lead { flex: 1 1 360px; margin: 0; }
   .missions { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s6); }
@@ -332,7 +349,7 @@
 
   /* ---------- Responsivo ---------- */
   @media (max-width: 1000px) {
-    .cover-wrap, .mission, .map-head, .end__grid { grid-template-columns: minmax(0, 1fr); }
+    .cover-wrap, .mission, .end__grid { grid-template-columns: minmax(0, 1fr); }
     .cover-wrap { gap: var(--s8); }
     .missions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     /* O botão de confirmar fica fixo no rodapé no celular */
@@ -482,9 +499,20 @@
           <p class="eyebrow" id="map-eyebrow">Mapa da cidade</p>
           <h1 class="title-xl" id="map-title">Escolha a missão</h1>
         </div>
-        <div class="dani-say">
-          <img class="avatar" id="map-avatar" alt="">
-          <p class="bubble" id="map-bubble"></p>
+        <!-- Dani na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
+             Fechado o tooltip, o avatar pulsa e reabre a fala ao ser tocado. -->
+        <div class="map-dani">
+          <button type="button" class="avatar-btn avatar-btn--inline" id="map-avatar-btn" aria-controls="map-tip" aria-expanded="false" aria-label="Ver o recado da Dani">
+            <img class="avatar" id="map-avatar" alt="">
+            <span class="live" aria-hidden="true">AO VIVO</span>
+          </button>
+          <div class="tip" id="map-tip" hidden>
+            <button type="button" class="tip__close" id="map-tip-close" aria-label="Fechar o recado da Dani">
+              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+            <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+            <p class="tip__text typing" id="map-tip-text" aria-hidden="true"></p>
+            <p class="sr-only" id="map-tip-full" role="status"></p>
+          </div>
         </div>
       </div>
       <div class="map-finish card" id="map-finish" hidden>
@@ -1395,12 +1423,14 @@ function renderMapa() {
   const next = MISSIONS.find(n => !finished(n));
   const first = !MISSIONS.some(finished);
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
-  $('map-bubble').textContent = first
+  const tip = first
     ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Escolhe por onde começar! O Aeroporto só libera no fim: termina as outras cinco com pelo menos ${STARS_TO_FLY} estrelas.`
     : stuckBeforeAirport() ? `Ih, ${nick()}, faltou estrela pra liberar o Aeroporto: você fez ${starsFor(totalPoints())} e precisava de ${STARS_TO_FLY}. Mas de boa: dá pra finalizar a live e sua nota vale do mesmo jeito.`
     : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão da live. Bora decolar?`
       : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
+  // A fala abre sozinha quando muda (início, depois de cada missão); senão, o avatar fica pulsando
+  if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse');
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
     const open = unlocked(n);
@@ -1422,6 +1452,48 @@ function renderMapa() {
   }).join('');
   $('map-finish').hidden = !stuckBeforeAirport();
 }
+
+/* Tooltip da Dani no mapa: texto digitado, fecha no ×, no Esc ou tocando fora */
+const tipTyping = { timer: null };
+function openMapTip() {
+  const text = S.mapTip || '';
+  $('map-tip').hidden = false;
+  $('map-avatar-btn').classList.remove('is-pulse');
+  $('map-avatar-btn').setAttribute('aria-expanded', 'true');
+  $('map-tip-full').textContent = text;
+  clearInterval(tipTyping.timer);
+  const el = $('map-tip-text');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
+  let i = 0;
+  el.textContent = '';
+  el.classList.add('is-typing');
+  tipTyping.timer = setInterval(() => {
+    i += 1;
+    el.textContent = text.slice(0, i);
+    if (i >= text.length) { clearInterval(tipTyping.timer); tipTyping.timer = null; el.classList.remove('is-typing'); }
+  }, 24);
+}
+function closeMapTip() {
+  if ($('map-tip').hidden) return;
+  clearInterval(tipTyping.timer);
+  tipTyping.timer = null;
+  $('map-tip-text').classList.remove('is-typing');
+  $('map-tip').hidden = true;
+  $('map-avatar-btn').setAttribute('aria-expanded', 'false');
+  $('map-avatar-btn').classList.add('is-pulse');
+}
+$('map-tip-close').addEventListener('click', closeMapTip);
+$('map-avatar-btn').addEventListener('click', () => { if ($('map-tip').hidden) openMapTip(); else closeMapTip(); });
+$('map-tip').addEventListener('click', event => {   // tocar no texto mostra tudo de uma vez
+  if (tipTyping.timer && !event.target.closest('#map-tip-close')) {
+    clearInterval(tipTyping.timer); tipTyping.timer = null;
+    $('map-tip-text').textContent = S.mapTip; $('map-tip-text').classList.remove('is-typing');
+  }
+});
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && screen === 'mapa') closeMapTip(); });
+document.addEventListener('pointerdown', event => {
+  if (screen === 'mapa' && !event.target.closest('.map-dani')) closeMapTip();
+});
 
 /* Finalizar sem o Aeroporto: ele vale 0 e a nota é calculada normalmente */
 $('map-finish-btn').addEventListener('click', () => {

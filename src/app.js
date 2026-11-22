@@ -570,12 +570,14 @@ function renderMapa() {
   const next = MISSIONS.find(n => !finished(n));
   const first = !MISSIONS.some(finished);
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
-  $('map-bubble').textContent = first
+  const tip = first
     ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre. Cada uma vale até 100 pontos. Escolhe por onde começar! O Aeroporto só libera no fim: termina as outras cinco com pelo menos ${STARS_TO_FLY} estrelas.`
     : stuckBeforeAirport() ? `Ih, ${nick()}, faltou estrela pra liberar o Aeroporto: você fez ${starsFor(totalPoints())} e precisava de ${STARS_TO_FLY}. Mas de boa: dá pra finalizar a live e sua nota vale do mesmo jeito.`
     : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão da live. Bora decolar?`
       : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
+  // A fala abre sozinha quando muda (início, depois de cada missão); senão, o avatar fica pulsando
+  if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse');
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
     const open = unlocked(n);
@@ -597,6 +599,48 @@ function renderMapa() {
   }).join('');
   $('map-finish').hidden = !stuckBeforeAirport();
 }
+
+/* Tooltip da Dani no mapa: texto digitado, fecha no ×, no Esc ou tocando fora */
+const tipTyping = { timer: null };
+function openMapTip() {
+  const text = S.mapTip || '';
+  $('map-tip').hidden = false;
+  $('map-avatar-btn').classList.remove('is-pulse');
+  $('map-avatar-btn').setAttribute('aria-expanded', 'true');
+  $('map-tip-full').textContent = text;
+  clearInterval(tipTyping.timer);
+  const el = $('map-tip-text');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
+  let i = 0;
+  el.textContent = '';
+  el.classList.add('is-typing');
+  tipTyping.timer = setInterval(() => {
+    i += 1;
+    el.textContent = text.slice(0, i);
+    if (i >= text.length) { clearInterval(tipTyping.timer); tipTyping.timer = null; el.classList.remove('is-typing'); }
+  }, 24);
+}
+function closeMapTip() {
+  if ($('map-tip').hidden) return;
+  clearInterval(tipTyping.timer);
+  tipTyping.timer = null;
+  $('map-tip-text').classList.remove('is-typing');
+  $('map-tip').hidden = true;
+  $('map-avatar-btn').setAttribute('aria-expanded', 'false');
+  $('map-avatar-btn').classList.add('is-pulse');
+}
+$('map-tip-close').addEventListener('click', closeMapTip);
+$('map-avatar-btn').addEventListener('click', () => { if ($('map-tip').hidden) openMapTip(); else closeMapTip(); });
+$('map-tip').addEventListener('click', event => {   // tocar no texto mostra tudo de uma vez
+  if (tipTyping.timer && !event.target.closest('#map-tip-close')) {
+    clearInterval(tipTyping.timer); tipTyping.timer = null;
+    $('map-tip-text').textContent = S.mapTip; $('map-tip-text').classList.remove('is-typing');
+  }
+});
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && screen === 'mapa') closeMapTip(); });
+document.addEventListener('pointerdown', event => {
+  if (screen === 'mapa' && !event.target.closest('.map-dani')) closeMapTip();
+});
 
 /* Finalizar sem o Aeroporto: ele vale 0 e a nota é calculada normalmente */
 $('map-finish-btn').addEventListener('click', () => {

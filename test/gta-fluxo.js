@@ -3,6 +3,8 @@
    Rodar:  cd test && node gta-fluxo.js   (depois de python3 src/build.py) */
 const GAME = 'file://' + require('path').resolve(__dirname, '../index.html');
 const { chromium } = require('playwright');
+/* Fecha o recado da Dani no mapa, se estiver aberto (ele flutua sobre os cards) */
+const closeTip = async p => { if (await p.isVisible('#map-tip')) await p.click('#map-tip-close'); };
 const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.exitCode = 1; } };
 
 (async () => {
@@ -41,9 +43,14 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await p.click('#btn-start'); await p.fill('#id-name', 'Ana'); await p.click('#id-form button[type=submit]'); await p.waitForTimeout(300);
     assert(!(await p.isDisabled('[data-mission="5"]')), 'missões 1 a 5 começam abertas');
     assert(await p.isDisabled('[data-mission="6"]'), 'o Aeroporto começa bloqueado');
+    assert(await p.isVisible('#map-tip'), 'o recado da Dani abre sozinho no mapa');
+    await p.click('#map-tip-close');
+    assert(await p.evaluate(() => document.getElementById('map-avatar-btn').classList.contains('is-pulse')), 'fechado o recado, o avatar pulsa');
+    await p.click('#map-avatar-btn'); await p.waitForTimeout(100);
+    assert(await p.isVisible('#map-tip'), 'o avatar reabre o recado');
 
     // Missão 1: monta a conta errado (1 erro), depois certo por toque e por arrastar; erra 1 alternativa; usa dica → 100 − 20 − 20 = 60
-    await p.click('[data-mission="1"]'); await p.waitForTimeout(200);
+    await closeTip(p); await p.click('[data-mission="1"]'); await p.waitForTimeout(200);
     assert(await p.isVisible('#dlg-brief'), 'a descrição abre em modal na primeira visita');
     await p.waitForTimeout(400);
     const typed = await p.evaluate(() => [document.getElementById('brief-text').textContent.length, typing.full.length]);
@@ -86,7 +93,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await p.click('#test-fab'); await p.waitForTimeout(250); await p.click('#rw-next'); await p.waitForTimeout(200);
 
     // Missão 2: 10 erros na conta liberam o "Pular"
-    await p.click('[data-mission="2"]'); await p.waitForTimeout(200); await p.click('#brief-ok');
+    await closeTip(p); await p.click('[data-mission="2"]'); await p.waitForTimeout(200); await p.click('#brief-ok');
     for (let i = 0; i < 10; i++) {
       await p.evaluate(() => { const s = currentStage(); ui.fills = ui.fills.map((_, k) => s.chips.findIndex(c => c !== s.template.filter(t => typeof t === 'object')[k].slot)); });
       await p.click('#m-confirm'); await p.click('#wasted-ok');
@@ -102,7 +109,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     // Missões 3 a 5 no modo de teste, fora de ordem; depois a 6 libera
     for (const n of [5, 3, 4, 6]) {
       if (n === 6) assert(!(await p.isDisabled('[data-mission="6"]')), 'o Aeroporto libera depois das outras 5');
-      await p.click(`[data-mission="${n}"]`); await p.waitForTimeout(150); await p.click('#brief-ok');
+      await closeTip(p); await p.click(`[data-mission="${n}"]`); await p.waitForTimeout(150); await p.click('#brief-ok');
       await p.click('#test-fab'); await p.waitForTimeout(150); await p.click('#test-fab'); await p.waitForTimeout(200);
       await p.click('#rw-next'); await p.waitForTimeout(200);
     }
@@ -127,7 +134,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await p.evaluate(() => { [1, 2, 3].forEach(n => { S.skipped[n] = true; }); [4, 5].forEach(n => { S.done[n] = true; }); save(); show('mapa'); });
     assert(await p.isDisabled('[data-mission="6"]'), 'com 2 estrelas o Aeroporto continua bloqueado');
     assert(await p.isVisible('#map-finish'), 'aparece a opção de finalizar a live');
-    await p.click('#map-finish-btn'); await p.waitForTimeout(300);
+    await closeTip(p); await p.click('#map-finish-btn'); await p.waitForTimeout(300);
     const f = await p.evaluate(() => [screen, totalPoints(), gradeFrom(totalPoints()), document.getElementById('g-list').textContent.includes('não liberada')]);
     assert(f[0] === 'fim' && f[1] === 200 && f[2] === 5 && f[3], 'finalizar sem o Aeroporto: ' + JSON.stringify(f));
     console.log(vp.width, 'sem estrelas ok', f);

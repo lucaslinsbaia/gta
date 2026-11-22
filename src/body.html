@@ -99,9 +99,20 @@
           <p class="eyebrow" id="map-eyebrow">Mapa da cidade</p>
           <h1 class="title-xl" id="map-title">Escolha a missão</h1>
         </div>
-        <div class="dani-say">
-          <img class="avatar" id="map-avatar" alt="">
-          <p class="bubble" id="map-bubble"></p>
+        <!-- Dani na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
+             Fechado o tooltip, o avatar pulsa e reabre a fala ao ser tocado. -->
+        <div class="map-dani">
+          <button type="button" class="avatar-btn avatar-btn--inline" id="map-avatar-btn" aria-controls="map-tip" aria-expanded="false" aria-label="Ver o recado da Dani">
+            <img class="avatar" id="map-avatar" alt="">
+            <span class="live" aria-hidden="true">AO VIVO</span>
+          </button>
+          <div class="tip" id="map-tip" hidden>
+            <button type="button" class="tip__close" id="map-tip-close" aria-label="Fechar o recado da Dani">
+              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+            <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+            <p class="tip__text typing" id="map-tip-text" aria-hidden="true"></p>
+            <p class="sr-only" id="map-tip-full" role="status"></p>
+          </div>
         </div>
       </div>
       <div class="map-finish card" id="map-finish" hidden>
