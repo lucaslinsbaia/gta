@@ -2606,7 +2606,7 @@ function completeMission(n, skipped) {
   $('rw-solution').hidden = false;
   $('rw-solution').innerHTML = `<p class="eyebrow">Entenda a matéria</p><p>${escapeHtml(MISSION[n].learn[1])}</p>`
     + `<p class="solution__calc">${lines.map(escapeHtml).join('<br>')}</p>`;
-  $('rw-next').textContent = last ? 'Ver resultado da live' : 'Voltar ao mapa';
+  $('rw-next').textContent = last ? 'Ver meus resultados' : 'Voltar ao mapa';
   openDialog($('dlg-reward'));
 }
 $('rw-next').addEventListener('click', () => closeDialog($('dlg-reward'), () => show(S.completed ? 'fim' : 'mapa')));
