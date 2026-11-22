@@ -418,6 +418,9 @@
     </span>
   </button>
   <div class="nav__tools">
+    <button type="button" class="icon-btn" id="nav-sound" aria-pressed="true" aria-label="Desligar o som">
+      <svg class="icon" aria-hidden="true"><use id="nav-sound-icon" href="#i-sound"/></svg>
+    </button>
     <span class="score-pill" id="nav-score" hidden>
       <span class="score-pill__pts"><strong id="nav-pts">0</strong> pts</span>
       <span class="stars" id="nav-stars" aria-label="Nível de conhecimento"></span>
@@ -745,6 +748,8 @@
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M19 21v-1a5 5 0 0 0-5-5h-4a5 5 0 0 0-5 5v1"/></symbol>
   <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.3L3 16M3 21v-5h5"/></symbol>
+  <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM17 9l5 6M22 9l-5 6"/></symbol>
   <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/></symbol>
   <symbol id="i-skip" viewBox="0 0 24 24"><path d="m5 4 10 8-10 8zM19 5v14"/></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></symbol>
@@ -756,6 +761,263 @@
 </svg>
 
 <script>
+/* Trilha sonora do GTA, Edição Porto Alegre: composições originais.
+   Este arquivo só tem as notas. O jogo toca com Web Audio (src/musica.js), sem baixar
+   nenhum arquivo de áudio, e tools/midi.mjs gera os .mid a partir dos mesmos dados.
+
+   Notação de cada faixa: notas separadas por espaço, a duração vem depois da barra,
+   em semicolcheias (16 = um compasso 4/4). Sem barra, dura 1. "-" é pausa e "+" junta
+   notas num acorde. Ex.: "A3+C4+E4/16" é um acorde de lá menor por um compasso.
+   Bateria: uma linha por peça (k bumbo, s caixa, h chimbal), um caractere por
+   semicolcheia, "x" toca e "." fica em silêncio. A linha se repete até o fim da faixa. */
+const rep = (text, times) => Array(times).fill(text).join(' ');
+const bar8 = (low, high) => `${low}/3 ${low}/3 ${low}/2 ${high}/2 ${low}/2 ${low}/2 ${low}/2`;
+
+const SONGS = {
+  // Capa e identificação: synthwave em lá menor, clima de pôr do sol
+  abertura: {
+    bpm: 104, loop: true,
+    tracks: [
+      { inst: 'pad', notes: rep('A3+C4+E4/16 F3+A3+C4/16 C4+E4+G4/16 G3+B3+D4/16', 2) },
+      { inst: 'bass', notes: rep(`${rep('A2/2', 7)} A3/2 ${rep('F2/2', 7)} F3/2 ${rep('C2/2', 7)} C3/2 ${rep('G2/2', 7)} G3/2`, 2) },
+      { inst: 'arp', notes: rep(`${rep('A3 C4 E4 A4 E4 C4 A3 C4', 2)} ${rep('F3 A3 C4 F4 C4 A3 F3 A3', 2)} ${rep('C4 E4 G4 C5 G4 E4 C4 E4', 2)} ${rep('G3 B3 D4 G4 D4 B3 G3 B3', 2)}`, 2) },
+      { inst: 'lead', notes: '-/64 E5/4 D5/2 C5/2 D5/4 E5/4 A5/6 G5/2 F5/4 E5/4 G5/4 E5/2 C5/2 E5/4 G5/4 D5/8 B4/4 D5/4' },
+    ],
+    drums: { k: 'x.......x.x.....', s: '....x.......x...', h: '..x...x...x...x.' },
+  },
+  // Mapa: mais calmo, em ré menor, para ficar de fundo enquanto a turma escolhe
+  mapa: {
+    bpm: 92, loop: true,
+    tracks: [
+      { inst: 'pad', notes: rep('D3+F3+A3/16 Bb2+D3+F3/16 F3+A3+C4/16 C3+E3+G3/16', 2) },
+      { inst: 'bass', notes: rep('D2/8 D2/8 Bb1/8 Bb1/8 F2/8 F2/8 C2/8 C2/8', 2) },
+      { inst: 'arp', notes: rep(`${rep('D4/2 F4/2 A4/2 F4/2', 2)} ${rep('D4/2 F4/2 Bb4/2 F4/2', 2)} ${rep('C4/2 F4/2 A4/2 F4/2', 2)} ${rep('C4/2 E4/2 G4/2 E4/2', 2)}`, 2) },
+      { inst: 'lead', notes: '-/64 A4/4 C5/4 D5/8 F5/4 D5/4 Bb4/8 C5/4 A4/4 F4/8 G4/6 A4/2 E4/8' },
+    ],
+    drums: { k: 'x.......x.......', s: '........x.......', h: 'x.x.x.x.x.x.x.x.' },
+  },
+  // Beira-Rio: tema original de estádio, marcha com metais e bumbo
+  beirario: {
+    bpm: 116, loop: true,
+    tracks: [
+      { inst: 'pad', notes: 'C4+E4+G4/16 F3+A3+C4/16 G3+B3+D4/16 C4+E4+G4/16 A3+C4+E4/16 F3+A3+C4/16 G3+B3+D4/16 C4+E4+G4/16' },
+      { inst: 'bass', notes: `${rep('C2/4 G2/4', 2)} ${rep('F2/4 C3/4', 2)} ${rep('G2/4 D3/4', 2)} ${rep('C2/4 G2/4', 2)} ${rep('A2/4 E3/4', 2)} ${rep('F2/4 C3/4', 2)} ${rep('G2/4 D3/4', 2)} ${rep('C2/4 G2/4', 2)}` },
+      { inst: 'brass', notes: 'G4/2 G4/2 C5/4 E5/4 G5/4 F5/4 A5/4 F5/4 C5/4 D5/2 D5/2 G5/4 F5/2 E5/2 D5/4 E5/8 C5/4 -/4 A4/2 A4/2 C5/4 E5/4 A5/4 G5/4 F5/4 E5/4 C5/4 D5/4 E5/4 F5/4 B4/4 C5/12 -/4' },
+    ],
+    drums: { k: 'x...x...x...x...', s: '..x...x.x.x...x.', h: '................' },
+  },
+  // Arena: tema original de arquibancada, em mi menor, com canto e resposta
+  arena: {
+    bpm: 124, loop: true,
+    tracks: [
+      { inst: 'pad', notes: rep('E3+G3+B3/16 C3+E3+G3/16 G3+B3+D4/16 D3+F#3+A3/16', 2) },
+      { inst: 'bass', notes: rep(`${bar8('E2', 'E3')} ${bar8('C2', 'C3')} ${bar8('G2', 'G3')} ${bar8('D2', 'D3')}`, 2) },
+      { inst: 'saw', notes: 'E5/2 E5/2 G5/2 E5/2 B4/4 -/4 C5/2 C5/2 E5/2 G5/2 E5/4 -/4 D5/2 D5/2 B4/2 D5/2 G5/4 F#5/4 F#5/6 E5/2 D5/8 B5/2 B5/2 A5/2 G5/2 E5/4 -/4 G5/2 G5/2 E5/2 C5/2 E5/4 -/4 D5/2 D5/2 G5/2 B5/2 A5/4 G5/4 F#5/4 A5/4 E5/8' },
+    ],
+    drums: { k: 'x.....x.x.....x.', s: '....x.......x...', h: 'xxxxxxxxxxxxxxxx' },
+  },
+  // Vinhetas: tocam uma vez por cima da música
+  acerto: { bpm: 150, tracks: [{ inst: 'lead', notes: 'C5 E5 G5 C6/5' }, { inst: 'brass', notes: 'C5 E5 G5 C6/5' }] },
+  erro: {
+    bpm: 96,
+    tracks: [{ inst: 'saw', notes: 'G4/3 F#4/3 F4/3 E4/9' }, { inst: 'bass', notes: 'E2/18' }],
+    drums: { k: 'x.................', s: '.........x........' },
+  },
+  concluida: {
+    bpm: 140,
+    tracks: [{ inst: 'brass', notes: 'G4/2 C5/2 E5/2 G5/4 E5/2 G5/8' }, { inst: 'pad', notes: 'C4+E4+G4/20' }, { inst: 'bass', notes: 'C2/12 C3/8' }],
+    drums: { k: 'x.......x...........', s: '..........x.........' },
+  },
+  aeroporto: {
+    bpm: 132,
+    tracks: [
+      { inst: 'brass', notes: 'D5/2 F#5/2 A5/2 D6/6 C6/2 A5/2 D6/12' },
+      { inst: 'pad', notes: 'D4+F#4+A4/16 G4+B4+D5/4 D4+F#4+A4/8' },
+      { inst: 'bass', notes: 'D2/16 G2/4 D2/8' },
+    ],
+    drums: { k: 'x...x...x...x...x...x...x...', s: '....x.......x.......x.xx....' },
+  },
+};
+
+/* Lê uma faixa: devolve [{ step, dur, notes: [midi] }] e o total de semicolcheias */
+function parseNotes(text) {
+  const out = [];
+  let step = 0;
+  text.trim().split(/\s+/).forEach(token => {
+    const [names, dur = '1'] = token.split('/');
+    const length = Number(dur);
+    if (names !== '-') out.push({ step, dur: length, notes: names.split('+').map(noteToMidi) });
+    step += length;
+  });
+  return { events: out, length: step };
+}
+function noteToMidi(name) {
+  const m = /^([A-G])(#|b)?(-?\d)$/.exec(name);
+  if (!m) throw new Error(`nota inválida: ${name}`);
+  const base = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[m[1]];
+  return 12 * (Number(m[3]) + 1) + base + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
+}
+
+/* Toca a trilha (src/musica-dados.js) com Web Audio: osciladores e ruído, sem arquivo de áudio.
+   music.play('mapa') troca a música de fundo (em loop); music.sfx('acerto') toca uma vinheta
+   por cima, abaixando a música enquanto ela soa. O som liga ou desliga no botão do topo. */
+const music = (() => {
+  const KEY = 'gta-glicerio-som';
+  let enabled = true;
+  try { enabled = localStorage.getItem(KEY) !== '0'; } catch (e) { /* armazenamento indisponível */ }
+  let ctx = null, master, musicBus, sfxBus, noise;
+  let current = null, wanted = null, timer = null;
+
+  // Cada faixa vira uma lista de eventos com instante em semicolcheias
+  const compiled = {};
+  function compile(name) {
+    if (compiled[name]) return compiled[name];
+    const song = SONGS[name];
+    const events = [];
+    let length = 0;
+    song.tracks.forEach(track => {
+      const parsed = parseNotes(track.notes);
+      length = Math.max(length, parsed.length);
+      parsed.events.forEach(ev => events.push({ ...ev, inst: track.inst }));
+    });
+    Object.entries(song.drums || {}).forEach(([piece, line]) => {
+      for (let step = 0; step < length; step += 1) if (line[step % line.length] === 'x') events.push({ step, dur: 1, inst: piece });
+    });
+    events.sort((a, b) => a.step - b.step);
+    return (compiled[name] = { events, length, stepDur: 60 / song.bpm / 4, loop: !!song.loop });
+  }
+
+  function init() {
+    if (ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination);
+    musicBus = ctx.createGain(); musicBus.gain.value = 0.55; musicBus.connect(master);
+    sfxBus = ctx.createGain(); sfxBus.gain.value = 0.9; sfxBus.connect(master);
+    noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+    const data = noise.getChannelData(0);
+    for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+    return true;
+  }
+
+  const freq = midi => 440 * 2 ** ((midi - 69) / 12);
+  function envelope(gain, t, end, peak, attack, release) {
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(peak, t + attack);
+    gain.gain.setValueAtTime(peak, Math.max(t + attack, end - release));
+    gain.gain.exponentialRampToValueAtTime(0.0001, end);
+  }
+  // Timbres: forma de onda, volume, ataque, soltura, filtro e desafinação entre duas vozes
+  const VOICES = {
+    lead: { wave: 'square', vol: 0.09, attack: 0.01, release: 0.08, cutoff: 3200 },
+    arp: { wave: 'square', vol: 0.035, attack: 0.005, release: 0.06, cutoff: 2400, pluck: 0.14 },
+    saw: { wave: 'sawtooth', vol: 0.06, attack: 0.01, release: 0.1, cutoff: 2600, detune: 8 },
+    brass: { wave: 'sawtooth', vol: 0.07, attack: 0.03, release: 0.12, cutoff: 2200, detune: 6, sweep: true },
+    pad: { wave: 'sawtooth', vol: 0.022, attack: 0.35, release: 0.5, cutoff: 1100, detune: 9 },
+    bass: { wave: 'square', vol: 0.11, attack: 0.005, release: 0.06, cutoff: 650 },
+  };
+  function tone(ev, t, dur, out) {
+    const v = VOICES[ev.inst];
+    const end = t + (v.pluck ? Math.min(dur, v.pluck) : dur);
+    ev.notes.forEach(midi => {
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(v.sweep ? 700 : v.cutoff, t);
+      if (v.sweep) filter.frequency.linearRampToValueAtTime(v.cutoff, t + 0.08);
+      const gain = ctx.createGain();
+      envelope(gain, t, end, v.vol, v.attack, v.release);
+      filter.connect(gain).connect(out);
+      (v.detune ? [-v.detune, v.detune] : [0]).forEach(cents => {
+        const osc = ctx.createOscillator();
+        osc.type = v.wave;
+        osc.frequency.value = freq(midi);
+        osc.detune.value = cents;
+        osc.connect(filter);
+        osc.start(t); osc.stop(end + 0.05);
+      });
+    });
+  }
+  function drum(piece, t, out) {
+    if (piece === 'k') {   // bumbo: seno que cai de 140 para 45 Hz
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.frequency.setValueAtTime(140, t); osc.frequency.exponentialRampToValueAtTime(45, t + 0.18);
+      gain.gain.setValueAtTime(0.45, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      osc.connect(gain).connect(out); osc.start(t); osc.stop(t + 0.3);
+      return;
+    }
+    const src = ctx.createBufferSource(), filter = ctx.createBiquadFilter(), gain = ctx.createGain();
+    src.buffer = noise;
+    filter.type = piece === 's' ? 'bandpass' : 'highpass';
+    filter.frequency.value = piece === 's' ? 1800 : 7000;
+    const length = piece === 's' ? 0.16 : 0.04;
+    gain.gain.setValueAtTime(piece === 's' ? 0.22 : 0.05, t); gain.gain.exponentialRampToValueAtTime(0.001, t + length);
+    src.connect(filter).connect(gain).connect(out); src.start(t); src.stop(t + length + 0.02);
+  }
+  const playEvent = (ev, t, stepDur, out) => (VOICES[ev.inst] ? tone(ev, t, ev.dur * stepDur, out) : drum(ev.inst, t, out));
+
+  // Agendador da música de fundo: olha 0,2 s à frente a cada 50 ms
+  function startLoop(name) {
+    stopLoop();
+    const song = compile(name);
+    current = { name, song, start: ctx.currentTime + 0.08, index: 0, cycle: 0 };
+    timer = setInterval(tick, 50);
+    tick();
+  }
+  function tick() {
+    if (!current) return;
+    const { song } = current;
+    const horizon = ctx.currentTime + 0.2;
+    for (;;) {
+      if (current.index >= song.events.length) {
+        if (!song.loop) { stopLoop(); return; }
+        current.index = 0; current.cycle += 1;
+      }
+      const ev = song.events[current.index];
+      const t = current.start + (current.cycle * song.length + ev.step) * song.stepDur;
+      if (t > horizon) return;
+      if (t >= ctx.currentTime - 0.02) playEvent(ev, t, song.stepDur, musicBus);
+      current.index += 1;
+    }
+  }
+  function stopLoop() { clearInterval(timer); timer = null; current = null; }
+
+  function play(name) {
+    wanted = name;
+    if (!enabled || !init() || ctx.state !== 'running') return;
+    if (current && current.name === name) return;
+    startLoop(name);
+  }
+  function sfx(name) {
+    if (!enabled || !init() || ctx.state !== 'running') return;
+    const song = compile(name);
+    const t0 = ctx.currentTime + 0.03;
+    song.events.forEach(ev => playEvent(ev, t0 + ev.step * song.stepDur, song.stepDur, sfxBus));
+    const total = song.length * song.stepDur;
+    musicBus.gain.cancelScheduledValues(ctx.currentTime);
+    musicBus.gain.setTargetAtTime(0.15, ctx.currentTime, 0.04);
+    musicBus.gain.setTargetAtTime(0.55, t0 + total, 0.3);
+  }
+  // O navegador só libera o áudio depois de um toque: o primeiro toque liga a música pedida
+  function unlock() {
+    if (!enabled || !init()) return;
+    if (ctx.state !== 'running') ctx.resume().then(() => { if (wanted) play(wanted); });
+    else if (wanted && !current) play(wanted);
+  }
+  function setEnabled(on) {
+    enabled = on;
+    try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) { /* armazenamento indisponível */ }
+    if (on) unlock(); else { stopLoop(); if (ctx) ctx.suspend(); }
+  }
+  document.addEventListener('pointerdown', unlock, true);
+  document.addEventListener('keydown', unlock, true);
+  document.addEventListener('visibilitychange', () => {
+    if (!ctx || !enabled) return;
+    if (document.hidden) ctx.suspend(); else ctx.resume();
+  });
+  return { play, sfx, setEnabled, get enabled() { return enabled; } };
+})();
+
 /* =====================================================================
    GTA · EDIÇÃO PORTO ALEGRE — lógica do jogo (JavaScript puro)
    ---------------------------------------------------------------------
@@ -1198,6 +1460,16 @@ setInterval(() => {
 }, 1000);
 document.addEventListener('visibilitychange', () => { lastTick = performance.now(); if (S) save(); });
 
+/* Botão de som no topo: liga e desliga a trilha e as vinhetas */
+function renderSound() {
+  const on = music.enabled;
+  $('nav-sound').setAttribute('aria-pressed', String(on));
+  $('nav-sound').setAttribute('aria-label', on ? 'Desligar o som' : 'Ligar o som');
+  $('nav-sound-icon').setAttribute('href', on ? '#i-sound' : '#i-mute');
+}
+$('nav-sound').addEventListener('click', () => { music.setEnabled(!music.enabled); renderSound(); });
+renderSound();
+
 /* ---------------------------------------------------------------
    5. NAVEGAÇÃO
    --------------------------------------------------------------- */
@@ -1211,6 +1483,7 @@ function show(name) {
   $('nav-score').hidden = !playing;
   $('nav-map').hidden = name !== 'missao';
   $('test-fab').hidden = !(TEST && name === 'missao');
+  music.play(name === 'missao' ? ({ 3: 'beirario', 5: 'arena' })[S.current] || 'mapa' : name === 'mapa' || name === 'fim' ? 'mapa' : 'abertura');
   ({ inicio: renderInicio, identificacao: renderIdentificacao, mapa: renderMapa, missao: renderMissao, fim: renderFim })[name]();
   renderScore();
   window.scrollTo(0, 0);
@@ -1432,6 +1705,7 @@ function renderMapa() {
       : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   // A fala abre sozinha quando muda (início, depois de cada missão); senão, o avatar fica pulsando
+  if (tip !== S.mapTip && next === LAST && !first) music.sfx('aeroporto');
   if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else { mapTip.text = tip; if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse'); }
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
@@ -1771,6 +2045,7 @@ function checkBuild() {
     save();
     renderMissao();
     setMsg(`Fórmula certa! ${stage.result} Agora resolva o problema.`, false);
+    music.sfx('acerto');
     openLearn(n, stage);
     return;
   }
@@ -1886,6 +2161,7 @@ $('learn-ok').addEventListener('click', () => closeDialog($('dlg-learn'), () => 
 /* Tela "wasted" (modal): aparece a cada erro e ao pular a missão.
    learn: explicação do conceito da etapa, sem a resposta. */
 function openWasted({ sub, action, after, learn }) {
+  music.sfx('erro');
   $('wasted-learn').hidden = !learn;
   $('wasted-learn-text').textContent = learn || '';
   $('wasted-sub').textContent = sub;
@@ -1914,6 +2190,7 @@ $('skip-confirm').addEventListener('click', () => closeDialog($('dlg-skip'), () 
 
 function completeMission(n, skipped) {
   if (skipped) S.skipped[n] = true; else S.done[n] = true;
+  if (!skipped) music.sfx('concluida');
   const last = allFinished();
   if (last && !S.completed) { S.completed = true; S.finalMs = Math.round(S.activeMs); }
   save();

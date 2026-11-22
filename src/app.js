@@ -440,6 +440,16 @@ setInterval(() => {
 }, 1000);
 document.addEventListener('visibilitychange', () => { lastTick = performance.now(); if (S) save(); });
 
+/* Botão de som no topo: liga e desliga a trilha e as vinhetas */
+function renderSound() {
+  const on = music.enabled;
+  $('nav-sound').setAttribute('aria-pressed', String(on));
+  $('nav-sound').setAttribute('aria-label', on ? 'Desligar o som' : 'Ligar o som');
+  $('nav-sound-icon').setAttribute('href', on ? '#i-sound' : '#i-mute');
+}
+$('nav-sound').addEventListener('click', () => { music.setEnabled(!music.enabled); renderSound(); });
+renderSound();
+
 /* ---------------------------------------------------------------
    5. NAVEGAÇÃO
    --------------------------------------------------------------- */
@@ -453,6 +463,7 @@ function show(name) {
   $('nav-score').hidden = !playing;
   $('nav-map').hidden = name !== 'missao';
   $('test-fab').hidden = !(TEST && name === 'missao');
+  music.play(name === 'missao' ? ({ 3: 'beirario', 5: 'arena' })[S.current] || 'mapa' : name === 'mapa' || name === 'fim' ? 'mapa' : 'abertura');
   ({ inicio: renderInicio, identificacao: renderIdentificacao, mapa: renderMapa, missao: renderMissao, fim: renderFim })[name]();
   renderScore();
   window.scrollTo(0, 0);
@@ -577,6 +588,7 @@ function renderMapa() {
       : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   // A fala abre sozinha quando muda (início, depois de cada missão); senão, o avatar fica pulsando
+  if (tip !== S.mapTip && next === LAST && !first) music.sfx('aeroporto');
   if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else { mapTip.text = tip; if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse'); }
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
@@ -916,6 +928,7 @@ function checkBuild() {
     save();
     renderMissao();
     setMsg(`Fórmula certa! ${stage.result} Agora resolva o problema.`, false);
+    music.sfx('acerto');
     openLearn(n, stage);
     return;
   }
@@ -1031,6 +1044,7 @@ $('learn-ok').addEventListener('click', () => closeDialog($('dlg-learn'), () => 
 /* Tela "wasted" (modal): aparece a cada erro e ao pular a missão.
    learn: explicação do conceito da etapa, sem a resposta. */
 function openWasted({ sub, action, after, learn }) {
+  music.sfx('erro');
   $('wasted-learn').hidden = !learn;
   $('wasted-learn-text').textContent = learn || '';
   $('wasted-sub').textContent = sub;
@@ -1059,6 +1073,7 @@ $('skip-confirm').addEventListener('click', () => closeDialog($('dlg-skip'), () 
 
 function completeMission(n, skipped) {
   if (skipped) S.skipped[n] = true; else S.done[n] = true;
+  if (!skipped) music.sfx('concluida');
   const last = allFinished();
   if (last && !S.completed) { S.completed = true; S.finalMs = Math.round(S.activeMs); }
   save();
