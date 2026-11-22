@@ -3,7 +3,7 @@
    Rodar:  cd test && node gta-fluxo.js   (depois de python3 src/build.py) */
 const GAME = 'file://' + require('path').resolve(__dirname, '../index.html');
 const { chromium } = require('playwright');
-/* Fecha o recado da Dani no mapa, se estiver aberto (ele flutua sobre os cards) */
+/* Fecha o recado da Isa no mapa, se estiver aberto (ele flutua sobre os cards) */
 const closeTip = async p => { if (await p.isVisible('#map-tip')) await p.click('#map-tip-close'); };
 // No celular o mapa é um carrossel: centraliza o card antes de tocar nele
 const openCard = async (p, n) => { await p.evaluate(n => carousel.center(MISSIONS.indexOf(n), false), n); await p.waitForTimeout(80); await p.click(`[data-mission="${n}"]`); };
@@ -46,7 +46,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await p.click('#btn-start'); await p.fill('#id-name', 'Ana'); await p.click('#id-form button[type=submit]'); await p.waitForTimeout(300);
     assert(!(await p.isDisabled('[data-mission="1"]')) && await p.isDisabled('[data-mission="2"]') && await p.isDisabled('[data-mission="5"]'), 'só a primeira missão começa aberta');
     assert(await p.isDisabled('[data-mission="6"]'), 'o Aeroporto começa bloqueado');
-    assert(await p.isVisible('#map-tip'), 'o recado da Dani abre sozinho no mapa');
+    assert(await p.isVisible('#map-tip'), 'o recado da Isa abre sozinho no mapa');
     await p.click('#map-tip-close');
     assert(await p.evaluate(() => document.getElementById('map-avatar-btn').classList.contains('is-pulse')), 'fechado o recado, o avatar pulsa');
     await p.click('#map-avatar-btn'); await p.waitForTimeout(100);

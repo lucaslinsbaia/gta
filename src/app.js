@@ -41,7 +41,7 @@ const fmtBig = n => n.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 const icon = (name, cls = 'icon') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 const escapeHtml = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 const MISSIONS = [1, 2, 3, 4, 5, 6];
-/** Nome ou apelido informado na identificação: a Dani chama o jogador por ele. */
+/** Nome ou apelido informado na identificação: a Isa chama o jogador por ele. */
 const nick = () => (S && S.player && S.player.name) || 'você';
 
 function newJourneyId() {
@@ -604,7 +604,7 @@ function renderMapa() {
   const first = !MISSIONS.some(finished);
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
   const tip = first
-    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre, uma depois da outra. Cada uma vale até 100 pontos. Começa pelo ${MISSION[MISSIONS[0]].title}! O Aeroporto fica no fim e precisa de pelo menos ${STARS_TO_FLY} estrelas.`
+    ? `Fala, ${nick()}! Eu sou a Isa e vou te ajudar a completar as missões de hoje. Ao final, você consegue chegar ao aeroporto e fugir da cidade. Bora?`
     : stuckBeforeAirport() ? `Ih, ${nick()}, faltou estrela pra liberar o Aeroporto: você fez ${starsFor(totalPoints())} e precisava de ${STARS_TO_FLY}. Mas de boa: dá pra finalizar a live e sua nota vale do mesmo jeito.`
     : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão da live. Bora decolar?`
       : next ? `Mandou bem até aqui! Próxima parada: ${MISSION[next].title}. Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} antes do Aeroporto. Tô torcendo, ${nick()}!`
@@ -672,7 +672,7 @@ const carousel = (() => {
   return { center, update, isSide, index: li => items().indexOf(li) };
 })();
 
-/* Tooltip da Dani (mapa e missões): texto digitado, fecha no ×, no Esc ou tocando fora.
+/* Tooltip da Isa (mapa e missões): texto digitado, fecha no ×, no Esc ou tocando fora.
    Fechado, o avatar pulsa e reabre o tooltip. */
 function makeTip(prefix, screenName, onClose) {
   const tip = { timer: null, text: '' };
@@ -748,7 +748,7 @@ $('missions').addEventListener('click', event => {
   show('missao');
   missionTip.reset();
   missionTip.text = missionBrief();
-  if (!finished(S.current) && !S.briefSeen[S.current]) openBrief();   // na primeira visita, a Dani apresenta a missão
+  if (!finished(S.current) && !S.briefSeen[S.current]) openBrief();   // na primeira visita, a Isa apresenta a missão
   else $('m-avatar-btn').classList.add('is-pulse');
 });
 
@@ -798,7 +798,7 @@ function renderMissao() {
     return `<li class="${cls}"${i === k && !closed ? ' aria-current="step"' : ''}>${name}</li>`;
   }).join('');
   setMsg('');
-  $('m-hint-text').textContent = S.hint[n] ? 'Ver a dica da Dani de novo' : 'Pedir dica à Dani (−20 pts)';
+  $('m-hint-text').textContent = S.hint[n] ? 'Ver a dica da Isa de novo' : 'Pedir dica à Isa (−20 pts)';
   $('m-hint-btn').hidden = closed && !S.hint[n];
   $('m-skip').hidden = closed || S.stageErrors[n] < SCORE.skipAfter;
   $('m-confirm').hidden = closed;
@@ -1032,7 +1032,7 @@ $('m-form').addEventListener('submit', event => {
   if (currentStage().type === 'build') checkBuild(); else checkChoice();
 });
 
-/* Descrição da missão: tooltip preso ao avatar da Dani sobre a cena. Abre sozinho na
+/* Descrição da missão: tooltip preso ao avatar da Isa sobre a cena. Abre sozinho na
    primeira visita a cada missão; depois de fechado, o avatar pulsa e reabre a descrição. */
 const missionTip = makeTip('m', 'missao', () => { if (S && !S.briefSeen[S.current]) { S.briefSeen[S.current] = true; save(); } });
 const missionBrief = () => MISSION[S.current].brief.replace(/\{nick\}/g, nick());
@@ -1149,7 +1149,7 @@ $('end-again').addEventListener('click', () => show('identificacao'));
 /* ---------------------------------------------------------------
    EXPORTAR O RESULTADO
    Desenha um cartão 1080 × 1920 (formato de story) num canvas, com o
-   logo, a Dani, o nome, os pontos, as estrelas e as missões. Depois:
+   logo, a Isa, o nome, os pontos, as estrelas e as missões. Depois:
    compartilhar pelo menu do aparelho (Instagram, WhatsApp, e-mail…),
    salvar a imagem, ou abrir WhatsApp/e-mail com o texto e o link.
    --------------------------------------------------------------- */
@@ -1199,7 +1199,7 @@ async function buildShareImage() {
   ctx.textAlign = 'center';
   ctx.save(); ctx.translate(W / 2, 360); ctx.rotate(-0.04);
   ctx.fillStyle = '#FFB02E'; ctx.font = '52px "Permanent Marker", cursive'; ctx.fillText('Edição Porto Alegre', 0, 0); ctx.restore();
-  // Dani
+  // Isa
   try {
     const dani = await loadImage(IMG.dani);
     const dw = 440, dh = 550, dx = (W - dw) / 2, dy = 420;

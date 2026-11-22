@@ -40,7 +40,7 @@
   <section class="screen" id="s-inicio" aria-labelledby="cover-title">
     <div class="wrap cover-wrap">
       <div class="cover" id="cover">
-        <div class="cover__panel cover__panel--dani"><img id="cover-dani" alt="Dani Pixel transmitindo ao vivo com o celular, ao pôr do sol"></div>
+        <div class="cover__panel cover__panel--dani"><img id="cover-dani" alt="Isa transmitindo ao vivo com o celular, ao pôr do sol"></div>
         <div class="cover__panel"><img data-card="4" alt=""></div>
         <div class="cover__panel"><img data-card="3" alt=""></div>
         <div class="cover__logo">
@@ -111,16 +111,16 @@
           <p class="eyebrow" id="map-eyebrow">Mapa da cidade</p>
           <h1 class="title-xl" id="map-title">Escolha a missão</h1>
         </div>
-        <!-- Dani na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
+        <!-- Isa na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
              Fechado o tooltip, o avatar pulsa e reabre a fala ao ser tocado. -->
         <div class="dani-anchor map-dani">
-          <button type="button" class="avatar-btn avatar-btn--inline" id="map-avatar-btn" aria-controls="map-tip" aria-expanded="false" aria-label="Ver o recado da Dani">
+          <button type="button" class="avatar-btn avatar-btn--inline" id="map-avatar-btn" aria-controls="map-tip" aria-expanded="false" aria-label="Ver o recado da Isa">
             <img class="avatar" id="map-avatar" alt="">
           </button>
           <div class="tip" id="map-tip" hidden>
-            <button type="button" class="tip__close" id="map-tip-close" aria-label="Fechar o recado da Dani">
+            <button type="button" class="tip__close" id="map-tip-close" aria-label="Fechar o recado da Isa">
               <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-            <p class="dani-say__name">Dani Pixel</p>
+            <p class="dani-say__name">Isa</p>
             <p class="tip__text typing" id="map-tip-text" aria-hidden="true"></p>
             <p class="sr-only" id="map-tip-full" role="status"></p>
           </div>
@@ -143,13 +143,13 @@
     <div class="wrap mission">
       <div class="mission__scene">
         <div class="dani-anchor scene__dani">
-          <button type="button" class="avatar-btn avatar-btn--inline" id="m-avatar-btn" aria-controls="m-tip" aria-expanded="false" aria-label="Ver a descrição da missão com a Dani">
+          <button type="button" class="avatar-btn avatar-btn--inline" id="m-avatar-btn" aria-controls="m-tip" aria-expanded="false" aria-label="Ver a descrição da missão com a Isa">
             <img class="avatar" id="m-avatar" alt="">
           </button>
           <div class="tip" id="m-tip" hidden>
             <button type="button" class="tip__close" id="m-tip-close" aria-label="Fechar a descrição da missão">
               <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-            <p class="dani-say__name">Dani Pixel</p>
+            <p class="dani-say__name">Isa</p>
             <p class="tip__text typing" id="m-tip-text" aria-hidden="true"></p>
             <p class="sr-only" id="m-tip-full" role="status"></p>
           </div>
@@ -192,7 +192,7 @@
         </form>
         <div class="mission__aux">
           <button type="button" class="link-btn" id="m-hint-btn">
-            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-bulb"/></svg> <span id="m-hint-text">Pedir dica à Dani (−20 pts)</span></button>
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-bulb"/></svg> <span id="m-hint-text">Pedir dica à Isa (−20 pts)</span></button>
           <button type="button" class="link-btn link-btn--muted" id="m-skip" hidden>
             <svg class="icon icon--sm" aria-hidden="true"><use href="#i-skip"/></svg> Pular missão</button>
         </div>
@@ -207,7 +207,7 @@
   <section class="screen" id="s-fim" aria-labelledby="end-title" hidden>
     <div class="wrap end">
       <div class="end__hero">
-        <img class="end__dani" id="end-dani" alt="Dani Pixel comemorando o fim da live">
+        <img class="end__dani" id="end-dani" alt="Isa comemorando o fim da live">
         <div>
           <p class="eyebrow">Live encerrada</p>
           <h1 class="title-xl" id="end-title">GG, <span id="g-name">você</span>!</h1>
@@ -268,17 +268,17 @@
   <div class="dlg__head dani-say">
     <img class="avatar" id="hint-avatar" alt="">
     <div>
-      <p class="dani-say__name">Dani Pixel</p>
+      <p class="dani-say__name">Isa</p>
       <h2 class="title-md" id="hint-title">Dica da live</h2>
     </div>
   </div>
   <p class="bubble" id="hint-text"></p>
-  <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Dani</button></div>
+  <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Isa</button></div>
 </dialog>
 
 <dialog class="dlg" id="dlg-hint-ask" aria-labelledby="hint-ask-title">
   <h2 class="title-md" id="hint-ask-title">Pedir dica?</h2>
-  <p>A dica da Dani tira 20 pontos desta missão (uma vez só). Depois ela fica aberta até o fim da missão.</p>
+  <p>A dica da Isa tira 20 pontos desta missão (uma vez só). Depois ela fica aberta até o fim da missão.</p>
   <div class="dlg__actions">
     <button type="button" class="btn btn--gold" id="hint-confirm">Quero a dica</button>
     <button type="button" class="link-btn" data-close>Agora não</button>

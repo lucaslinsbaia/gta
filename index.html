@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GTA · Edição Porto Alegre</title>
-<meta name="description" content="GTA (Geometria, Trigonometria e Aritmética): seis desafios de matemática em Porto Alegre, com a Dani Pixel transmitindo tudo ao vivo.">
+<meta name="description" content="GTA (Geometria, Trigonometria e Aritmética): seis desafios de matemática em Porto Alegre, com a Isa transmitindo tudo ao vivo.">
 <meta name="theme-color" content="#1A0833">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,7 +178,7 @@
   .msg.is-error { color: var(--err); }
   .msg.is-ok { color: var(--acid); }
 
-  /* ---------- Dani ---------- */
+  /* ---------- Isa ---------- */
   .avatar { width: 72px; height: 72px; flex-shrink: 0; border-radius: 50%; object-fit: cover; border: 3px solid var(--cream); box-shadow: 4px 4px 0 var(--pink); background: var(--purple); }
   .dani-say { display: flex; align-items: flex-start; gap: var(--s4); }
   .dani-say__name { display: flex; align-items: center; gap: var(--s2); margin: 0 0 var(--s2); font: 400 1.2rem/1 var(--font-label); letter-spacing: 0.08em; color: var(--ink); }
@@ -191,7 +191,7 @@
   .mission__scene { position: relative; }
   .scene__dani { position: absolute; top: var(--s3); right: var(--s3); z-index: 6; }
   .avatar-btn.avatar-btn--inline { position: relative; top: auto; right: auto; }
-  /* Tooltip da Dani: flutua sobre o conteúdo, preso ao avatar */
+  /* Tooltip da Isa: flutua sobre o conteúdo, preso ao avatar */
   .tip { position: absolute; top: calc(100% + 16px); right: 0; z-index: 12; width: min(380px, calc(100vw - 32px)); padding: var(--s4) var(--s5) var(--s5); background: var(--cream); color: var(--night); border: 3px solid var(--night); border-radius: 14px; box-shadow: 6px 6px 0 var(--cyan); animation: tip-in 260ms var(--ease) both; }
   .tip::before { content: ""; position: absolute; top: -13px; right: 30px; width: 20px; height: 20px; background: var(--cream); border-left: 3px solid var(--night); border-top: 3px solid var(--night); transform: rotate(45deg); }
   .tip .dani-say__name { color: var(--night); margin-bottom: var(--s2); padding-right: var(--s8); }
@@ -231,7 +231,7 @@
   .mission__scene { display: grid; gap: var(--s6); }
   .scene { position: relative; overflow: hidden; border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 8px 8px 0 var(--pink); aspect-ratio: 1510 / 806; background: var(--purple); }
   .scene img { width: 100%; height: 100%; object-fit: cover; }
-  /* Avatar da Dani sobre a cena: reabre a descrição da missão */
+  /* Avatar da Isa sobre a cena: reabre a descrição da missão */
   .avatar-btn { position: absolute; top: var(--s3); right: var(--s3); z-index: 2; display: grid; justify-items: center; gap: 4px; padding: 0; background: none; border: 0; cursor: pointer; }
   .avatar-btn .avatar { width: 76px; height: 76px; transition: transform 160ms var(--ease); }
   .avatar-btn:hover .avatar, .avatar-btn:focus-visible .avatar { transform: scale(1.08) rotate(-3deg); }
@@ -484,7 +484,7 @@
   <section class="screen" id="s-inicio" aria-labelledby="cover-title">
     <div class="wrap cover-wrap">
       <div class="cover" id="cover">
-        <div class="cover__panel cover__panel--dani"><img id="cover-dani" alt="Dani Pixel transmitindo ao vivo com o celular, ao pôr do sol"></div>
+        <div class="cover__panel cover__panel--dani"><img id="cover-dani" alt="Isa transmitindo ao vivo com o celular, ao pôr do sol"></div>
         <div class="cover__panel"><img data-card="4" alt=""></div>
         <div class="cover__panel"><img data-card="3" alt=""></div>
         <div class="cover__logo">
@@ -555,16 +555,16 @@
           <p class="eyebrow" id="map-eyebrow">Mapa da cidade</p>
           <h1 class="title-xl" id="map-title">Escolha a missão</h1>
         </div>
-        <!-- Dani na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
+        <!-- Isa na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
              Fechado o tooltip, o avatar pulsa e reabre a fala ao ser tocado. -->
         <div class="dani-anchor map-dani">
-          <button type="button" class="avatar-btn avatar-btn--inline" id="map-avatar-btn" aria-controls="map-tip" aria-expanded="false" aria-label="Ver o recado da Dani">
+          <button type="button" class="avatar-btn avatar-btn--inline" id="map-avatar-btn" aria-controls="map-tip" aria-expanded="false" aria-label="Ver o recado da Isa">
             <img class="avatar" id="map-avatar" alt="">
           </button>
           <div class="tip" id="map-tip" hidden>
-            <button type="button" class="tip__close" id="map-tip-close" aria-label="Fechar o recado da Dani">
+            <button type="button" class="tip__close" id="map-tip-close" aria-label="Fechar o recado da Isa">
               <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-            <p class="dani-say__name">Dani Pixel</p>
+            <p class="dani-say__name">Isa</p>
             <p class="tip__text typing" id="map-tip-text" aria-hidden="true"></p>
             <p class="sr-only" id="map-tip-full" role="status"></p>
           </div>
@@ -587,13 +587,13 @@
     <div class="wrap mission">
       <div class="mission__scene">
         <div class="dani-anchor scene__dani">
-          <button type="button" class="avatar-btn avatar-btn--inline" id="m-avatar-btn" aria-controls="m-tip" aria-expanded="false" aria-label="Ver a descrição da missão com a Dani">
+          <button type="button" class="avatar-btn avatar-btn--inline" id="m-avatar-btn" aria-controls="m-tip" aria-expanded="false" aria-label="Ver a descrição da missão com a Isa">
             <img class="avatar" id="m-avatar" alt="">
           </button>
           <div class="tip" id="m-tip" hidden>
             <button type="button" class="tip__close" id="m-tip-close" aria-label="Fechar a descrição da missão">
               <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-            <p class="dani-say__name">Dani Pixel</p>
+            <p class="dani-say__name">Isa</p>
             <p class="tip__text typing" id="m-tip-text" aria-hidden="true"></p>
             <p class="sr-only" id="m-tip-full" role="status"></p>
           </div>
@@ -636,7 +636,7 @@
         </form>
         <div class="mission__aux">
           <button type="button" class="link-btn" id="m-hint-btn">
-            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-bulb"/></svg> <span id="m-hint-text">Pedir dica à Dani (−20 pts)</span></button>
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-bulb"/></svg> <span id="m-hint-text">Pedir dica à Isa (−20 pts)</span></button>
           <button type="button" class="link-btn link-btn--muted" id="m-skip" hidden>
             <svg class="icon icon--sm" aria-hidden="true"><use href="#i-skip"/></svg> Pular missão</button>
         </div>
@@ -651,7 +651,7 @@
   <section class="screen" id="s-fim" aria-labelledby="end-title" hidden>
     <div class="wrap end">
       <div class="end__hero">
-        <img class="end__dani" id="end-dani" alt="Dani Pixel comemorando o fim da live">
+        <img class="end__dani" id="end-dani" alt="Isa comemorando o fim da live">
         <div>
           <p class="eyebrow">Live encerrada</p>
           <h1 class="title-xl" id="end-title">GG, <span id="g-name">você</span>!</h1>
@@ -712,17 +712,17 @@
   <div class="dlg__head dani-say">
     <img class="avatar" id="hint-avatar" alt="">
     <div>
-      <p class="dani-say__name">Dani Pixel</p>
+      <p class="dani-say__name">Isa</p>
       <h2 class="title-md" id="hint-title">Dica da live</h2>
     </div>
   </div>
   <p class="bubble" id="hint-text"></p>
-  <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Dani</button></div>
+  <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Isa</button></div>
 </dialog>
 
 <dialog class="dlg" id="dlg-hint-ask" aria-labelledby="hint-ask-title">
   <h2 class="title-md" id="hint-ask-title">Pedir dica?</h2>
-  <p>A dica da Dani tira 20 pontos desta missão (uma vez só). Depois ela fica aberta até o fim da missão.</p>
+  <p>A dica da Isa tira 20 pontos desta missão (uma vez só). Depois ela fica aberta até o fim da missão.</p>
   <div class="dlg__actions">
     <button type="button" class="btn btn--gold" id="hint-confirm">Quero a dica</button>
     <button type="button" class="link-btn" data-close>Agora não</button>
@@ -1106,7 +1106,7 @@ const fmtBig = n => n.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 const icon = (name, cls = 'icon') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 const escapeHtml = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 const MISSIONS = [1, 2, 3, 4, 5, 6];
-/** Nome ou apelido informado na identificação: a Dani chama o jogador por ele. */
+/** Nome ou apelido informado na identificação: a Isa chama o jogador por ele. */
 const nick = () => (S && S.player && S.player.name) || 'você';
 
 function newJourneyId() {
@@ -1766,7 +1766,7 @@ function renderMapa() {
   const first = !MISSIONS.some(finished);
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
   const tip = first
-    ? `Fala, ${nick()}! Hoje a live é de missões por Porto Alegre, uma depois da outra. Cada uma vale até 100 pontos. Começa pelo ${MISSION[MISSIONS[0]].title}! O Aeroporto fica no fim e precisa de pelo menos ${STARS_TO_FLY} estrelas.`
+    ? `Fala, ${nick()}! Eu sou a Isa e vou te ajudar a completar as missões de hoje. Ao final, você consegue chegar ao aeroporto e fugir da cidade. Bora?`
     : stuckBeforeAirport() ? `Ih, ${nick()}, faltou estrela pra liberar o Aeroporto: você fez ${starsFor(totalPoints())} e precisava de ${STARS_TO_FLY}. Mas de boa: dá pra finalizar a live e sua nota vale do mesmo jeito.`
     : next === LAST ? `Liberou o Aeroporto Salgado Filho, ${nick()}! Última missão da live. Bora decolar?`
       : next ? `Mandou bem até aqui! Próxima parada: ${MISSION[next].title}. Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} antes do Aeroporto. Tô torcendo, ${nick()}!`
@@ -1834,7 +1834,7 @@ const carousel = (() => {
   return { center, update, isSide, index: li => items().indexOf(li) };
 })();
 
-/* Tooltip da Dani (mapa e missões): texto digitado, fecha no ×, no Esc ou tocando fora.
+/* Tooltip da Isa (mapa e missões): texto digitado, fecha no ×, no Esc ou tocando fora.
    Fechado, o avatar pulsa e reabre o tooltip. */
 function makeTip(prefix, screenName, onClose) {
   const tip = { timer: null, text: '' };
@@ -1910,7 +1910,7 @@ $('missions').addEventListener('click', event => {
   show('missao');
   missionTip.reset();
   missionTip.text = missionBrief();
-  if (!finished(S.current) && !S.briefSeen[S.current]) openBrief();   // na primeira visita, a Dani apresenta a missão
+  if (!finished(S.current) && !S.briefSeen[S.current]) openBrief();   // na primeira visita, a Isa apresenta a missão
   else $('m-avatar-btn').classList.add('is-pulse');
 });
 
@@ -1960,7 +1960,7 @@ function renderMissao() {
     return `<li class="${cls}"${i === k && !closed ? ' aria-current="step"' : ''}>${name}</li>`;
   }).join('');
   setMsg('');
-  $('m-hint-text').textContent = S.hint[n] ? 'Ver a dica da Dani de novo' : 'Pedir dica à Dani (−20 pts)';
+  $('m-hint-text').textContent = S.hint[n] ? 'Ver a dica da Isa de novo' : 'Pedir dica à Isa (−20 pts)';
   $('m-hint-btn').hidden = closed && !S.hint[n];
   $('m-skip').hidden = closed || S.stageErrors[n] < SCORE.skipAfter;
   $('m-confirm').hidden = closed;
@@ -2194,7 +2194,7 @@ $('m-form').addEventListener('submit', event => {
   if (currentStage().type === 'build') checkBuild(); else checkChoice();
 });
 
-/* Descrição da missão: tooltip preso ao avatar da Dani sobre a cena. Abre sozinho na
+/* Descrição da missão: tooltip preso ao avatar da Isa sobre a cena. Abre sozinho na
    primeira visita a cada missão; depois de fechado, o avatar pulsa e reabre a descrição. */
 const missionTip = makeTip('m', 'missao', () => { if (S && !S.briefSeen[S.current]) { S.briefSeen[S.current] = true; save(); } });
 const missionBrief = () => MISSION[S.current].brief.replace(/\{nick\}/g, nick());
@@ -2311,7 +2311,7 @@ $('end-again').addEventListener('click', () => show('identificacao'));
 /* ---------------------------------------------------------------
    EXPORTAR O RESULTADO
    Desenha um cartão 1080 × 1920 (formato de story) num canvas, com o
-   logo, a Dani, o nome, os pontos, as estrelas e as missões. Depois:
+   logo, a Isa, o nome, os pontos, as estrelas e as missões. Depois:
    compartilhar pelo menu do aparelho (Instagram, WhatsApp, e-mail…),
    salvar a imagem, ou abrir WhatsApp/e-mail com o texto e o link.
    --------------------------------------------------------------- */
@@ -2361,7 +2361,7 @@ async function buildShareImage() {
   ctx.textAlign = 'center';
   ctx.save(); ctx.translate(W / 2, 360); ctx.rotate(-0.04);
   ctx.fillStyle = '#FFB02E'; ctx.font = '52px "Permanent Marker", cursive'; ctx.fillText('Edição Porto Alegre', 0, 0); ctx.restore();
-  // Dani
+  // Isa
   try {
     const dani = await loadImage(IMG.dani);
     const dw = 440, dh = 550, dx = (W - dw) / 2, dy = 420;
