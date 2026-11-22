@@ -542,6 +542,7 @@ function setFieldMessage(input, msg, text) {
 function renderIdentificacao() {
   const last = lastPlayer();
   $('id-name').value = last ? last.name : '';
+  AVATAR.load(last && last.avatar);
   renderClassField(last);
   API.ready.then(() => { if (screen === 'identificacao') renderClassField(lastPlayer()); });
   setFieldMessage($('id-name'), $('id-name-msg'), '');
@@ -580,13 +581,14 @@ $('id-form').addEventListener('submit', async event => {
   const serverMsg = await serverNameProblem(name);
   checkingName = false;
   if (serverMsg) { setFieldMessage($('id-name'), $('id-name-msg'), serverMsg); $('id-name').focus(); return; }
-  const player = { name, turma, turmaId };
+  const player = { name, turma, turmaId, avatar: AVATAR.get() };
   try { localStorage.setItem(PLAYER_KEY, JSON.stringify(player)); } catch (e) { /* segue sem lembrar */ }
   S = freshState();
   S.player = player;
   save();
   show('mapa');
 });
+AVATAR.setup();
 $('id-name').addEventListener('input', () => setFieldMessage($('id-name'), $('id-name-msg'), ''));
 $('id-class').addEventListener('change', () => setFieldMessage($('id-class'), $('id-class-msg'), ''));
 
@@ -601,6 +603,8 @@ function lockText(n) {
 
 function renderMapa() {
   $('map-avatar').src = IMG.avatar;
+  $('map-me').hidden = !(S.player && S.player.avatar);
+  if (S.player && S.player.avatar) AVATAR.paint($('map-me'), AVATAR.normalize(S.player.avatar), [16, 4, 96]);
   const next = MISSIONS.find(n => !finished(n));
   const first = !MISSIONS.some(finished);
   $('map-eyebrow').textContent = S.player ? `Partiu, ${S.player.name}` : 'Mapa da cidade';
@@ -1135,7 +1139,9 @@ $('rw-next').addEventListener('click', () => closeDialog($('dlg-reward'), () => 
    --------------------------------------------------------------- */
 function renderFim() {
   const pts = totalPoints(), stars = starsFor(pts);
-  $('end-dani').src = IMG.dani;
+  // Na tela final aparece o personagem do aluno sobre o cenário escolhido (sem personagem, a Isa)
+  $('end-dani').src = IMG.dani; $('end-dani').alt = 'Isa comemorando o fim da live'; $('end-dani').classList.remove('is-square');
+  if (S.player && S.player.avatar) AVATAR.compose(AVATAR.normalize(S.player.avatar), 640).then(cv => { $('end-dani').src = cv.toDataURL('image/png'); $('end-dani').classList.add('is-square'); $('end-dani').alt = `Personagem de ${S.player.name}`; });
   $('g-name').textContent = S.player ? S.player.name : 'você';
   $('g-class').textContent = S.player && S.player.turma ? `Turma ${S.player.turma}` : '';
   $('g-pts').textContent = pts;
@@ -1206,12 +1212,15 @@ async function buildShareImage() {
   ctx.textAlign = 'center';
   ctx.save(); ctx.translate(W / 2, 360); ctx.rotate(-0.04);
   ctx.fillStyle = '#FFB02E'; ctx.font = '52px "Permanent Marker", cursive'; ctx.fillText('Edição Porto Alegre', 0, 0); ctx.restore();
-  // Isa
+  // Personagem do aluno sobre o cenário escolhido (sem personagem, a Isa)
   try {
-    const dani = await loadImage(IMG.dani);
-    const dw = 440, dh = 550, dx = (W - dw) / 2, dy = 420;
+    const mine = S.player && S.player.avatar;
+    const dani = mine ? await AVATAR.compose(AVATAR.normalize(S.player.avatar), 520) : await loadImage(IMG.dani);
+    const dw = mine ? 520 : 440, dh = mine ? 520 : 550, dx = (W - dw) / 2, dy = mine ? 430 : 420;
+    ctx.imageSmoothingEnabled = !mine;
     ctx.fillStyle = '#FF2E93'; ctx.fillRect(dx + 18, dy + 18, dw, dh);
     ctx.drawImage(dani, dx, dy, dw, dh);
+    ctx.imageSmoothingEnabled = true;
     ctx.lineWidth = 10; ctx.strokeStyle = '#FFF7EC'; ctx.strokeRect(dx, dy, dw, dh);
   } catch (e) { /* sem a foto, o cartão segue */ }
   // Nome, pontos, estrelas e nível

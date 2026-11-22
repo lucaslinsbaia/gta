@@ -73,11 +73,11 @@
        IDENTIFICAÇÃO
        ================================================================ -->
   <section class="screen" id="s-identificacao" aria-labelledby="id-title" hidden>
-    <div class="wrap narrow">
-      <div class="card">
+    <div class="wrap creator">
+      <div class="creator__main">
         <p class="eyebrow">Antes de entrar na live</p>
-        <h1 class="title-lg" id="id-title">Quem vai jogar?</h1>
-        <p class="lead">Seu nome aparece no ranking da turma quando o professor publicar.</p>
+        <h1 class="title-lg" id="id-title">Crie seu personagem</h1>
+        <p class="lead">Ele vai com você por Porto Alegre e aparece no seu resultado.</p>
         <form id="id-form" novalidate>
           <div class="id-field field">
             <label for="id-name">Nome ou apelido</label>
@@ -90,13 +90,29 @@
             <p class="msg" id="id-class-hint"></p>
             <p class="msg is-error" id="id-class-msg" aria-live="polite"></p>
           </div>
-          <div class="actions">
-            <button type="submit" class="btn btn--gold">Começar
-              <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+          <!-- Espelho: o personagem montado em tempo real sobre o cenário escolhido; recebe os acessórios arrastados -->
+          <div class="av-mirror" id="av-mirror">
+            <canvas id="av-canvas" width="128" height="128" role="img" aria-label="Seu personagem"></canvas>
+            <span class="av-mirror__hint" aria-hidden="true">Solte aqui</span>
+          </div>
+          <div class="av-presets" role="group" aria-label="Começar de um modelo pronto">
+            <button type="button" class="btn btn--outline btn--sm" data-av-preset="0">Modelo 1</button>
+            <button type="button" class="btn btn--outline btn--sm" data-av-preset="1">Modelo 2</button>
+            <button type="button" class="btn btn--outline btn--sm" data-av-preset="2">Modelo 3</button>
+            <button type="button" class="btn btn--outline btn--sm" id="av-random">Sortear</button>
+          </div>
+          <!-- Rodapé fixo com o botão de começar -->
+          <div class="fixed-footer">
             <button type="button" class="link-btn" id="id-back">Voltar</button>
+            <button type="submit" class="btn btn--gold">Bora jogar
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
           </div>
         </form>
       </div>
+      <section class="av-closet" aria-label="Opções do personagem">
+        <div class="av-tabs" role="tablist" id="av-tabs"></div>
+        <div class="av-panel" id="av-panel" role="tabpanel"></div>
+      </section>
     </div>
   </section>
 
@@ -106,9 +122,12 @@
   <section class="screen" id="s-mapa" aria-labelledby="map-title" hidden>
     <div class="wrap">
       <div class="map-head">
-        <div>
+        <div class="map-me">
+          <canvas class="me-avatar" id="map-me" width="96" height="96" aria-hidden="true" hidden></canvas>
+          <div>
           <p class="eyebrow" id="map-eyebrow">Mapa da cidade</p>
           <h1 class="title-xl" id="map-title">Escolha a missão</h1>
+          </div>
         </div>
         <!-- Isa na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
              Fechado o tooltip, o avatar pulsa e reabre a fala ao ser tocado. -->
