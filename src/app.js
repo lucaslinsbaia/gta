@@ -22,6 +22,7 @@
 const IMG = {
   dani: '__IMG_gta_isa_retrato__',
   avatar: '__IMG_gta_isa_avatar__',
+  avatarFala: '__IMG_gta_isa_avatar_fala__',   // mesma imagem com a boca fechada: alternando, a Isa "fala"
   card: {
     1: '__IMG_gta_card_m1_mercado__', 2: '__IMG_gta_card_m2_redencao__', 3: '__IMG_gta_card_m3_beirario__',
     4: '__IMG_gta_card_m4_gasometro__', 5: '__IMG_gta_card_m5_arena__', 6: '__IMG_gta_card_m6_aeroporto__'
@@ -677,7 +678,7 @@ const carousel = (() => {
 function makeTip(prefix, screenName, onClose) {
   const tip = { timer: null, text: '' };
   const el = () => $(`${prefix}-tip-text`);
-  const finishTyping = () => { clearInterval(tip.timer); tip.timer = null; el().textContent = tip.text; el().classList.remove('is-typing'); };
+  const finishTyping = () => { clearInterval(tip.timer); tip.timer = null; el().textContent = tip.text; el().classList.remove('is-typing'); $(`${prefix}-avatar`).src = IMG.avatar; };
   tip.open = text => {
     if (text != null) tip.text = text;
     $(`${prefix}-tip`).hidden = false;
@@ -689,7 +690,13 @@ function makeTip(prefix, screenName, onClose) {
     let i = 0;
     el().textContent = '';
     el().classList.add('is-typing');
-    tip.timer = setInterval(() => { i += 1; el().textContent = tip.text.slice(0, i); if (i >= tip.text.length) finishTyping(); }, 24);
+    // Boca mexendo: troca o quadro do avatar a cada 6 letras (cerca de 7 vezes por segundo), fechando nas pausas
+    tip.timer = setInterval(() => {
+      i += 1;
+      el().textContent = tip.text.slice(0, i);
+      if (i % 6 === 0) $(`${prefix}-avatar`).src = /[\s.,!?]/.test(tip.text[i - 1]) || $(`${prefix}-avatar`).src === IMG.avatar ? IMG.avatarFala : IMG.avatar;
+      if (i >= tip.text.length) finishTyping();
+    }, 24);
   };
   tip.close = () => {
     if ($(`${prefix}-tip`).hidden) return;
