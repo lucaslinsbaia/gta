@@ -230,9 +230,19 @@
   .data li span:first-child { color: var(--muted); }
   .data li strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
   .question { font-size: var(--text-lg); color: var(--ink); font-weight: 600; }
+  /* Caixa do problema */
+  .problem { display: grid; gap: var(--s3); margin-bottom: var(--s4); padding: var(--s4) var(--s5) var(--s5); background: var(--night); border: 2px solid var(--line-strong); border-radius: var(--radius); }
+  .problem .title-md { margin: 0; }
+  .problem__info { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3) var(--s5); }
+  .problem__figure { flex: 0 0 170px; margin: 0 auto; }
+  .problem__figure svg { display: block; width: 100%; height: auto; }
+  .problem .data { flex: 1 1 200px; margin: 0; padding: 0; background: none; border: 0; }
+  .problem .question { margin: 0; padding-top: var(--s3); border-top: 1px solid var(--line); }
+  .problem .build__expr { margin: 0; background: rgba(255, 247, 236, 0.05); border: 2px solid var(--cyan); }
   /* Etapa A: montar a conta */
   .build__expr { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); padding: var(--s4); margin-bottom: var(--s3); background: var(--night); border: 2px solid var(--cyan); border-radius: var(--radius); font: 400 1.6rem/1.2 var(--font-label); letter-spacing: 0.04em; color: var(--ink); }
   .tok { white-space: pre; }
+  .glue { display: inline-flex; align-items: flex-start; white-space: nowrap; }
   .slot { min-width: 72px; min-height: 52px; padding: var(--s2) var(--s3); font: 700 1.25rem/1 var(--font-body); color: var(--night); background: rgba(255, 247, 236, 0.08); border: 3px dashed var(--yellow); border-radius: var(--radius); cursor: pointer; }
   .slot.is-filled { background: var(--yellow); border-style: solid; border-color: var(--night); }
   .slot.is-over { background: rgba(34, 227, 255, 0.25); border-color: var(--cyan); }
@@ -342,6 +352,9 @@
     .end__dani { width: 180px; }
     .avatar { width: 56px; height: 56px; }
     .avatar-btn .avatar { width: 60px; height: 60px; }
+    .problem { padding: var(--s3) var(--s4) var(--s4); }
+    .problem .build__expr { padding: var(--s3); gap: 6px; }
+    .slot { min-width: 60px; }
     .bubble { font-size: var(--text-base); }
     .card { padding: var(--s5); box-shadow: 6px 6px 0 var(--pink); }
     .logo__gta { -webkit-text-stroke: 2px var(--cream); }

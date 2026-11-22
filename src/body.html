@@ -134,12 +134,18 @@
       </div>
       <div class="mission__panel card">
         <ol class="steps" id="m-steps" aria-label="Etapas da missão"></ol>
-        <h2 class="title-md" id="m-step-title"></h2>
-        <ul class="data" id="m-data"></ul>
-        <p class="question" id="m-question"></p>
+        <!-- Caixa do problema: título da etapa, desenho, dados, pergunta e a conta para montar -->
+        <div class="problem" id="m-problem">
+          <h2 class="title-md" id="m-step-title"></h2>
+          <div class="problem__info">
+            <div class="problem__figure" id="m-figure" hidden></div>
+            <ul class="data" id="m-data"></ul>
+          </div>
+          <p class="question" id="m-question"></p>
+          <div class="build__expr" id="m-expr" aria-label="Conta para montar" hidden></div>
+        </div>
         <form id="m-form" novalidate>
           <div class="build" id="m-build" hidden>
-            <div class="build__expr" id="m-expr" aria-label="Conta para montar"></div>
             <p class="msg" id="m-build-help">Arraste cada peça até a lacuna certa. Também dá pra tocar na peça e depois na lacuna.</p>
             <div class="chips" id="m-chips" aria-label="Peças"></div>
           </div>

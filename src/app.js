@@ -66,6 +66,21 @@ function makeChips(required, distractors) {
   return list;
 }
 
+/** Desenho do cilindro (tonel) com o raio e a altura sorteados. */
+function cylinderSvg(r, h) {
+  return `<svg viewBox="0 0 185 165" role="img" aria-label="Desenho do tonel: um cilindro com raio de ${fmt(r)} m e altura de ${fmt(h)} m">
+    <path d="M20 40 V140 A55 16 0 0 0 130 140 V40" fill="rgba(34,227,255,0.18)" stroke="#FFF7EC" stroke-width="3"/>
+    <path d="M20 140 A55 16 0 0 1 130 140" fill="none" stroke="#FFF7EC" stroke-width="2" stroke-dasharray="5 5" opacity="0.6"/>
+    <ellipse cx="75" cy="40" rx="55" ry="16" fill="rgba(34,227,255,0.32)" stroke="#FFF7EC" stroke-width="3"/>
+    <line x1="75" y1="40" x2="130" y2="40" stroke="#FFB02E" stroke-width="3"/>
+    <circle cx="75" cy="40" r="3.5" fill="#FFB02E"/>
+    <text x="102" y="28" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="800" fill="#FFB02E">r</text>
+    <line x1="150" y1="40" x2="150" y2="140" stroke="#FF2E93" stroke-width="3"/>
+    <path d="M144 48 L150 38 L156 48 M144 132 L150 142 L156 132" fill="none" stroke="#FF2E93" stroke-width="3"/>
+    <text x="162" y="97" font-family="Inter, sans-serif" font-size="20" font-weight="800" fill="#FF2E93">h</text>
+  </svg>`;
+}
+
 const MISSION = {
   1: {
     title: 'Mercado Público', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
@@ -87,6 +102,7 @@ const MISSION = {
         question: 'Quantos litros cabem no tonel?', unit: 'litros', correct: d.B,
         distractors: [round2(d.A * d.h), round2(d.A * d.h * 100), round2(3.14 * 4 * d.r * d.r * d.h * 1000)] }
     ],
+    figure: d => cylinderSvg(d.r, d.h),
     solution: d => [
       `Área da base: 3,14 · ${fmt(d.r)}² = ${fmt(d.A)} m².`,
       `Volume: ${fmt(d.A)} · ${fmt(d.h)} = ${fmt(round2(d.A * d.h))} m³, ou seja, ${fmtBig(d.B)} litros.`
@@ -539,8 +555,11 @@ function renderMissao() {
   $('m-skip').hidden = closed || S.stageErrors[n] < SCORE.skipAfter;
   $('m-confirm').hidden = closed;
   renderMissionScore();
+  $('m-figure').hidden = !M.figure;
+  $('m-figure').innerHTML = M.figure ? M.figure(d) : '';
   if (closed) {
     $('m-build').hidden = true;
+    $('m-expr').hidden = true;
     $('m-choice').hidden = true;
     $('m-step-title').textContent = 'Missão finalizada';
     $('m-question').textContent = S.done[n] ? `Missão concluída com ${missionPoints(n)} pontos. A resolução:` : 'Missão pulada. A resolução:';
@@ -553,6 +572,7 @@ function renderMissao() {
   $('m-data').innerHTML = stage.data.map(([label, value]) => `<li><span>${label}</span><strong>${value}</strong></li>`).join('');
   $('m-question').textContent = stage.question;
   $('m-build').hidden = stage.type !== 'build';
+  $('m-expr').hidden = stage.type !== 'build';
   $('m-choice').hidden = stage.type !== 'choice';
   $('m-confirm-text').textContent = stage.type === 'build' ? 'Conferir conta' : 'Confirmar';
   if (stage.type === 'build') renderBuild(stage); else renderChoice(stage);
@@ -561,14 +581,22 @@ function renderMissao() {
 /* --- Etapa A: montar a conta --- */
 function renderBuild(stage) {
   let s = -1;
-  $('m-expr').innerHTML = stage.template.map(t => {
+  const html = stage.template.map(t => {
     if (typeof t === 'string') return `<span class="tok">${escapeHtml(t)}</span>`;
     s += 1;
     const chip = ui.fills[s];
     const label = chip == null ? '' : stage.chips[chip];
     return `<button type="button" class="slot${chip == null ? '' : ' is-filled'}" data-slot="${s}"
       aria-label="Lacuna ${s + 1}: ${chip == null ? 'vazia' : label}${chip == null ? '' : ' (toque para tirar)'}">${escapeHtml(label)}</button>`;
-  }).join('');
+  });
+  // "²" e ")" logo depois de uma lacuna ficam grudados nela, para não quebrarem a linha sozinhos
+  for (let i = html.length - 1; i > 0; i--) {
+    const t = stage.template[i];
+    if (typeof t === 'string' && /^[²)]/.test(t) && typeof stage.template[i - 1] === 'object') {
+      html.splice(i - 1, 2, `<span class="glue">${html[i - 1]}${html[i]}</span>`);
+    }
+  }
+  $('m-expr').innerHTML = html.join('');
   const used = new Set(ui.fills.filter(v => v != null));
   $('m-chips').innerHTML = ui.chipOrder.map(i => `<button type="button" class="chip${ui.selected === i ? ' is-selected' : ''}" data-chip="${i}"
       aria-pressed="${ui.selected === i}" ${used.has(i) ? 'hidden' : ''}>${escapeHtml(stage.chips[i])}</button>`).join('');
