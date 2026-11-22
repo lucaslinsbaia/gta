@@ -101,15 +101,14 @@
         </div>
         <!-- Dani na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
              Fechado o tooltip, o avatar pulsa e reabre a fala ao ser tocado. -->
-        <div class="map-dani">
+        <div class="dani-anchor map-dani">
           <button type="button" class="avatar-btn avatar-btn--inline" id="map-avatar-btn" aria-controls="map-tip" aria-expanded="false" aria-label="Ver o recado da Dani">
             <img class="avatar" id="map-avatar" alt="">
-            <span class="live" aria-hidden="true">AO VIVO</span>
           </button>
           <div class="tip" id="map-tip" hidden>
             <button type="button" class="tip__close" id="map-tip-close" aria-label="Fechar o recado da Dani">
               <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-            <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+            <p class="dani-say__name">Dani Pixel</p>
             <p class="tip__text typing" id="map-tip-text" aria-hidden="true"></p>
             <p class="sr-only" id="map-tip-full" role="status"></p>
           </div>
@@ -130,12 +129,20 @@
   <section class="screen" id="s-missao" aria-labelledby="m-title" hidden>
     <div class="wrap mission">
       <div class="mission__scene">
+        <div class="dani-anchor scene__dani">
+          <button type="button" class="avatar-btn avatar-btn--inline" id="m-avatar-btn" aria-controls="m-tip" aria-expanded="false" aria-label="Ver a descrição da missão com a Dani">
+            <img class="avatar" id="m-avatar" alt="">
+          </button>
+          <div class="tip" id="m-tip" hidden>
+            <button type="button" class="tip__close" id="m-tip-close" aria-label="Fechar a descrição da missão">
+              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+            <p class="dani-say__name">Dani Pixel</p>
+            <p class="tip__text typing" id="m-tip-text" aria-hidden="true"></p>
+            <p class="sr-only" id="m-tip-full" role="status"></p>
+          </div>
+        </div>
         <div class="scene">
           <img id="m-scene" alt="">
-          <button type="button" class="avatar-btn" id="m-avatar-btn" aria-label="Ver de novo a descrição da missão com a Dani" title="Ver de novo a descrição da missão">
-            <img class="avatar" id="m-avatar" alt="">
-            <span class="live" aria-hidden="true">AO VIVO</span>
-          </button>
           <div class="scene__label">
             <p class="eyebrow" id="m-eyebrow"></p>
             <h1 class="title-xl" id="m-title"></h1>
@@ -248,26 +255,12 @@
   <div class="dlg__head dani-say">
     <img class="avatar" id="hint-avatar" alt="">
     <div>
-      <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+      <p class="dani-say__name">Dani Pixel</p>
       <h2 class="title-md" id="hint-title">Dica da live</h2>
     </div>
   </div>
   <p class="bubble" id="hint-text"></p>
   <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Dani</button></div>
-</dialog>
-
-<dialog class="dlg dlg--brief" id="dlg-brief" aria-labelledby="brief-title" aria-describedby="brief-full">
-  <div class="dlg__head dani-say">
-    <img class="avatar" id="brief-avatar" alt="">
-    <div>
-      <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
-      <h2 class="title-md" id="brief-title"></h2>
-    </div>
-  </div>
-  <!-- O texto aparece letra por letra (animação); o leitor de tela recebe o texto inteiro de uma vez -->
-  <p class="bubble typing" id="brief-text" aria-hidden="true"></p>
-  <p class="sr-only" id="brief-full"></p>
-  <div class="dlg__actions"><button type="button" class="btn btn--gold" id="brief-ok">Bora!</button></div>
 </dialog>
 
 <dialog class="dlg" id="dlg-hint-ask" aria-labelledby="hint-ask-title">

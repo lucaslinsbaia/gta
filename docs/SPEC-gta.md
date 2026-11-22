@@ -102,6 +102,7 @@
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
 - **1.7 (22/11/2026):** mapa com a Dani na linha do título. O recado dela abre num tooltip flutuante, com o texto sendo digitado; fecha no ×, no Esc ou tocando fora, e só abre sozinho quando a fala muda. Fechado, o avatar pulsa e reabre o recado.
+- **1.8 (22/11/2026):** a descrição da missão também virou tooltip digitado ancorado no avatar da cena (sai o modal inicial); fechado, o avatar pulsa. Saem as tags "AO VIVO". Tocar fora de qualquer tooltip só fecha o tooltip, sem acionar o que está embaixo.
 - **1.6 (21/11/2026):** exportação simplificada, sem prévia e sem textos de instrução. No celular com suporte, só "Compartilhar". No computador, "Salvar imagem" e "E-mail". Os botões WhatsApp e Instagram saíram: no celular eles chegam pelo menu do aparelho.
 - **1.5 (21/11/2026):** exportar o resultado na tela final. O jogo desenha num canvas um cartão 1080 × 1920 (formato de story) com o logo, a Dani, o nome, os pontos, as estrelas, o nível e as missões.
   - **Compartilhar:** usa o menu do aparelho (Web Share com arquivo) e aparece só onde há suporte, em geral no celular. Por ele chegam Instagram, WhatsApp e e-mail com a imagem.

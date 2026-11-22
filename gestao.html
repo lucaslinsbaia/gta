@@ -187,7 +187,9 @@
 
   /* ---------- Mapa ---------- */
   .map-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s8); }
-  .map-dani { position: relative; flex-shrink: 0; }
+  .dani-anchor { position: relative; flex-shrink: 0; }
+  .mission__scene { position: relative; }
+  .scene__dani { position: absolute; top: var(--s3); right: var(--s3); z-index: 6; }
   .avatar-btn.avatar-btn--inline { position: relative; top: auto; right: auto; }
   /* Tooltip da Dani: flutua sobre o conteúdo, preso ao avatar */
   .tip { position: absolute; top: calc(100% + 16px); right: 0; z-index: 12; width: min(380px, calc(100vw - 32px)); padding: var(--s4) var(--s5) var(--s5); background: var(--cream); color: var(--night); border: 3px solid var(--night); border-radius: 14px; box-shadow: 6px 6px 0 var(--cyan); animation: tip-in 260ms var(--ease) both; }
@@ -233,7 +235,6 @@
   .avatar-btn { position: absolute; top: var(--s3); right: var(--s3); z-index: 2; display: grid; justify-items: center; gap: 4px; padding: 0; background: none; border: 0; cursor: pointer; }
   .avatar-btn .avatar { width: 76px; height: 76px; transition: transform 160ms var(--ease); }
   .avatar-btn:hover .avatar, .avatar-btn:focus-visible .avatar { transform: scale(1.08) rotate(-3deg); }
-  .avatar-btn .live { margin-top: -14px; box-shadow: 2px 2px 0 var(--night); }
   .dlg--brief .bubble { min-height: 7.5em; }
   .typing.is-typing::after { content: "▌"; margin-left: 2px; color: var(--pink); animation: blink 700ms steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }

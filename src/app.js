@@ -577,7 +577,7 @@ function renderMapa() {
       : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   // A fala abre sozinha quando muda (início, depois de cada missão); senão, o avatar fica pulsando
-  if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse');
+  if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else { mapTip.text = tip; if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse'); }
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
     const open = unlocked(n);
@@ -600,47 +600,61 @@ function renderMapa() {
   $('map-finish').hidden = !stuckBeforeAirport();
 }
 
-/* Tooltip da Dani no mapa: texto digitado, fecha no ×, no Esc ou tocando fora */
-const tipTyping = { timer: null };
-function openMapTip() {
-  const text = S.mapTip || '';
-  $('map-tip').hidden = false;
-  $('map-avatar-btn').classList.remove('is-pulse');
-  $('map-avatar-btn').setAttribute('aria-expanded', 'true');
-  $('map-tip-full').textContent = text;
-  clearInterval(tipTyping.timer);
-  const el = $('map-tip-text');
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
-  let i = 0;
-  el.textContent = '';
-  el.classList.add('is-typing');
-  tipTyping.timer = setInterval(() => {
-    i += 1;
-    el.textContent = text.slice(0, i);
-    if (i >= text.length) { clearInterval(tipTyping.timer); tipTyping.timer = null; el.classList.remove('is-typing'); }
-  }, 24);
+/* Tooltip da Dani (mapa e missões): texto digitado, fecha no ×, no Esc ou tocando fora.
+   Fechado, o avatar pulsa e reabre o tooltip. */
+function makeTip(prefix, screenName, onClose) {
+  const tip = { timer: null, text: '' };
+  const el = () => $(`${prefix}-tip-text`);
+  const finishTyping = () => { clearInterval(tip.timer); tip.timer = null; el().textContent = tip.text; el().classList.remove('is-typing'); };
+  tip.open = text => {
+    if (text != null) tip.text = text;
+    $(`${prefix}-tip`).hidden = false;
+    $(`${prefix}-avatar-btn`).classList.remove('is-pulse');
+    $(`${prefix}-avatar-btn`).setAttribute('aria-expanded', 'true');
+    $(`${prefix}-tip-full`).textContent = tip.text;
+    clearInterval(tip.timer);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { finishTyping(); return; }
+    let i = 0;
+    el().textContent = '';
+    el().classList.add('is-typing');
+    tip.timer = setInterval(() => { i += 1; el().textContent = tip.text.slice(0, i); if (i >= tip.text.length) finishTyping(); }, 24);
+  };
+  tip.close = () => {
+    if ($(`${prefix}-tip`).hidden) return;
+    finishTyping();
+    $(`${prefix}-tip`).hidden = true;
+    $(`${prefix}-avatar-btn`).setAttribute('aria-expanded', 'false');
+    $(`${prefix}-avatar-btn`).classList.add('is-pulse');
+    if (onClose) onClose();
+  };
+  tip.reset = () => {   // estado inicial ao trocar de tela: fechado e sem pulsar
+    clearInterval(tip.timer); tip.timer = null;
+    $(`${prefix}-tip`).hidden = true;
+    $(`${prefix}-avatar-btn`).classList.remove('is-pulse');
+    $(`${prefix}-avatar-btn`).setAttribute('aria-expanded', 'false');
+  };
+  $(`${prefix}-tip-close`).addEventListener('click', tip.close);
+  $(`${prefix}-avatar-btn`).addEventListener('click', () => { if ($(`${prefix}-tip`).hidden) tip.open(); else tip.close(); });
+  $(`${prefix}-tip`).addEventListener('click', event => { if (tip.timer && !event.target.closest('.tip__close')) finishTyping(); });   // tocar no texto mostra tudo
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && screen === screenName) tip.close(); });
+  // Tocar fora só fecha o tooltip: o toque não chega no que está embaixo (card, link, botão)
+  document.addEventListener('pointerdown', event => {
+    if (screen !== screenName || $(`${prefix}-tip`).hidden || event.target.closest(`#${prefix}-tip, #${prefix}-avatar-btn`)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    tip.close();
+    swallowNextClick();
+  }, true);
+  return tip;
 }
-function closeMapTip() {
-  if ($('map-tip').hidden) return;
-  clearInterval(tipTyping.timer);
-  tipTyping.timer = null;
-  $('map-tip-text').classList.remove('is-typing');
-  $('map-tip').hidden = true;
-  $('map-avatar-btn').setAttribute('aria-expanded', 'false');
-  $('map-avatar-btn').classList.add('is-pulse');
-}
-$('map-tip-close').addEventListener('click', closeMapTip);
-$('map-avatar-btn').addEventListener('click', () => { if ($('map-tip').hidden) openMapTip(); else closeMapTip(); });
-$('map-tip').addEventListener('click', event => {   // tocar no texto mostra tudo de uma vez
-  if (tipTyping.timer && !event.target.closest('#map-tip-close')) {
-    clearInterval(tipTyping.timer); tipTyping.timer = null;
-    $('map-tip-text').textContent = S.mapTip; $('map-tip-text').classList.remove('is-typing');
-  }
-});
-document.addEventListener('keydown', event => { if (event.key === 'Escape' && screen === 'mapa') closeMapTip(); });
-document.addEventListener('pointerdown', event => {
-  if (screen === 'mapa' && !event.target.closest('.map-dani')) closeMapTip();
-});
+/* Engole o clique que vem logo depois do toque que fechou um tooltip */
+let swallowClickUntil = 0;
+function swallowNextClick() { swallowClickUntil = Date.now() + 700; }
+document.addEventListener('click', event => {
+  if (Date.now() < swallowClickUntil) { event.preventDefault(); event.stopPropagation(); swallowClickUntil = 0; }
+}, true);
+const mapTip = makeTip('map', 'mapa');
+const openMapTip = () => mapTip.open(S.mapTip || '');
 
 /* Finalizar sem o Aeroporto: ele vale 0 e a nota é calculada normalmente */
 $('map-finish-btn').addEventListener('click', () => {
@@ -657,7 +671,10 @@ $('missions').addEventListener('click', event => {
   S.current = Number(btn.dataset.mission);
   save();
   show('missao');
+  missionTip.reset();
+  missionTip.text = missionBrief();
   if (!finished(S.current) && !S.briefSeen[S.current]) openBrief();   // na primeira visita, a Dani apresenta a missão
+  else $('m-avatar-btn').classList.add('is-pulse');
 });
 
 /* ---------------------------------------------------------------
@@ -934,42 +951,11 @@ $('m-form').addEventListener('submit', event => {
   if (currentStage().type === 'build') checkBuild(); else checkChoice();
 });
 
-/* Descrição da missão: abre num modal com o texto sendo digitado.
-   Depois de fechado, o avatar da Dani sobre a cena reabre a descrição. */
-const typing = { timer: null, full: '' };
-function stopTyping() {
-  clearInterval(typing.timer);
-  typing.timer = null;
-  $('brief-text').textContent = typing.full;
-  $('brief-text').classList.remove('is-typing');
-}
-function openBrief() {
-  const n = S.current, M = MISSION[n];
-  typing.full = M.brief.replace(/\{nick\}/g, nick());
-  $('brief-avatar').src = IMG.avatar;
-  $('brief-title').textContent = `Missão ${n} · ${M.title}`;
-  $('brief-full').textContent = typing.full;
-  clearInterval(typing.timer);
-  openDialog($('dlg-brief'));
-  $('brief-ok').focus();
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { stopTyping(); return; }
-  let i = 0;
-  $('brief-text').textContent = '';
-  $('brief-text').classList.add('is-typing');
-  typing.timer = setInterval(() => {
-    i += 1;
-    $('brief-text').textContent = typing.full.slice(0, i);
-    if (i >= typing.full.length) stopTyping();
-  }, 24);
-}
-$('brief-text').addEventListener('click', () => { if (typing.timer) stopTyping(); });   // tocar no texto mostra tudo de uma vez
-$('brief-ok').addEventListener('click', () => closeDialog($('dlg-brief')));
-$('dlg-brief').addEventListener('close', () => {
-  stopTyping();
-  if (S && !S.briefSeen[S.current]) { S.briefSeen[S.current] = true; save(); }
-  if (screen === 'missao') $('m-avatar-btn').focus();
-});
-$('m-avatar-btn').addEventListener('click', openBrief);
+/* Descrição da missão: tooltip preso ao avatar da Dani sobre a cena. Abre sozinho na
+   primeira visita a cada missão; depois de fechado, o avatar pulsa e reabre a descrição. */
+const missionTip = makeTip('m', 'missao', () => { if (S && !S.briefSeen[S.current]) { S.briefSeen[S.current] = true; save(); } });
+const missionBrief = () => MISSION[S.current].brief.replace(/\{nick\}/g, nick());
+function openBrief() { missionTip.open(missionBrief()); }
 
 /* Dica: −20 pontos, cobrada uma vez por missão */
 $('m-hint-btn').addEventListener('click', () => {

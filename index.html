@@ -187,7 +187,9 @@
 
   /* ---------- Mapa ---------- */
   .map-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s8); }
-  .map-dani { position: relative; flex-shrink: 0; }
+  .dani-anchor { position: relative; flex-shrink: 0; }
+  .mission__scene { position: relative; }
+  .scene__dani { position: absolute; top: var(--s3); right: var(--s3); z-index: 6; }
   .avatar-btn.avatar-btn--inline { position: relative; top: auto; right: auto; }
   /* Tooltip da Dani: flutua sobre o conteúdo, preso ao avatar */
   .tip { position: absolute; top: calc(100% + 16px); right: 0; z-index: 12; width: min(380px, calc(100vw - 32px)); padding: var(--s4) var(--s5) var(--s5); background: var(--cream); color: var(--night); border: 3px solid var(--night); border-radius: 14px; box-shadow: 6px 6px 0 var(--cyan); animation: tip-in 260ms var(--ease) both; }
@@ -233,7 +235,6 @@
   .avatar-btn { position: absolute; top: var(--s3); right: var(--s3); z-index: 2; display: grid; justify-items: center; gap: 4px; padding: 0; background: none; border: 0; cursor: pointer; }
   .avatar-btn .avatar { width: 76px; height: 76px; transition: transform 160ms var(--ease); }
   .avatar-btn:hover .avatar, .avatar-btn:focus-visible .avatar { transform: scale(1.08) rotate(-3deg); }
-  .avatar-btn .live { margin-top: -14px; box-shadow: 2px 2px 0 var(--night); }
   .dlg--brief .bubble { min-height: 7.5em; }
   .typing.is-typing::after { content: "▌"; margin-left: 2px; color: var(--pink); animation: blink 700ms steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
@@ -501,15 +502,14 @@
         </div>
         <!-- Dani na linha do título: a fala aparece num tooltip flutuante, com o texto sendo digitado.
              Fechado o tooltip, o avatar pulsa e reabre a fala ao ser tocado. -->
-        <div class="map-dani">
+        <div class="dani-anchor map-dani">
           <button type="button" class="avatar-btn avatar-btn--inline" id="map-avatar-btn" aria-controls="map-tip" aria-expanded="false" aria-label="Ver o recado da Dani">
             <img class="avatar" id="map-avatar" alt="">
-            <span class="live" aria-hidden="true">AO VIVO</span>
           </button>
           <div class="tip" id="map-tip" hidden>
             <button type="button" class="tip__close" id="map-tip-close" aria-label="Fechar o recado da Dani">
               <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-            <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+            <p class="dani-say__name">Dani Pixel</p>
             <p class="tip__text typing" id="map-tip-text" aria-hidden="true"></p>
             <p class="sr-only" id="map-tip-full" role="status"></p>
           </div>
@@ -530,12 +530,20 @@
   <section class="screen" id="s-missao" aria-labelledby="m-title" hidden>
     <div class="wrap mission">
       <div class="mission__scene">
+        <div class="dani-anchor scene__dani">
+          <button type="button" class="avatar-btn avatar-btn--inline" id="m-avatar-btn" aria-controls="m-tip" aria-expanded="false" aria-label="Ver a descrição da missão com a Dani">
+            <img class="avatar" id="m-avatar" alt="">
+          </button>
+          <div class="tip" id="m-tip" hidden>
+            <button type="button" class="tip__close" id="m-tip-close" aria-label="Fechar a descrição da missão">
+              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+            <p class="dani-say__name">Dani Pixel</p>
+            <p class="tip__text typing" id="m-tip-text" aria-hidden="true"></p>
+            <p class="sr-only" id="m-tip-full" role="status"></p>
+          </div>
+        </div>
         <div class="scene">
           <img id="m-scene" alt="">
-          <button type="button" class="avatar-btn" id="m-avatar-btn" aria-label="Ver de novo a descrição da missão com a Dani" title="Ver de novo a descrição da missão">
-            <img class="avatar" id="m-avatar" alt="">
-            <span class="live" aria-hidden="true">AO VIVO</span>
-          </button>
           <div class="scene__label">
             <p class="eyebrow" id="m-eyebrow"></p>
             <h1 class="title-xl" id="m-title"></h1>
@@ -648,26 +656,12 @@
   <div class="dlg__head dani-say">
     <img class="avatar" id="hint-avatar" alt="">
     <div>
-      <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+      <p class="dani-say__name">Dani Pixel</p>
       <h2 class="title-md" id="hint-title">Dica da live</h2>
     </div>
   </div>
   <p class="bubble" id="hint-text"></p>
   <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Dani</button></div>
-</dialog>
-
-<dialog class="dlg dlg--brief" id="dlg-brief" aria-labelledby="brief-title" aria-describedby="brief-full">
-  <div class="dlg__head dani-say">
-    <img class="avatar" id="brief-avatar" alt="">
-    <div>
-      <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
-      <h2 class="title-md" id="brief-title"></h2>
-    </div>
-  </div>
-  <!-- O texto aparece letra por letra (animação); o leitor de tela recebe o texto inteiro de uma vez -->
-  <p class="bubble typing" id="brief-text" aria-hidden="true"></p>
-  <p class="sr-only" id="brief-full"></p>
-  <div class="dlg__actions"><button type="button" class="btn btn--gold" id="brief-ok">Bora!</button></div>
 </dialog>
 
 <dialog class="dlg" id="dlg-hint-ask" aria-labelledby="hint-ask-title">
@@ -1430,7 +1424,7 @@ function renderMapa() {
       : next ? `Mandou bem até aqui! Faltam ${MISSIONS.filter(m => m !== LAST && !finished(m)).length} missões antes do Aeroporto. Tô torcendo, ${nick()}!`
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   // A fala abre sozinha quando muda (início, depois de cada missão); senão, o avatar fica pulsando
-  if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse');
+  if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else { mapTip.text = tip; if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse'); }
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
     const open = unlocked(n);
@@ -1453,47 +1447,61 @@ function renderMapa() {
   $('map-finish').hidden = !stuckBeforeAirport();
 }
 
-/* Tooltip da Dani no mapa: texto digitado, fecha no ×, no Esc ou tocando fora */
-const tipTyping = { timer: null };
-function openMapTip() {
-  const text = S.mapTip || '';
-  $('map-tip').hidden = false;
-  $('map-avatar-btn').classList.remove('is-pulse');
-  $('map-avatar-btn').setAttribute('aria-expanded', 'true');
-  $('map-tip-full').textContent = text;
-  clearInterval(tipTyping.timer);
-  const el = $('map-tip-text');
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
-  let i = 0;
-  el.textContent = '';
-  el.classList.add('is-typing');
-  tipTyping.timer = setInterval(() => {
-    i += 1;
-    el.textContent = text.slice(0, i);
-    if (i >= text.length) { clearInterval(tipTyping.timer); tipTyping.timer = null; el.classList.remove('is-typing'); }
-  }, 24);
+/* Tooltip da Dani (mapa e missões): texto digitado, fecha no ×, no Esc ou tocando fora.
+   Fechado, o avatar pulsa e reabre o tooltip. */
+function makeTip(prefix, screenName, onClose) {
+  const tip = { timer: null, text: '' };
+  const el = () => $(`${prefix}-tip-text`);
+  const finishTyping = () => { clearInterval(tip.timer); tip.timer = null; el().textContent = tip.text; el().classList.remove('is-typing'); };
+  tip.open = text => {
+    if (text != null) tip.text = text;
+    $(`${prefix}-tip`).hidden = false;
+    $(`${prefix}-avatar-btn`).classList.remove('is-pulse');
+    $(`${prefix}-avatar-btn`).setAttribute('aria-expanded', 'true');
+    $(`${prefix}-tip-full`).textContent = tip.text;
+    clearInterval(tip.timer);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { finishTyping(); return; }
+    let i = 0;
+    el().textContent = '';
+    el().classList.add('is-typing');
+    tip.timer = setInterval(() => { i += 1; el().textContent = tip.text.slice(0, i); if (i >= tip.text.length) finishTyping(); }, 24);
+  };
+  tip.close = () => {
+    if ($(`${prefix}-tip`).hidden) return;
+    finishTyping();
+    $(`${prefix}-tip`).hidden = true;
+    $(`${prefix}-avatar-btn`).setAttribute('aria-expanded', 'false');
+    $(`${prefix}-avatar-btn`).classList.add('is-pulse');
+    if (onClose) onClose();
+  };
+  tip.reset = () => {   // estado inicial ao trocar de tela: fechado e sem pulsar
+    clearInterval(tip.timer); tip.timer = null;
+    $(`${prefix}-tip`).hidden = true;
+    $(`${prefix}-avatar-btn`).classList.remove('is-pulse');
+    $(`${prefix}-avatar-btn`).setAttribute('aria-expanded', 'false');
+  };
+  $(`${prefix}-tip-close`).addEventListener('click', tip.close);
+  $(`${prefix}-avatar-btn`).addEventListener('click', () => { if ($(`${prefix}-tip`).hidden) tip.open(); else tip.close(); });
+  $(`${prefix}-tip`).addEventListener('click', event => { if (tip.timer && !event.target.closest('.tip__close')) finishTyping(); });   // tocar no texto mostra tudo
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && screen === screenName) tip.close(); });
+  // Tocar fora só fecha o tooltip: o toque não chega no que está embaixo (card, link, botão)
+  document.addEventListener('pointerdown', event => {
+    if (screen !== screenName || $(`${prefix}-tip`).hidden || event.target.closest(`#${prefix}-tip, #${prefix}-avatar-btn`)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    tip.close();
+    swallowNextClick();
+  }, true);
+  return tip;
 }
-function closeMapTip() {
-  if ($('map-tip').hidden) return;
-  clearInterval(tipTyping.timer);
-  tipTyping.timer = null;
-  $('map-tip-text').classList.remove('is-typing');
-  $('map-tip').hidden = true;
-  $('map-avatar-btn').setAttribute('aria-expanded', 'false');
-  $('map-avatar-btn').classList.add('is-pulse');
-}
-$('map-tip-close').addEventListener('click', closeMapTip);
-$('map-avatar-btn').addEventListener('click', () => { if ($('map-tip').hidden) openMapTip(); else closeMapTip(); });
-$('map-tip').addEventListener('click', event => {   // tocar no texto mostra tudo de uma vez
-  if (tipTyping.timer && !event.target.closest('#map-tip-close')) {
-    clearInterval(tipTyping.timer); tipTyping.timer = null;
-    $('map-tip-text').textContent = S.mapTip; $('map-tip-text').classList.remove('is-typing');
-  }
-});
-document.addEventListener('keydown', event => { if (event.key === 'Escape' && screen === 'mapa') closeMapTip(); });
-document.addEventListener('pointerdown', event => {
-  if (screen === 'mapa' && !event.target.closest('.map-dani')) closeMapTip();
-});
+/* Engole o clique que vem logo depois do toque que fechou um tooltip */
+let swallowClickUntil = 0;
+function swallowNextClick() { swallowClickUntil = Date.now() + 700; }
+document.addEventListener('click', event => {
+  if (Date.now() < swallowClickUntil) { event.preventDefault(); event.stopPropagation(); swallowClickUntil = 0; }
+}, true);
+const mapTip = makeTip('map', 'mapa');
+const openMapTip = () => mapTip.open(S.mapTip || '');
 
 /* Finalizar sem o Aeroporto: ele vale 0 e a nota é calculada normalmente */
 $('map-finish-btn').addEventListener('click', () => {
@@ -1510,7 +1518,10 @@ $('missions').addEventListener('click', event => {
   S.current = Number(btn.dataset.mission);
   save();
   show('missao');
+  missionTip.reset();
+  missionTip.text = missionBrief();
   if (!finished(S.current) && !S.briefSeen[S.current]) openBrief();   // na primeira visita, a Dani apresenta a missão
+  else $('m-avatar-btn').classList.add('is-pulse');
 });
 
 /* ---------------------------------------------------------------
@@ -1787,42 +1798,11 @@ $('m-form').addEventListener('submit', event => {
   if (currentStage().type === 'build') checkBuild(); else checkChoice();
 });
 
-/* Descrição da missão: abre num modal com o texto sendo digitado.
-   Depois de fechado, o avatar da Dani sobre a cena reabre a descrição. */
-const typing = { timer: null, full: '' };
-function stopTyping() {
-  clearInterval(typing.timer);
-  typing.timer = null;
-  $('brief-text').textContent = typing.full;
-  $('brief-text').classList.remove('is-typing');
-}
-function openBrief() {
-  const n = S.current, M = MISSION[n];
-  typing.full = M.brief.replace(/\{nick\}/g, nick());
-  $('brief-avatar').src = IMG.avatar;
-  $('brief-title').textContent = `Missão ${n} · ${M.title}`;
-  $('brief-full').textContent = typing.full;
-  clearInterval(typing.timer);
-  openDialog($('dlg-brief'));
-  $('brief-ok').focus();
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { stopTyping(); return; }
-  let i = 0;
-  $('brief-text').textContent = '';
-  $('brief-text').classList.add('is-typing');
-  typing.timer = setInterval(() => {
-    i += 1;
-    $('brief-text').textContent = typing.full.slice(0, i);
-    if (i >= typing.full.length) stopTyping();
-  }, 24);
-}
-$('brief-text').addEventListener('click', () => { if (typing.timer) stopTyping(); });   // tocar no texto mostra tudo de uma vez
-$('brief-ok').addEventListener('click', () => closeDialog($('dlg-brief')));
-$('dlg-brief').addEventListener('close', () => {
-  stopTyping();
-  if (S && !S.briefSeen[S.current]) { S.briefSeen[S.current] = true; save(); }
-  if (screen === 'missao') $('m-avatar-btn').focus();
-});
-$('m-avatar-btn').addEventListener('click', openBrief);
+/* Descrição da missão: tooltip preso ao avatar da Dani sobre a cena. Abre sozinho na
+   primeira visita a cada missão; depois de fechado, o avatar pulsa e reabre a descrição. */
+const missionTip = makeTip('m', 'missao', () => { if (S && !S.briefSeen[S.current]) { S.briefSeen[S.current] = true; save(); } });
+const missionBrief = () => MISSION[S.current].brief.replace(/\{nick\}/g, nick());
+function openBrief() { missionTip.open(missionBrief()); }
 
 /* Dica: −20 pontos, cobrada uma vez por missão */
 $('m-hint-btn').addEventListener('click', () => {
