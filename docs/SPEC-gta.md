@@ -24,7 +24,7 @@
 | 1 | Geometria | Mercado Público (tonel de uma banca) | Área do círculo e volume do cilindro (π = 3,14, nunca alterar) | Área da base: 3,14 · r², arredondada a 2 casas (r ∈ {0,5; 1; 1,5} m) | Litros: área · altura · 1.000 (h ∈ {1, 2} m) |
 | 2 | Geometria | Parque Redenção (lago e Brique) | Ponto médio e distância (Pitágoras no plano) | x do ponto médio | Distância, com catetos (3,4), (4,3), (6,8) ou (8,6) |
 | 3 | Aritmética | Beira-Rio (arquibancada e convites) | PA e PG | Cadeiras na fileira n ∈ {4, 5, 6} | Pessoas na rodada m ∈ {3, 4} |
-| 4 | Trigonometria | Usina do Gasômetro (chaminé e veleiro) | Razões trigonométricas e Pitágoras | Altura da chaminé: L · sen 30° (L ∈ {40, 60, 80, 100} m) | Distância até o veleiro: ternas (3,4,5), (6,8,10) ou (5,12,13) × 100 m |
+| 4 | Trigonometria | Usina do Gasômetro (chaminé e cabo de luzes) | Razões trigonométricas e Pitágoras | Altura da chaminé: L · sen 30° (L ∈ {40, 60, 80, 100} m) | Comprimento do cabo do topo da chaminé até o chão: √(h² + a²), com ternas inteiras para cada altura (20: 15 ou 48; 30: 40 ou 16; 40: 30 ou 42; 50: 120) |
 | 5 | Aritmética | Arena do Grêmio (público e ingresso) | Porcentagem | Público: lugares · ocupação ÷ 100 (lugares ∈ {40.000, 50.000, 60.000}, ocupação ∈ {50, 60, 75, 80, 90}%) | Ingresso com desconto de estudante: preço − preço · desconto ÷ 100 (preço ∈ {40, 60, 80, 100}, desconto ∈ {10, 20, 25, 50}%) |
 | 6 | Aritmética | Aeroporto Salgado Filho (avião em velocidade constante) | Razão, proporção e regra de três | km por minuto: distância ÷ tempo (v ∈ {10, 12, 15}, t ∈ {2, 3, 4}) | Minutos até a próxima parada: distância ÷ v ∈ {20, 25, 30, 40} |
 
@@ -101,6 +101,7 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **1.3 (21/11/2026):** a 2ª etapa da Usina continua na chaminé (cabo de luzes com Pitágoras), no lugar do veleiro.
 - **1.2 (21/11/2026):** desenhos com os dados sorteados em todas as missões (cilindro, plano cartesiano, fileiras e convites, triângulo retângulo, barra de ocupação e ingresso, rota do avião), sem mostrar a resposta.
 - **1.1 (21/11/2026):** as etapas aparecem para o aluno como "Relembre a fórmula" (A) e "Resolva o problema" (B).
 - **1.0 (21/11/2026):** descrição da missão em modal com animação de digitação; o avatar da Dani sobre a cena reabre a descrição.

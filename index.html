@@ -229,7 +229,7 @@
   .data { list-style: none; margin: 0 0 var(--s4); padding: var(--s3) var(--s4); display: grid; gap: var(--s1); background: var(--night); border: 2px dashed var(--line-strong); border-radius: var(--radius); }
   .data li { display: flex; justify-content: space-between; gap: var(--s4); font-size: var(--text-base); }
   .data li span:first-child { color: var(--muted); }
-  .data li strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+  .data li strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
   .question { font-size: var(--text-lg); color: var(--ink); font-weight: 600; }
   /* Caixa do problema */
   .problem { display: grid; gap: var(--s3); margin-bottom: var(--s4); padding: var(--s4) var(--s5) var(--s5); background: var(--night); border: 2px solid var(--line-strong); border-radius: var(--radius); }
@@ -820,18 +820,19 @@ function stadiumSvg(d, k) {
   return svgWrap(205, y + 20, `Convites por rodada: ${d.g1} na 1ª rodada e cada pessoa repassa para ${d.q}; a ${d.m}ª rodada é a pergunta`, out);
 }
 
-/** Usina do Gasômetro: chaminé (seno de 30°) ou veleiro (Pitágoras). */
-function triangleSvg(d, k) {
-  const tri = (a, b, c, angle) => `<path d="M20 150 L180 150 L180 40 Z" fill="rgba(34,227,255,0.16)" stroke="#FFF7EC" stroke-width="3" stroke-linejoin="round"/>
-    <path d="M168 150 V138 H180" fill="none" stroke="#FFF7EC" stroke-width="2"/>
-    ${angle ? `<path d="M58 150 A38 38 0 0 0 54 132" fill="none" stroke="#FFB02E" stroke-width="2.5"/>${T(70, 143, angle, '#FFB02E', 13, 'start')}` : ''}
-    ${T(100, 174, a, '#FFF7EC', 16)}${T(188, 100, b, '#FF2E93', 16, 'start')}${T(88, 84, c, '#22E3FF', 16, 'end')}`;
+/** Usina do Gasômetro: a chaminé nas duas etapas (seno de 30°, depois Pitágoras com o cabo). */
+function chimneySvg(d, k) {
+  const tri = `<path d="M20 150 L180 150 L180 40 Z" fill="rgba(34,227,255,0.16)" stroke="#FFF7EC" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="176" y="34" width="10" height="116" fill="#A33A2A"/>
+    <path d="M166 150 V138 H178" fill="none" stroke="#FFF7EC" stroke-width="2"/>`;
   if (k !== 1) {
     return svgWrap(300, 185, `Triângulo retângulo: a linha do chão até o topo da chaminé mede ${d.L} m e faz 30° com o chão; a altura h é a pergunta`,
-      `<rect x="176" y="34" width="8" height="116" fill="#A33A2A"/>` + tri('chão', 'h = ?', `${d.L} m`, '30°'));
+      tri + `<path d="M58 150 A38 38 0 0 0 54 132" fill="none" stroke="#FFB02E" stroke-width="2.5"/>${T(70, 143, '30°', '#FFB02E', 13, 'start')}`
+      + T(100, 174, 'chão', '#FFF7EC', 16) + T(192, 100, 'h = ?', '#FF2E93', 16, 'start') + T(88, 84, `${d.L} m`, '#22E3FF', 16, 'end'));
   }
-  return svgWrap(300, 185, `Triângulo retângulo: o veleiro está ${fmtBig(d.a)} m a leste e ${fmtBig(d.b)} m ao norte do mirante; a distância é a pergunta`,
-    tri(`leste: ${fmtBig(d.a)} m`, `norte: ${fmtBig(d.b)} m`, 'd = ?', '') + `<path d="M172 30 L188 30 L180 18 Z" fill="#FFF7EC"/>`);
+  const bulbs = [0.2, 0.4, 0.6, 0.8].map(f => `<circle cx="${20 + 160 * f}" cy="${150 - 110 * f}" r="4" fill="#FFB02E"/>`).join('');
+  return svgWrap(300, 185, `Triângulo retângulo: a chaminé tem ${d.h} m de altura e o ponto no chão fica a ${d.a} m do pé dela; o comprimento do cabo é a pergunta`,
+    tri + bulbs + T(100, 174, `chão: ${d.a} m`, '#FFF7EC', 16) + T(192, 100, `altura: ${d.h} m`, '#FF2E93', 16, 'start') + T(88, 84, 'cabo = ?', '#22E3FF', 16, 'end'));
 }
 
 /** Arena: ocupação em % (etapa A) ou ingresso com desconto (etapa B). */
@@ -943,27 +944,28 @@ const MISSION = {
   },
   4: {
     title: 'Usina do Gasômetro', area: 'Trigonometria', topic: 'Razões trigonométricas e Pitágoras',
-    brief: '{nick}, cheguei no mirante da Usina do Gasômetro bem na hora do pôr do sol! Bora descobrir a altura da chaminé e a distância até um veleiro no Guaíba?',
-    hint: 'No triângulo retângulo: seno = cateto oposto ÷ hipotenusa. Então cateto oposto = hipotenusa · seno. Lembra: sen 30° = 0,5. Pra distância do veleiro, é Pitágoras: d² = a² + b².',
-    alt: 'Usina do Gasômetro, de tijolos vermelhos e chaminé alta, à beira do Guaíba ao pôr do sol, com dois veleiros na água.',
+    brief: '{nick}, cheguei na Usina do Gasômetro bem na hora do pôr do sol! Vão pendurar um cabo de luzes do topo da chaminé até o chão. Bora descobrir a altura da chaminé e o tamanho do cabo?',
+    hint: 'No triângulo retângulo: seno = cateto oposto ÷ hipotenusa, então cateto oposto = hipotenusa · seno (sen 30° = 0,5). Pro cabo, é Pitágoras: a chaminé e o chão são os catetos e o cabo é a hipotenusa, cabo² = altura² + chão².',
+    alt: 'Usina do Gasômetro, de tijolos vermelhos e chaminé alta, à beira do Guaíba ao pôr do sol.',
     gen() {
-      const [a, b, c] = pick([[3, 4, 5], [6, 8, 10], [5, 12, 13]]);
-      return { L: pick([40, 60, 80, 100]), a: a * 100, b: b * 100, c: c * 100 };
+      const L = pick([40, 60, 80, 100]), h = L / 2;
+      const [a, c] = pick({ 20: [[15, 25], [48, 52]], 30: [[40, 50], [16, 34]], 40: [[30, 50], [42, 58]], 50: [[120, 130]] }[h]);
+      return { L, h, a, c };
     },
     stages: d => [
       { type: 'build', data: [['Linha do chão até o topo da chaminé', `${d.L} m (hipotenusa)`], ['Ângulo com o chão', '30°'], ['Tabela', 'sen 30° = 0,5 · cos 30° ≈ 0,87']],
         question: 'Monte a conta da altura da chaminé (o cateto oposto ao ângulo de 30°).',
         template: ['h = ', slot(d.L), ' · ', slot('0,5')],
         chips: makeChips([d.L, '0,5'], ['0,87', 30, 2]),
-        result: `A chaminé tem ${d.L / 2} m de altura.` },
-      { type: 'choice', data: [['Veleiro: para o leste', `${fmtBig(d.a)} m`], ['Veleiro: para o norte', `${fmtBig(d.b)} m`], ['Ângulo entre leste e norte', '90°']],
-        question: 'Qual é a distância em linha reta do mirante até o veleiro?', unit: 'm', correct: d.c,
-        distractors: [d.a + d.b, d.b - d.a, d.c + 100, d.a * 2] }
+        result: `A chaminé tem ${d.h} m de altura.` },
+      { type: 'choice', data: [['Altura da chaminé', `${d.h} m`], ['Do pé da chaminé até o ponto no chão', `${d.a} m`], ['Ângulo entre a chaminé e o chão', '90°']],
+        question: 'O cabo de luzes vai do topo da chaminé até esse ponto no chão. Qual é o comprimento do cabo?', unit: 'm', correct: d.c,
+        distractors: [d.h + d.a, Math.abs(d.a - d.h), d.c + 10, d.h * 2] }
     ],
-    figure: (d, k) => triangleSvg(d, k),
+    figure: (d, k) => chimneySvg(d, k),
     solution: d => [
-      `Altura: h = ${d.L} · sen 30° = ${d.L} · 0,5 = ${d.L / 2} m.`,
-      `Distância: d² = ${fmtBig(d.a)}² + ${fmtBig(d.b)}² = ${fmtBig(d.c * d.c)}, então d = ${fmtBig(d.c)} m.`
+      `Altura: h = ${d.L} · sen 30° = ${d.L} · 0,5 = ${d.h} m.`,
+      `Cabo: c² = ${d.h}² + ${d.a}² = ${d.h * d.h + d.a * d.a}, então c = ${d.c} m.`
     ]
   },
   5: {
@@ -1041,7 +1043,7 @@ const STUDY = {
   1: [['Khan Academy · volume do cilindro', khan('volume do cilindro')], ['YouTube · área do círculo e volume do cilindro', yt('volume do cilindro área da base aula')]],
   2: [['Khan Academy · distância entre dois pontos', khan('distância entre dois pontos')], ['YouTube · ponto médio e distância entre pontos', yt('geometria analítica ponto médio distância entre dois pontos aula')]],
   3: [['Khan Academy · progressões aritméticas e geométricas', khan('progressão aritmética geométrica')], ['YouTube · termo geral da PA e da PG', yt('termo geral PA PG aula')]],
-  4: [['Khan Academy · razões trigonométricas no triângulo retângulo', khan('seno cosseno tangente triângulo retângulo')], ['YouTube · seno, cosseno e tangente', yt('seno cosseno tangente triângulo retângulo aula')]],
+  4: [['Khan Academy · razões trigonométricas no triângulo retângulo', khan('seno cosseno tangente triângulo retângulo')], ['YouTube · teorema de Pitágoras', yt('teorema de Pitágoras aula')]],
   5: [['Khan Academy · porcentagem', khan('porcentagem desconto')], ['YouTube · porcentagem e desconto', yt('porcentagem desconto aula')]],
   6: [['Khan Academy · razão e proporção', khan('razão proporção regra de três')], ['YouTube · regra de três simples', yt('regra de três simples aula')]]
 };
@@ -1077,7 +1079,7 @@ let S = null;
 
 function freshState() {
   return {
-    v: 6, started: true, jornadaId: newJourneyId(), player: null,
+    v: 7, started: true, jornadaId: newJourneyId(), player: null,
     data: Object.fromEntries(MISSIONS.map(n => [n, MISSION[n].gen()])),
     stage: perMission(0), stageErrors: perMission(0),
     done: perMission(false), skipped: perMission(false), errors: perMission(0), hint: perMission(false),
@@ -1088,7 +1090,7 @@ function freshState() {
 function loadState() {
   try {
     const data = JSON.parse(localStorage.getItem(STORE_KEY));
-    return data && data.v === 6 && data.data ? data : null;
+    return data && data.v === 7 && data.data ? data : null;
   } catch (e) { return null; }
 }
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* segue sem salvar */ } }
