@@ -44,6 +44,15 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
 
     // Missão 1: monta a conta errado (1 erro), depois certo por toque e por arrastar; erra 1 alternativa; usa dica → 100 − 20 − 20 = 60
     await p.click('[data-mission="1"]'); await p.waitForTimeout(200);
+    assert(await p.isVisible('#dlg-brief'), 'a descrição abre em modal na primeira visita');
+    await p.waitForTimeout(400);
+    const typed = await p.evaluate(() => [document.getElementById('brief-text').textContent.length, typing.full.length]);
+    assert(typed[0] > 0 && typed[0] < typed[1], 'o texto aparece sendo digitado');
+    await p.click('#brief-ok'); await p.waitForTimeout(150);
+    assert(!(await p.isVisible('#dlg-brief')), 'Bora! fecha a descrição');
+    await p.click('#m-avatar-btn'); await p.waitForTimeout(150);
+    assert(await p.isVisible('#dlg-brief'), 'o avatar reabre a descrição');
+    await p.click('#brief-text'); await p.click('#brief-ok'); await p.waitForTimeout(150);
     const st = await p.evaluate(() => { const s = currentStage(); return { need: s.template.filter(t => typeof t === 'object').map(t => t.slot), chips: s.chips }; });
     const chipBtn = v => p.locator(`#m-chips .chip:not([hidden])`, { hasText: new RegExp(`^${v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) }).first();
     // errado: põe uma peça errada na lacuna 2
@@ -74,7 +83,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await p.click('#test-fab'); await p.waitForTimeout(250); await p.click('#rw-next'); await p.waitForTimeout(200);
 
     // Missão 2: 10 erros na conta liberam o "Pular"
-    await p.click('[data-mission="2"]'); await p.waitForTimeout(200);
+    await p.click('[data-mission="2"]'); await p.waitForTimeout(200); await p.click('#brief-ok');
     for (let i = 0; i < 10; i++) {
       await p.evaluate(() => { const s = currentStage(); ui.fills = ui.fills.map((_, k) => s.chips.findIndex(c => c !== s.template.filter(t => typeof t === 'object')[k].slot)); });
       await p.click('#m-confirm'); await p.click('#wasted-ok');
@@ -90,7 +99,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     // Missões 3 a 5 no modo de teste, fora de ordem; depois a 6 libera
     for (const n of [5, 3, 4, 6]) {
       if (n === 6) assert(!(await p.isDisabled('[data-mission="6"]')), 'o Aeroporto libera depois das outras 5');
-      await p.click(`[data-mission="${n}"]`); await p.waitForTimeout(150);
+      await p.click(`[data-mission="${n}"]`); await p.waitForTimeout(150); await p.click('#brief-ok');
       await p.click('#test-fab'); await p.waitForTimeout(150); await p.click('#test-fab'); await p.waitForTimeout(200);
       await p.click('#rw-next'); await p.waitForTimeout(200);
     }

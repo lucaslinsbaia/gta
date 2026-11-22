@@ -212,6 +212,14 @@
   .mission__scene { display: grid; gap: var(--s6); }
   .scene { position: relative; overflow: hidden; border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 8px 8px 0 var(--pink); aspect-ratio: 1510 / 806; background: var(--purple); }
   .scene img { width: 100%; height: 100%; object-fit: cover; }
+  /* Avatar da Dani sobre a cena: reabre a descrição da missão */
+  .avatar-btn { position: absolute; top: var(--s3); right: var(--s3); z-index: 2; display: grid; justify-items: center; gap: 4px; padding: 0; background: none; border: 0; cursor: pointer; }
+  .avatar-btn .avatar { width: 76px; height: 76px; transition: transform 160ms var(--ease); }
+  .avatar-btn:hover .avatar, .avatar-btn:focus-visible .avatar { transform: scale(1.08) rotate(-3deg); }
+  .avatar-btn .live { margin-top: -14px; box-shadow: 2px 2px 0 var(--night); }
+  .dlg--brief .bubble { min-height: 7.5em; }
+  .typing.is-typing::after { content: "▌"; margin-left: 2px; color: var(--pink); animation: blink 700ms steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
   .scene__label { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--s10) var(--s5) var(--s4); background: linear-gradient(0deg, rgba(26, 8, 51, 0.92), rgba(26, 8, 51, 0)); }
   .scene__label .eyebrow { margin-bottom: var(--s1); color: var(--yellow); }
   .steps { list-style: none; display: flex; gap: var(--s2); margin: 0 0 var(--s4); padding: 0; }
@@ -334,6 +342,7 @@
     .end__hero { grid-template-columns: minmax(0, 1fr); }
     .end__dani { width: 180px; }
     .avatar { width: 56px; height: 56px; }
+    .avatar-btn .avatar { width: 60px; height: 60px; }
     .bubble { font-size: var(--text-base); }
     .card { padding: var(--s5); box-shadow: 6px 6px 0 var(--pink); }
     .logo__gta { -webkit-text-stroke: 2px var(--cream); }

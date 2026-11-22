@@ -121,18 +121,16 @@
       <div class="mission__scene">
         <div class="scene">
           <img id="m-scene" alt="">
+          <button type="button" class="avatar-btn" id="m-avatar-btn" aria-label="Ver de novo a descrição da missão com a Dani" title="Ver de novo a descrição da missão">
+            <img class="avatar" id="m-avatar" alt="">
+            <span class="live" aria-hidden="true">AO VIVO</span>
+          </button>
           <div class="scene__label">
             <p class="eyebrow" id="m-eyebrow"></p>
             <h1 class="title-xl" id="m-title"></h1>
           </div>
         </div>
-        <div class="dani-say dani-say--brief">
-          <img class="avatar" id="m-avatar" alt="">
-          <div>
-            <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
-            <p class="bubble" id="m-brief"></p>
-          </div>
-        </div>
+
       </div>
       <div class="mission__panel card">
         <ol class="steps" id="m-steps" aria-label="Etapas da missão"></ol>
@@ -225,6 +223,20 @@
   </div>
   <p class="bubble" id="hint-text"></p>
   <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Dani</button></div>
+</dialog>
+
+<dialog class="dlg dlg--brief" id="dlg-brief" aria-labelledby="brief-title" aria-describedby="brief-full">
+  <div class="dlg__head dani-say">
+    <img class="avatar" id="brief-avatar" alt="">
+    <div>
+      <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+      <h2 class="title-md" id="brief-title"></h2>
+    </div>
+  </div>
+  <!-- O texto aparece letra por letra (animação); o leitor de tela recebe o texto inteiro de uma vez -->
+  <p class="bubble typing" id="brief-text" aria-hidden="true"></p>
+  <p class="sr-only" id="brief-full"></p>
+  <div class="dlg__actions"><button type="button" class="btn btn--gold" id="brief-ok">Bora!</button></div>
 </dialog>
 
 <dialog class="dlg" id="dlg-hint-ask" aria-labelledby="hint-ask-title">

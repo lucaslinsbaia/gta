@@ -212,6 +212,14 @@
   .mission__scene { display: grid; gap: var(--s6); }
   .scene { position: relative; overflow: hidden; border: 3px solid var(--cream); border-radius: var(--radius); box-shadow: 8px 8px 0 var(--pink); aspect-ratio: 1510 / 806; background: var(--purple); }
   .scene img { width: 100%; height: 100%; object-fit: cover; }
+  /* Avatar da Dani sobre a cena: reabre a descrição da missão */
+  .avatar-btn { position: absolute; top: var(--s3); right: var(--s3); z-index: 2; display: grid; justify-items: center; gap: 4px; padding: 0; background: none; border: 0; cursor: pointer; }
+  .avatar-btn .avatar { width: 76px; height: 76px; transition: transform 160ms var(--ease); }
+  .avatar-btn:hover .avatar, .avatar-btn:focus-visible .avatar { transform: scale(1.08) rotate(-3deg); }
+  .avatar-btn .live { margin-top: -14px; box-shadow: 2px 2px 0 var(--night); }
+  .dlg--brief .bubble { min-height: 7.5em; }
+  .typing.is-typing::after { content: "▌"; margin-left: 2px; color: var(--pink); animation: blink 700ms steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
   .scene__label { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--s10) var(--s5) var(--s4); background: linear-gradient(0deg, rgba(26, 8, 51, 0.92), rgba(26, 8, 51, 0)); }
   .scene__label .eyebrow { margin-bottom: var(--s1); color: var(--yellow); }
   .steps { list-style: none; display: flex; gap: var(--s2); margin: 0 0 var(--s4); padding: 0; }
@@ -334,6 +342,7 @@
     .end__hero { grid-template-columns: minmax(0, 1fr); }
     .end__dani { width: 180px; }
     .avatar { width: 56px; height: 56px; }
+    .avatar-btn .avatar { width: 60px; height: 60px; }
     .bubble { font-size: var(--text-base); }
     .card { padding: var(--s5); box-shadow: 6px 6px 0 var(--pink); }
     .logo__gta { -webkit-text-stroke: 2px var(--cream); }
@@ -469,18 +478,16 @@
       <div class="mission__scene">
         <div class="scene">
           <img id="m-scene" alt="">
+          <button type="button" class="avatar-btn" id="m-avatar-btn" aria-label="Ver de novo a descrição da missão com a Dani" title="Ver de novo a descrição da missão">
+            <img class="avatar" id="m-avatar" alt="">
+            <span class="live" aria-hidden="true">AO VIVO</span>
+          </button>
           <div class="scene__label">
             <p class="eyebrow" id="m-eyebrow"></p>
             <h1 class="title-xl" id="m-title"></h1>
           </div>
         </div>
-        <div class="dani-say dani-say--brief">
-          <img class="avatar" id="m-avatar" alt="">
-          <div>
-            <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
-            <p class="bubble" id="m-brief"></p>
-          </div>
-        </div>
+
       </div>
       <div class="mission__panel card">
         <ol class="steps" id="m-steps" aria-label="Etapas da missão"></ol>
@@ -573,6 +580,20 @@
   </div>
   <p class="bubble" id="hint-text"></p>
   <div class="dlg__actions"><button type="button" class="btn btn--gold" data-close>Valeu, Dani</button></div>
+</dialog>
+
+<dialog class="dlg dlg--brief" id="dlg-brief" aria-labelledby="brief-title" aria-describedby="brief-full">
+  <div class="dlg__head dani-say">
+    <img class="avatar" id="brief-avatar" alt="">
+    <div>
+      <p class="dani-say__name"><span class="live">AO VIVO</span> Dani Pixel</p>
+      <h2 class="title-md" id="brief-title"></h2>
+    </div>
+  </div>
+  <!-- O texto aparece letra por letra (animação); o leitor de tela recebe o texto inteiro de uma vez -->
+  <p class="bubble typing" id="brief-text" aria-hidden="true"></p>
+  <p class="sr-only" id="brief-full"></p>
+  <div class="dlg__actions"><button type="button" class="btn btn--gold" id="brief-ok">Bora!</button></div>
 </dialog>
 
 <dialog class="dlg" id="dlg-hint-ask" aria-labelledby="hint-ask-title">
@@ -921,18 +942,18 @@ let S = null;
 
 function freshState() {
   return {
-    v: 5, started: true, jornadaId: newJourneyId(), player: null,
+    v: 6, started: true, jornadaId: newJourneyId(), player: null,
     data: Object.fromEntries(MISSIONS.map(n => [n, MISSION[n].gen()])),
     stage: perMission(0), stageErrors: perMission(0),
     done: perMission(false), skipped: perMission(false), errors: perMission(0), hint: perMission(false),
-    options: perMission(null), tried: Object.fromEntries(MISSIONS.map(n => [n, []])),
+    options: perMission(null), tried: Object.fromEntries(MISSIONS.map(n => [n, []])), briefSeen: perMission(false),
     current: 1, activeMs: 0, completed: false, finalMs: 0, submitted: false, usedTest: false
   };
 }
 function loadState() {
   try {
     const data = JSON.parse(localStorage.getItem(STORE_KEY));
-    return data && data.v === 5 && data.data ? data : null;
+    return data && data.v === 6 && data.data ? data : null;
   } catch (e) { return null; }
 }
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* segue sem salvar */ } }
@@ -1231,6 +1252,7 @@ $('missions').addEventListener('click', event => {
   S.current = Number(btn.dataset.mission);
   save();
   show('missao');
+  if (!finished(S.current) && !S.briefSeen[S.current]) openBrief();   // na primeira visita, a Dani apresenta a missão
 });
 
 /* ---------------------------------------------------------------
@@ -1268,7 +1290,6 @@ function renderMissao() {
   $('m-avatar').src = IMG.avatar;
   $('m-eyebrow').textContent = `Missão ${n} · ${M.area}`;
   $('m-title').textContent = M.title;
-  $('m-brief').textContent = M.brief.replace(/\{nick\}/g, nick());
   const k = closed ? 1 : S.stage[n];
   $('m-steps').innerHTML = ['Etapa A', 'Etapa B'].map((name, i) => {
     const cls = closed || i < S.stage[n] ? 'is-done' : i === k ? 'is-current' : '';
@@ -1497,6 +1518,43 @@ $('m-form').addEventListener('submit', event => {
   if (finished(S.current)) return;
   if (currentStage().type === 'build') checkBuild(); else checkChoice();
 });
+
+/* Descrição da missão: abre num modal com o texto sendo digitado.
+   Depois de fechado, o avatar da Dani sobre a cena reabre a descrição. */
+const typing = { timer: null, full: '' };
+function stopTyping() {
+  clearInterval(typing.timer);
+  typing.timer = null;
+  $('brief-text').textContent = typing.full;
+  $('brief-text').classList.remove('is-typing');
+}
+function openBrief() {
+  const n = S.current, M = MISSION[n];
+  typing.full = M.brief.replace(/\{nick\}/g, nick());
+  $('brief-avatar').src = IMG.avatar;
+  $('brief-title').textContent = `Missão ${n} · ${M.title}`;
+  $('brief-full').textContent = typing.full;
+  clearInterval(typing.timer);
+  openDialog($('dlg-brief'));
+  $('brief-ok').focus();
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { stopTyping(); return; }
+  let i = 0;
+  $('brief-text').textContent = '';
+  $('brief-text').classList.add('is-typing');
+  typing.timer = setInterval(() => {
+    i += 1;
+    $('brief-text').textContent = typing.full.slice(0, i);
+    if (i >= typing.full.length) stopTyping();
+  }, 24);
+}
+$('brief-text').addEventListener('click', () => { if (typing.timer) stopTyping(); });   // tocar no texto mostra tudo de uma vez
+$('brief-ok').addEventListener('click', () => closeDialog($('dlg-brief')));
+$('dlg-brief').addEventListener('close', () => {
+  stopTyping();
+  if (S && !S.briefSeen[S.current]) { S.briefSeen[S.current] = true; save(); }
+  if (screen === 'missao') $('m-avatar-btn').focus();
+});
+$('m-avatar-btn').addEventListener('click', openBrief);
 
 /* Dica: −20 pontos, cobrada uma vez por missão */
 $('m-hint-btn').addEventListener('click', () => {

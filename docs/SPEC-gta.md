@@ -9,7 +9,7 @@
 
 - **6 missões**, 2 por área. As missões 1 a 5 ficam **abertas desde o início**, em qualquer ordem. A 6 (Aeroporto Salgado Filho) só libera quando as outras cinco estiverem terminadas (concluídas ou puladas) **e** o jogador tiver pelo menos 3 estrelas. Sem as 3 estrelas, aparece "Finalizar a live": o Aeroporto conta como 0 (enviado ao servidor como pulado) e a nota é calculada normalmente, com mínimo 5.
 - A tela inicial é a **colagem tipo pôster**: cada missão é um painel da cidade, e o painel "acende" quando a missão é concluída.
-- Cada missão tem: **briefing** (o personagem explica a situação), **pistas** na cena, **desafio em 2 etapas** (A e B) e **recompensa** (pontos e estrelas).
+- Cada missão tem: **briefing** (a Dani explica a situação num modal, com o texto sendo digitado; abre sozinho na primeira visita e depois pelo avatar dela no canto da cena), **pistas** na cena, **desafio em 2 etapas** (A e B) e **recompensa** (pontos e estrelas).
 
 ## 2. Missões
 
@@ -101,6 +101,7 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **1.0 (21/11/2026):** descrição da missão em modal com animação de digitação; o avatar da Dani sobre a cena reabre a descrição.
 - **0.9 (21/11/2026):** "Álgebra" vira "Aritmética" no nome do jogo e nas missões: Arena com porcentagem e Aeroporto com razão, proporção e regra de três. O Beira-Rio mantém PA e PG.
 - **0.8 (21/11/2026):** Aeroporto exige 3 estrelas, com opção de finalizar sem ele; marca "Edição Porto Alegre" no lugar de "Missões do Glicério".
 - **0.7 (21/11/2026):** desafios no nível do 1º ano: sem lei dos senos/cossenos nem ciclo trigonométrico (entram razões trigonométricas com sen 30° e Pitágoras na Usina, e o vértice da parábola na Arena); números menores nas outras missões (π continua 3,14: o Lucas pediu para nunca alterar). Os sorteios detalhados da seção 2 ficaram valendo só como histórico; os atuais estão na tabela.
