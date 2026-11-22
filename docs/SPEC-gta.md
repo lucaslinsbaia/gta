@@ -101,6 +101,7 @@
 ## 6. Registro de mudanças
 
 - **0.1 (21/11/2026):** missões, assuntos, liberação em sequência, pontuação de 100 por missão com descontos, ranking com pontos e estrelas, regra de respostas só positivas. Logo direção C; personagem Dani Pixel; linguagem sem regionalismos.
+- **1.4 (21/11/2026):** explicação da matéria em cada etapa (campo `learn` de cada missão). Ao acertar a fórmula, abre "Entenda a matéria" com o conceito e a conta com os números da partida. Ao concluir a missão, a recompensa explica a etapa "Resolva o problema". Ao errar, a tela "wasted" mostra o conceito, sem a resposta.
 - **1.3 (21/11/2026):** a 2ª etapa da Usina continua na chaminé (cabo de luzes com Pitágoras), no lugar do veleiro.
 - **1.2 (21/11/2026):** desenhos com os dados sorteados em todas as missões (cilindro, plano cartesiano, fileiras e convites, triângulo retângulo, barra de ocupação e ingresso, rota do avião), sem mostrar a resposta.
 - **1.1 (21/11/2026):** as etapas aparecem para o aluno como "Relembre a fórmula" (A) e "Resolva o problema" (B).

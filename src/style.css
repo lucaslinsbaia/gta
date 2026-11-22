@@ -293,6 +293,8 @@
   .solution { margin-top: var(--s3); padding: var(--s3) var(--s4); background: var(--night); border: 2px dashed var(--line-strong); border-radius: var(--radius); font-size: var(--text-sm); }
   .solution p { margin: 0 0 var(--s2); }
   .solution p:last-child { margin: 0; }
+  .solution__calc { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .dlg--learn .title-md { color: var(--acid); }
 
   /* Tela "wasted": aparece ao errar ou pular. Fundo preto, palavra vermelha
      grande e o jogo por trás em preto e branco. */
@@ -303,6 +305,9 @@
   .wasted__word { margin: 0; font: 400 clamp(4.5rem, 2rem + 14vw, 11rem)/1 var(--font-display); letter-spacing: 0.02em; color: #E3141B; -webkit-text-stroke: 3px #000; paint-order: stroke fill; text-shadow: 0 0 2px #000, 6px 6px 0 rgba(0, 0, 0, 0.85); }
   .wasted__svg { display: block; width: min(860px, 88vw); height: auto; filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.85)); }
   .wasted__sub { margin: 0; font: 400 clamp(1.2rem, 1rem + 1vw, 1.8rem)/1.2 var(--font-label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream); }
+  .wasted__learn { max-width: 560px; padding: var(--s4) var(--s5); text-align: left; background: rgba(26, 8, 51, 0.92); border: 2px solid var(--cyan); border-radius: var(--radius); font-size: var(--text-base); line-height: 1.55; }
+  .wasted__learn .eyebrow { margin-bottom: var(--s2); }
+  .wasted__learn p:last-child { margin: 0; }
   .wasted__btn { margin-top: var(--s3); border-color: var(--cream); background: rgba(0, 0, 0, 0.6); }
   @keyframes wasted-in { from { opacity: 0; transform: scale(1.35); } 60% { opacity: 1; } to { transform: scale(1); } }
 
@@ -332,6 +337,9 @@
   .wasted__word { margin: 0; font: 400 clamp(4.5rem, 2rem + 14vw, 11rem)/1 var(--font-display); letter-spacing: 0.02em; color: #E3141B; -webkit-text-stroke: 3px #000; paint-order: stroke fill; text-shadow: 0 0 2px #000, 6px 6px 0 rgba(0, 0, 0, 0.85); }
   .wasted__svg { display: block; width: min(860px, 88vw); height: auto; filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.85)); }
   .wasted__sub { margin: 0; font: 400 clamp(1.2rem, 1rem + 1vw, 1.8rem)/1.2 var(--font-label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream); }
+  .wasted__learn { max-width: 560px; padding: var(--s4) var(--s5); text-align: left; background: rgba(26, 8, 51, 0.92); border: 2px solid var(--cyan); border-radius: var(--radius); font-size: var(--text-base); line-height: 1.55; }
+  .wasted__learn .eyebrow { margin-bottom: var(--s2); }
+  .wasted__learn p:last-child { margin: 0; }
   .wasted__btn { margin-top: var(--s3); border-color: var(--cream); background: rgba(0, 0, 0, 0.6); }
   @keyframes wasted-in { from { opacity: 0; transform: scale(1.35); } 60% { opacity: 1; } to { transform: scale(1); } }
 

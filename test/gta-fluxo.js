@@ -61,6 +61,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     await chipBtn(wrongChip).click(); await p.click('[data-slot="1"]');
     await p.click('#m-confirm'); await p.waitForTimeout(200);
     assert(await p.isVisible('#dlg-wasted'), 'erro abre a tela wasted');
+    assert(await p.isVisible('#wasted-learn'), 'a tela wasted explica a matéria');
     await p.click('#wasted-ok'); await p.waitForTimeout(150);
     assert(!(await p.isVisible('#dlg-wasted')), 'tentar de novo fecha a tela wasted');
     assert(await p.evaluate(() => S.errors[1]) === 1, 'conta errada conta 1 erro');
@@ -74,6 +75,8 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     assert(await p.evaluate(() => ui.fills[1] != null), 'arrastar coloca a peça na lacuna');
     await p.click('#m-confirm'); await p.waitForTimeout(250);
     assert(await p.evaluate(() => S.stage[1]) === 1, 'conta certa libera a etapa B');
+    assert(await p.isVisible('#dlg-learn'), 'acertar a fórmula abre o Entenda a matéria');
+    await p.click('#learn-ok'); await p.waitForTimeout(150);
     // etapa B: uma alternativa errada, depois a dica, depois a certa
     const wrongOpt = await p.evaluate(() => S.options[1].find(v => v !== round2(currentStage().correct)));
     await p.click(`#m-options input[value="${wrongOpt}"]`, { force: true }); await p.click('#m-confirm'); await p.waitForTimeout(150);

@@ -198,6 +198,7 @@ const MISSION = {
         distractors: [round2(d.A * d.h), round2(d.A * d.h * 100), round2(3.14 * 4 * d.r * d.r * d.h * 1000)] }
     ],
     figure: d => cylinderSvg(d.r, d.h),
+    learn: ["A base do tonel é um círculo, e a área do círculo é π · r²: o raio ao quadrado vezes π (≈ 3,14). Cuidado para não usar o diâmetro, que é o dobro do raio.", "O volume de um cilindro é a área da base vezes a altura (V = A · h), e o resultado sai em m³. Em 1 m³ cabem 1.000 litros, então é só multiplicar por 1.000."],
     solution: d => [
       `Área da base: 3,14 · ${fmt(d.r)}² = ${fmt(d.A)} m².`,
       `Volume: ${fmt(d.A)} · ${fmt(d.h)} = ${fmt(round2(d.A * d.h))} m³, ou seja, ${fmtBig(d.B)} litros.`
@@ -226,6 +227,7 @@ const MISSION = {
         distractors: [d.dx + d.dy, d.dx * d.dx + d.dy * d.dy, Math.abs(d.dx - d.dy)] }
     ],
     figure: (d, k) => planeSvg(d, k),
+    learn: ["O ponto médio fica exatamente no meio do caminho. Por isso a coordenada dele é a média das coordenadas dos dois pontos: soma e divide por 2.", "Entre dois pontos do plano dá para desenhar um triângulo retângulo: um cateto é quanto se anda no x e o outro é quanto se anda no y. A distância em linha reta é a hipotenusa, e sai pelo teorema de Pitágoras: d² = Δx² + Δy²."],
     solution: d => [
       `Ponto médio: x = (${d.P[0]} + ${d.Q[0]}) ÷ 2 = ${fmt(d.mx)}.`,
       `Distância: √(${d.dx}² + ${d.dy}²) = ${d.dist} unidades do mapa, ou ${d.dist * 10} m.`
@@ -252,6 +254,7 @@ const MISSION = {
         distractors: [d.g1 * d.q ** d.m, d.g1 + (d.m - 1) * d.q, d.q ** (d.m - 1), d.g1 * d.q * d.m] }
     ],
     figure: (d, k) => stadiumSvg(d, k),
+    learn: ["Numa progressão aritmética (PA), cada termo é o anterior mais um valor fixo, a razão r. Da 1ª até a n-ésima fileira, a razão é somada (n − 1) vezes: aₙ = a₁ + (n − 1) · r.", "Numa progressão geométrica (PG), cada termo é o anterior vezes um valor fixo, a razão q. Por isso os números crescem tão rápido: aₙ = a₁ · qⁿ⁻¹."],
     solution: d => [
       `PA: a${d.n} = ${d.a1} + (${d.n} − 1) · ${d.r} = ${d.an} cadeiras.`,
       `PG: a${d.m} = ${d.g1} · ${d.q}^${d.m - 1} = ${d.gm} pessoas.`
@@ -278,6 +281,7 @@ const MISSION = {
         distractors: [d.h + d.a, Math.abs(d.a - d.h), d.c + 10, d.h * 2] }
     ],
     figure: (d, k) => chimneySvg(d, k),
+    learn: ["Num triângulo retângulo, o seno de um ângulo é o cateto oposto dividido pela hipotenusa. Então cateto oposto = hipotenusa · seno. Como sen 30° = 0,5, o lado oposto a 30° é sempre a metade da hipotenusa.", "O teorema de Pitágoras vale em todo triângulo retângulo: a soma dos quadrados dos catetos é igual ao quadrado da hipotenusa (c² = a² + b²). Aqui, a chaminé e o chão são os catetos, e o cabo é a hipotenusa."],
     solution: d => [
       `Altura: h = ${d.L} · sen 30° = ${d.L} · 0,5 = ${d.h} m.`,
       `Cabo: c² = ${d.h}² + ${d.a}² = ${d.h * d.h + d.a * d.a}, então c = ${d.c} m.`
@@ -304,6 +308,7 @@ const MISSION = {
         distractors: [d.P * d.dsc / 100, d.P - d.dsc, d.P + d.P * d.dsc / 100] }
     ],
     figure: (d, k) => percentSvg(d, k),
+    learn: ["Porcentagem quer dizer \"por cem\": 75% são 75 de cada 100. Para achar p% de um total, multiplica o total por p e divide por 100.", "Num desconto, primeiro você acha quanto vale a porcentagem do preço e depois tira esse valor do preço cheio. Atalho: com 25% de desconto, você paga 75% do preço."],
     solution: d => [
       `Público: ${fmtBig(d.C)} · ${d.p} ÷ 100 = ${fmtBig(d.pub)} pessoas.`,
       `Desconto: ${d.P} · ${d.dsc} ÷ 100 = ${fmt(d.P * d.dsc / 100)} reais, então o ingresso sai por ${d.P} − ${fmt(d.P * d.dsc / 100)} = ${fmt(d.final)} reais.`
@@ -329,6 +334,7 @@ const MISSION = {
         distractors: [d.K / d.D, d.T * 2, d.T + d.t, d.K / 10] }
     ],
     figure: (d, k) => flightSvg(d, k),
+    learn: ["Razão é a comparação de duas grandezas por divisão. Quilômetros divididos por minutos dá a velocidade: quantos quilômetros o avião anda em 1 minuto.", "Regra de três: com a velocidade constante, distância e tempo são proporcionais. Se em 1 minuto o avião anda v km, para a distância toda ele leva distância ÷ v minutos."],
     solution: d => [
       `Razão: ${d.D} km ÷ ${d.t} min = ${d.v} km por minuto.`,
       `Regra de três: ${fmtBig(d.K)} km ÷ ${d.v} km por minuto = ${d.T} minutos.`
@@ -808,9 +814,7 @@ function checkBuild() {
     save();
     renderMissao();
     setMsg(`Fórmula certa! ${stage.result} Agora resolva o problema.`, false);
-    $('live').textContent = 'Fórmula certa. Agora resolva o problema.';
-    const first = document.querySelector('#m-options input');
-    if (first) first.focus();
+    openLearn(n, stage);
     return;
   }
   ok.forEach((good, i) => { if (!good) ui.fills[i] = null; });
@@ -939,8 +943,25 @@ function openHint() {
   openDialog($('dlg-hint'));
 }
 
-/* Tela "wasted" (modal): aparece a cada erro e ao pular a missão */
-function openWasted({ sub, action, after }) {
+/* "Entenda a matéria": depois de acertar a fórmula, explica o conceito e a conta com os números da partida */
+function openLearn(n, stage) {
+  $('learn-title').textContent = `Fórmula certa! ${stage.result}`;
+  $('learn-text').textContent = MISSION[n].learn[0];
+  $('learn-calc').textContent = MISSION[n].solution(S.data[n])[0];
+  openDialog($('dlg-learn'));
+  $('learn-ok').focus();
+}
+$('learn-ok').addEventListener('click', () => closeDialog($('dlg-learn'), () => {
+  $('live').textContent = 'Fórmula certa. Agora resolva o problema.';
+  const first = document.querySelector('#m-options input:not(:disabled)');
+  if (first) first.focus();
+}));
+
+/* Tela "wasted" (modal): aparece a cada erro e ao pular a missão.
+   learn: explicação do conceito da etapa, sem a resposta. */
+function openWasted({ sub, action, after, learn }) {
+  $('wasted-learn').hidden = !learn;
+  $('wasted-learn-text').textContent = learn || '';
   $('wasted-sub').textContent = sub;
   $('wasted-ok').textContent = action;
   if (after) closeCallbacks.set($('dlg-wasted'), after);
@@ -953,7 +974,8 @@ function wastedForError() {
   const n = S.current;
   openWasted({
     sub: S.stageErrors[n] >= SCORE.skipAfter ? '−10 pts · se travar, já dá pra pular' : `−10 pts · tentativa incorreta ${S.stageErrors[n]}`,
-    action: 'Tentar de novo'
+    action: 'Tentar de novo',
+    learn: MISSION[n].learn[S.stage[n]]
   });
 }
 
@@ -977,8 +999,11 @@ function completeMission(n, skipped) {
   $('rw-text').textContent = skipped
     ? 'Sem estresse: confere a resolução e salva pra revisar depois.'
     : S.errors[n] === 0 && !S.hint[n] ? `${nick()}, de primeira e sem dica! Pontuação cheia.` : `${nick()}, missão no bolso! Bora pra próxima.`;
-  $('rw-solution').hidden = !skipped;
-  $('rw-solution').innerHTML = skipped ? MISSION[n].solution(S.data[n]).map(line => `<p>${escapeHtml(line)}</p>`).join('') : '';
+  // Explicação: o conceito da etapa "Resolva o problema" e a conta com os números da partida
+  const lines = skipped ? MISSION[n].solution(S.data[n]) : [MISSION[n].solution(S.data[n])[1]];
+  $('rw-solution').hidden = false;
+  $('rw-solution').innerHTML = `<p class="eyebrow">Entenda a matéria</p><p>${escapeHtml(MISSION[n].learn[1])}</p>`
+    + `<p class="solution__calc">${lines.map(escapeHtml).join('<br>')}</p>`;
   $('rw-next').textContent = last ? 'Ver resultado da live' : 'Voltar ao mapa';
   openDialog($('dlg-reward'));
 }
@@ -1119,6 +1144,7 @@ $('test-fab').addEventListener('click', () => {
     input.checked = true;
   }
   $('m-form').requestSubmit();
+  if ($('dlg-learn').open) closeDialog($('dlg-learn'));
 });
 
 /* ---------------------------------------------------------------

@@ -272,6 +272,15 @@
   </div>
 </dialog>
 
+<dialog class="dlg dlg--learn" id="dlg-learn" aria-labelledby="learn-title" aria-describedby="learn-text">
+  <p class="eyebrow">Entenda a matéria</p>
+  <h2 class="title-md" id="learn-title"></h2>
+  <p id="learn-text"></p>
+  <p class="solution solution__calc" id="learn-calc"></p>
+  <div class="dlg__actions"><button type="button" class="btn btn--gold" id="learn-ok">Resolver o problema
+    <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button></div>
+</dialog>
+
 <dialog class="dlg dlg--reward" id="dlg-reward" aria-labelledby="rw-title">
   <p class="eyebrow" id="rw-eyebrow"></p>
   <h2 class="title-lg" id="rw-title"></h2>
@@ -286,6 +295,10 @@
     <!-- "wasted" em Pricedown Black (Typodermic) convertido em contorno: imagem fixa, sem a fonte embutida -->
     <h2 class="wasted__word" id="wasted-title"><span class="sr-only">wasted</span><svg class="wasted__svg" viewBox="-57 141 3540 919" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M730 1000 834 361H633L580 720L529 361H322L270 720L217 361H3L107 1000H368L421 680L473 1000Z M1120 841H1071C1070 841 1069 840 1069 839V743C1069 742 1070 741 1071 741H1120ZM1328 1000V442C1328 388 1293 361 1224 361H965C896 361 861 388 861 442V560H1069V523C1069 522 1070 521 1071 521H1118C1119 521 1120 522 1120 523V601H965C896 601 861 627 861 680V921C861 974 896 1000 965 1000Z M1740 1000C1809 1000 1844 974 1844 921V680C1844 627 1809 601 1740 601H1587C1586 601 1585 600 1585 599V523C1585 522 1586 521 1587 521H1634C1635 521 1636 522 1636 523V560H1844V442C1844 388 1809 361 1740 361H1481C1412 361 1377 388 1377 442V680C1377 734 1412 761 1481 761H1634C1635 761 1636 762 1636 763V839C1636 840 1635 841 1634 841H1587C1586 841 1585 840 1585 839V801H1377V921C1377 974 1412 1000 1481 1000Z M2288 1000C2357 1000 2392 974 2392 921V601H2185V839C2185 840 2184 841 2183 841H2135C2134 841 2133 840 2133 839V560H2392V402H2133V361H1925V402H1874V560H1925V921C1925 974 1960 1000 2029 1000Z M2700 612H2649V523C2649 522 2650 521 2651 521H2698C2699 521 2700 522 2700 523ZM2804 1000C2873 1000 2908 974 2908 921V801H2700V839C2700 840 2699 841 2698 841H2651C2650 841 2649 840 2649 839V761H2908V442C2908 388 2873 361 2804 361H2545C2476 361 2441 388 2441 442V921C2441 974 2476 1000 2545 1000Z M3423 1000V201H3215V361H3060C2991 361 2956 388 2956 442V921C2956 974 2988 1000 3060 1000ZM3215 841H3166C3165 841 3164 840 3164 839V523C3164 522 3165 521 3166 521H3215Z" fill="#E3141B" stroke="#000" stroke-width="44" stroke-linejoin="round" paint-order="stroke fill"/></svg></h2>
     <p class="wasted__sub" id="wasted-sub"></p>
+    <div class="wasted__learn" id="wasted-learn" hidden>
+      <p class="eyebrow">Entenda a matéria</p>
+      <p id="wasted-learn-text"></p>
+    </div>
     <button type="button" class="btn btn--outline wasted__btn" id="wasted-ok" data-close>Tentar de novo</button>
   </div>
 </dialog>
