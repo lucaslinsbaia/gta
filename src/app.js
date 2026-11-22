@@ -119,7 +119,7 @@ const MISSION = {
     ]
   },
   3: {
-    title: 'Beira-Rio', area: 'Álgebra', topic: 'Progressão aritmética (PA) e geométrica (PG)',
+    title: 'Beira-Rio', area: 'Aritmética', topic: 'Progressão aritmética (PA) e geométrica (PG)',
     brief: '{nick}, dia de show no Beira-Rio! Cada fileira da arquibancada tem mais lugares que a de baixo, e o convite do show se espalha em rodadas. Bora organizar?',
     hint: 'PA: cada fileira soma a mesma quantidade, então aₙ = a₁ + (n − 1) · r. PG: cada rodada multiplica pelo mesmo número, então dá pra ir multiplicando rodada por rodada. Na PA você soma; na PG você multiplica.',
     alt: 'Estádio de assentos vermelhos à beira do lago ao pôr do sol, com fileiras de arquibancada que se alargam para cima.',
@@ -168,51 +168,52 @@ const MISSION = {
     ]
   },
   5: {
-    title: 'Arena do Grêmio', area: 'Álgebra', topic: 'Função quadrática (vértice da parábola)',
-    brief: '{nick}, hoje a live é na Arena! A grua da TV acompanha um tiro de meta, e a bola faz uma parábola no ar. Bora descobrir onde ela fica mais alta?',
-    hint: 'Numa parábola h(x) = −x² + b·x, o ponto mais alto (o vértice) fica no meio do caminho: x = b ÷ 2. Depois é só colocar esse x na função pra achar a altura.',
+    title: 'Arena do Grêmio', area: 'Aritmética', topic: 'Porcentagem',
+    brief: '{nick}, hoje a live é na Arena! A transmissão quer saber quanta gente veio ao jogo, e eu quero descobrir quanto sai o ingresso com desconto de estudante. Bora calcular?',
+    hint: 'Porcentagem é uma fração de 100: p% de um valor = valor · p ÷ 100. Pra um desconto, calcula quanto é o desconto e tira do preço cheio.',
     alt: 'Estádio de assentos azuis ao entardecer, com uma grua de TV erguendo a câmera sobre o gramado.',
     gen() {
-      const k = pick([6, 8, 10]);
-      return { k, x: k / 2, H: k * k / 4 };
+      const C = pick([40000, 50000, 60000]), p = pick([50, 60, 75, 80, 90]);
+      const P = pick([40, 60, 80, 100]), dsc = pick([10, 20, 25, 50]);
+      return { C, p, pub: C * p / 100, P, dsc, final: P - P * dsc / 100 };
     },
     stages: d => [
-      { type: 'build', data: [['Altura da bola', `h(x) = −x² + ${d.k}x`], ['x', 'distância do gol, em metros'], ['h', 'altura da bola, em metros']],
-        question: 'Monte a conta do x do vértice (onde a bola fica mais alta).',
-        template: ['x = ', slot(d.k), ' ÷ ', slot('2')],
-        chips: makeChips([d.k, 2], [4, 1, d.k * 2]),
-        result: `A bola fica mais alta em x = ${d.x} m.` },
-      { type: 'choice', data: [['Altura da bola', `h(x) = −x² + ${d.k}x`], ['Vértice', `x = ${d.x} m`]],
-        question: 'Qual é a altura máxima da bola?', unit: 'm', correct: d.H,
-        distractors: [d.k * d.k / 2, d.k, d.H + d.k, d.x] }
+      { type: 'build', data: [['Lugares na Arena', `${fmtBig(d.C)}`], ['Ocupação hoje', `${d.p}%`]],
+        question: 'Monte a conta de quantas pessoas vieram ao jogo.',
+        template: ['público = ', slot(fmtBig(d.C)), ' · ', slot(d.p), ' ÷ ', slot(100)],
+        chips: makeChips([fmtBig(d.C), d.p, 100], [10, 100 - d.p, '1.000']),
+        result: `Vieram ${fmtBig(d.pub)} pessoas ao jogo.` },
+      { type: 'choice', data: [['Preço do ingresso', `R$ ${d.P}`], ['Desconto de estudante', `${d.dsc}%`]],
+        question: 'Quanto o estudante paga no ingresso, já com o desconto?', unit: 'reais', correct: d.final,
+        distractors: [d.P * d.dsc / 100, d.P - d.dsc, d.P + d.P * d.dsc / 100] }
     ],
     solution: d => [
-      `Vértice: x = ${d.k} ÷ 2 = ${d.x} m.`,
-      `Altura máxima: h(${d.x}) = −${d.x}² + ${d.k} · ${d.x} = ${d.H} m.`
+      `Público: ${fmtBig(d.C)} · ${d.p} ÷ 100 = ${fmtBig(d.pub)} pessoas.`,
+      `Desconto: ${d.P} · ${d.dsc} ÷ 100 = ${fmt(d.P * d.dsc / 100)} reais, então o ingresso sai por ${d.P} − ${fmt(d.P * d.dsc / 100)} = ${fmt(d.final)} reais.`
     ]
   },
   6: {
-    title: 'Aeroporto Salgado Filho', area: 'Álgebra', topic: 'Função afim (taxa de variação)',
-    brief: '{nick}, partiu Salgado Filho! O avião acabou de decolar e sobe sempre no mesmo ritmo. Bora descobrir a altitude dele e quanto tempo falta pra chegar lá em cima?',
-    hint: 'Função afim: h(t) = h₀ + r · t, em que h₀ é a altitude inicial e r é quanto o avião sobe por minuto. Pra achar o tempo, isola o t: t = (h − h₀) ÷ r.',
+    title: 'Aeroporto Salgado Filho', area: 'Aritmética', topic: 'Razão, proporção e regra de três',
+    brief: '{nick}, partiu Salgado Filho! O avião acabou de decolar e voa sempre na mesma velocidade. Bora descobrir quanto ele anda por minuto e quanto tempo falta até a próxima parada?',
+    hint: 'Razão: quilômetros ÷ minutos dá quantos km o avião anda em 1 minuto. Regra de três: se em 1 minuto ele anda v km, pra andar a distância toda ele leva distância ÷ v minutos.',
     alt: 'Aeroporto ao pôr do sol, com terminal envidraçado, torre de controle e um avião subindo logo depois da decolagem.',
     gen() {
-      const h0 = pick([100, 200]), r = pick([200, 300]), t = pick([2, 3, 4]), t2 = pick([5, 6, 8]);
-      return { h0, r, t, ht: h0 + r * t, t2, H: h0 + r * t2 };
+      const v = pick([10, 12, 15]), t = pick([2, 3, 4]), T = pick([20, 25, 30, 40]);
+      return { v, t, D: v * t, T, K: v * T };
     },
     stages: d => [
-      { type: 'build', data: [['Altitude no início da contagem', `${fmtBig(d.h0)} m`], ['Subida por minuto', `${d.r} m`], ['Tempo de voo', `${d.t} min`]],
-        question: `Monte a conta da altitude do avião depois de ${d.t} minutos.`,
-        template: ['h = ', slot(d.h0), ' + ', slot(d.r), ' · ', slot(d.t)],
-        chips: makeChips([d.h0, d.r, d.t], [d.t + 1, d.r + 100, 60]),
-        result: `Depois de ${d.t} minutos, o avião está a ${fmtBig(d.ht)} m.` },
-      { type: 'choice', data: [['Altitude', `h(t) = ${d.h0} + ${d.r} · t`], ['Altitude de cruzeiro da subida', `${fmtBig(d.H)} m`]],
-        question: 'Em quantos minutos o avião chega a essa altitude?', unit: 'min', correct: d.t2,
-        distractors: [d.H / d.r, (d.H + d.h0) / d.r, d.t2 * 2, d.t2 + 1] }
+      { type: 'build', data: [['Distância voada', `${d.D} km`], ['Tempo', `${d.t} minutos`]],
+        question: 'Monte a conta de quantos quilômetros o avião voa em 1 minuto.',
+        template: ['km por minuto = ', slot(d.D), ' ÷ ', slot(d.t)],
+        chips: makeChips([d.D, d.t], [60, d.D + d.t, d.t * 2]),
+        result: `O avião voa ${d.v} km por minuto.` },
+      { type: 'choice', data: [['Velocidade', `${d.v} km por minuto`], ['Distância até a próxima parada', `${fmtBig(d.K)} km`]],
+        question: 'Quantos minutos faltam para chegar à próxima parada?', unit: 'min', correct: d.T,
+        distractors: [d.K / d.D, d.T * 2, d.T + d.t, d.K / 10] }
     ],
     solution: d => [
-      `Altitude: h = ${d.h0} + ${d.r} · ${d.t} = ${fmtBig(d.ht)} m.`,
-      `Tempo: t = (${fmtBig(d.H)} − ${d.h0}) ÷ ${d.r} = ${d.t2} minutos.`
+      `Razão: ${d.D} km ÷ ${d.t} min = ${d.v} km por minuto.`,
+      `Regra de três: ${fmtBig(d.K)} km ÷ ${d.v} km por minuto = ${d.T} minutos.`
     ]
   }
 };
@@ -240,8 +241,8 @@ const STUDY = {
   2: [['Khan Academy · distância entre dois pontos', khan('distância entre dois pontos')], ['YouTube · ponto médio e distância entre pontos', yt('geometria analítica ponto médio distância entre dois pontos aula')]],
   3: [['Khan Academy · progressões aritméticas e geométricas', khan('progressão aritmética geométrica')], ['YouTube · termo geral da PA e da PG', yt('termo geral PA PG aula')]],
   4: [['Khan Academy · razões trigonométricas no triângulo retângulo', khan('seno cosseno tangente triângulo retângulo')], ['YouTube · seno, cosseno e tangente', yt('seno cosseno tangente triângulo retângulo aula')]],
-  5: [['Khan Academy · vértice da parábola', khan('vértice da parábola função quadrática')], ['YouTube · altura máxima e vértice da parábola', yt('vértice da parábola valor máximo aula')]],
-  6: [['Khan Academy · função afim', khan('função afim taxa de variação')], ['YouTube · função afim: taxa de variação', yt('função afim taxa de variação aula')]]
+  5: [['Khan Academy · porcentagem', khan('porcentagem desconto')], ['YouTube · porcentagem e desconto', yt('porcentagem desconto aula')]],
+  6: [['Khan Academy · razão e proporção', khan('razão proporção regra de três')], ['YouTube · regra de três simples', yt('regra de três simples aula')]]
 };
 
 /* ---------------------------------------------------------------
@@ -275,7 +276,7 @@ let S = null;
 
 function freshState() {
   return {
-    v: 4, started: true, jornadaId: newJourneyId(), player: null,
+    v: 5, started: true, jornadaId: newJourneyId(), player: null,
     data: Object.fromEntries(MISSIONS.map(n => [n, MISSION[n].gen()])),
     stage: perMission(0), stageErrors: perMission(0),
     done: perMission(false), skipped: perMission(false), errors: perMission(0), hint: perMission(false),
@@ -286,7 +287,7 @@ function freshState() {
 function loadState() {
   try {
     const data = JSON.parse(localStorage.getItem(STORE_KEY));
-    return data && data.v === 4 && data.data ? data : null;
+    return data && data.v === 5 && data.data ? data : null;
   } catch (e) { return null; }
 }
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* segue sem salvar */ } }
