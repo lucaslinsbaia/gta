@@ -2,7 +2,7 @@
 
 Jogo educativo de matemática com clima urbano e neon, feito a partir do jogo [O Enigma de Pitágoras](https://enigma-de-pitagoras.vercel.app).
 
-- Produção: https://gta-glicerio.vercel.app
+- Produção: https://gta-poa.vercel.app (também responde em https://gta-glicerio.vercel.app)
 - Situação: em construção. Veja [HANDOFF.md](HANDOFF.md) para o contexto completo e os próximos passos.
 - Regras do jogo-base: [docs/SPEC-enigma-de-pitagoras.md](docs/SPEC-enigma-de-pitagoras.md)
 

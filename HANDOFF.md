@@ -201,7 +201,7 @@ Criar um novo jogo educativo de matemática, o **GTA**, para alunos do **2º e 3
 ## 7. Artefatos relevantes
 
 **Endereços:**
-- GTA (produção): https://gta-glicerio.vercel.app (projeto Vercel `gta-glicerio`, `prj_1Ne8GTeNnUH106Q3hWiSEImD45yY`)
+- GTA (produção): https://gta-poa.vercel.app (antigo: https://gta-glicerio.vercel.app) (projeto Vercel `gta-glicerio`, `prj_1Ne8GTeNnUH106Q3hWiSEImD45yY`)
 - Repositório do GTA: https://github.com/lucaslinsbaia/gta (privado, branch `main`)
 - Enigma: https://enigma-de-pitagoras.vercel.app · `/ranking` · `/gestao` (projeto Vercel `enigma`, `prj_CI5THN1mclShRcKULIG3HT9k7R5a`)
 - Time da Vercel: `team_4LR2S470KBcyUJ1bWw2mIZ7k`

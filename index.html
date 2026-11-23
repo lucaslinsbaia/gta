@@ -2647,7 +2647,7 @@ $('end-again').addEventListener('click', () => show('identificacao'));
    salvar a imagem, ou abrir WhatsApp/e-mail com o texto e o link.
    --------------------------------------------------------------- */
 const share = { blob: null, url: '' };
-const gameUrl = () => (/^https?:$/.test(location.protocol) ? location.origin : 'https://gta-glicerio.vercel.app');
+const gameUrl = () => (/^https?:$/.test(location.protocol) ? location.origin : 'https://gta-poa.vercel.app');
 function shareText() {
   const pts = totalPoints(), stars = starsFor(pts);
   return `Fiz ${pts} pontos e ${stars} ${stars === 1 ? 'estrela' : 'estrelas'} no GTA, Edição Porto Alegre! Bora tentar? ${gameUrl()}`;
