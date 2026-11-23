@@ -2595,7 +2595,7 @@ function completeMission(n, skipped) {
   save();
   renderScore();
   const pts = missionPoints(n);
-  $('rw-eyebrow').textContent = `Missão ${n} · ${MISSION[n].title}`;
+  $('rw-eyebrow').textContent = MISSION[n].title;
   $('rw-title').textContent = skipped ? 'Missão pulada' : pick(['Missão concluída! GG!', 'Missão concluída! Brabo!', 'Missão concluída! Nível desbloqueado!']);
   $('rw-pts').innerHTML = `<strong>+${pts}</strong> pts`;
   $('rw-text').textContent = skipped
@@ -2628,7 +2628,7 @@ function renderFim() {
   $('g-stars').innerHTML = starsHtml(stars);
   $('g-stars').setAttribute('aria-label', `${stars} de 5 estrelas`);
   $('g-level').textContent = `Nível de conhecimento: ${LEVEL[stars]}`;
-  $('g-list').innerHTML = MISSIONS.map(n => `<li><span>${n}. ${MISSION[n].title}</span><strong>${n === LAST && S.noAirport ? 'não liberada · 0' : S.skipped[n] ? 'pulada · 0' : missionPoints(n)} pts</strong></li>`).join('');
+  $('g-list').innerHTML = MISSIONS.map(n => `<li><span>${MISSION[n].title}</span><strong>${n === LAST && S.noAirport ? 'não liberada · 0' : S.skipped[n] ? 'pulada · 0' : missionPoints(n)} pts</strong></li>`).join('');
   const review = MISSIONS.filter(n => !(n === LAST && S.noAirport) && (S.skipped[n] || missionPoints(n) < 70));
   $('g-study').hidden = !review.length;
   $('g-study-lead').textContent = 'Essas missões merecem uma revisada:';
@@ -2724,7 +2724,7 @@ async function buildShareImage() {
   MISSIONS.forEach((n, i) => {
     const y = 1540 + i * 52;
     const val = n === LAST && S.noAirport ? 'não liberada' : S.skipped[n] ? 'pulada' : `${missionPoints(n)} pts`;
-    ctx.fillStyle = '#EADDF6'; ctx.font = '36px Inter, sans-serif'; ctx.fillText(`${n}. ${MISSION[n].title}`, 140, y);
+    ctx.fillStyle = '#EADDF6'; ctx.font = '36px Inter, sans-serif'; ctx.fillText(MISSION[n].title, 140, y);
     ctx.textAlign = 'right'; ctx.fillStyle = '#FFF7EC'; ctx.font = '700 36px Inter, sans-serif'; ctx.fillText(val, W - 140, y); ctx.textAlign = 'left';
   });
   ctx.textAlign = 'center'; ctx.fillStyle = '#FFF7EC'; ctx.font = '700 34px Inter, sans-serif';
