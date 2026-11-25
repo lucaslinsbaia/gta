@@ -410,6 +410,27 @@
   .map-me { display: flex; align-items: center; gap: var(--s3); }
   .me-avatar { width: 52px; height: 52px; flex: none; border: 2px solid var(--cream); border-radius: 50%; image-rendering: pixelated; background: var(--purple); }
 
+  /* ---------- Tutorial: tour guiado ---------- */
+  .coach { position: fixed; inset: 0; z-index: 55; pointer-events: none; }
+  .coach.is-block { pointer-events: auto; }
+  .coach.is-under-dialog { visibility: hidden; }
+  .coach__spot { position: fixed; border-radius: 10px; box-shadow: 0 0 0 200vmax rgba(10, 3, 22, 0.72); outline: 3px solid var(--yellow); outline-offset: 2px; transition: left 260ms var(--ease), top 260ms var(--ease), width 260ms var(--ease), height 260ms var(--ease); pointer-events: none; }
+  .coach__card { position: fixed; left: 50%; transform: translateX(-50%); width: min(460px, calc(100vw - 24px)); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s3); padding: var(--s4); color: var(--night); background: var(--cream); border: 3px solid var(--night); border-radius: 14px; box-shadow: 6px 6px 0 var(--pink); pointer-events: auto; animation: tip-in 260ms var(--ease) both; }
+  .coach__card[data-side="bottom"] { bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .coach__card[data-side="top"] { top: 16px; }
+  .coach__avatar { width: 56px; height: 56px; }
+  .coach__top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s2); margin: 0; }
+  .coach__step { font-size: var(--text-xs); font-weight: 600; color: #6b5a80; }
+  .coach__text { margin: var(--s1) 0 var(--s3); font-size: 1rem; line-height: 1.45; min-height: 2.9em; }
+  .coach__actions { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); flex-wrap: wrap; }
+  .coach__actions .link-btn { color: #5a3a7a; }
+  .map-howto { margin: var(--s6) 0 0; text-align: center; }
+  .map-howto .link-btn { display: inline-flex; align-items: center; gap: var(--s2); min-height: 44px; }
+  .dlg--tutorial .tut-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s3); }
+  .dlg--tutorial .avatar { width: 64px; height: 64px; flex: none; }
+  .dlg--tutorial .dlg__actions { flex-wrap: wrap; }
+  @media (prefers-reduced-motion: reduce) { .coach__spot { transition: none; } }
+
   /* ---------- Responsivo ---------- */
   @media (max-width: 1000px) {
     .cover-wrap, .mission, .end__grid { grid-template-columns: minmax(0, 1fr); }
@@ -535,6 +556,24 @@
 </header>
 
 <!-- Transição entre telas: faixas diagonais que varrem a tela; ao entrar numa missão, mostram o nome do lugar -->
+<!-- Tour guiado: destaque com recorte e balão da Isa -->
+<div class="coach" id="coach" hidden>
+  <div class="coach__spot" id="coach-spot" hidden></div>
+  <section class="coach__card" id="coach-card" aria-label="Tutorial com a Isa">
+    <img class="avatar coach__avatar" id="coach-avatar" alt="">
+    <div class="coach__body">
+      <p class="coach__top"><span class="dani-say__name">Isa</span> <span class="coach__step" id="coach-step"></span></p>
+      <p class="coach__text" id="coach-text" aria-hidden="true"></p>
+      <p class="sr-only" id="coach-full" role="status"></p>
+      <div class="coach__actions">
+        <button type="button" class="link-btn" id="coach-exit">Sair do tutorial</button>
+        <button type="button" class="btn btn--gold btn--sm" id="coach-next"><span id="coach-next-text">Próximo</span>
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+      </div>
+    </div>
+  </section>
+</div>
+
 <div class="wipe" id="wipe" aria-hidden="true">
   <div class="wipe__layer wipe__layer--cyan"></div>
   <div class="wipe__layer wipe__layer--pink"></div>
@@ -682,6 +721,8 @@
       </div>
       <ol class="missions" id="missions" aria-label="Missões"></ol>
       <div class="carousel-dots" id="missions-dots"></div>
+      <p class="map-howto"><button type="button" class="link-btn" id="map-tutorial-btn">
+        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-play"/></svg> Como jogar? Refazer o tutorial</button></p>
     </div>
   </section>
 
@@ -859,6 +900,17 @@
   <p class="solution solution__calc" id="learn-calc"></p>
   <div class="dlg__actions"><button type="button" class="btn btn--gold" id="learn-ok">Resolver o problema
     <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button></div>
+</dialog>
+
+<!-- Convite para o treino, logo depois de criar o personagem -->
+<dialog class="dlg dlg--tutorial" id="dlg-tutorial" aria-labelledby="tut-title" aria-describedby="tut-text">
+  <div class="tut-head"><img class="avatar" id="tut-avatar" alt=""><h2 class="title-lg" id="tut-title">Primeira vez por aqui?</h2></div>
+  <p id="tut-text"></p>
+  <div class="dlg__actions">
+    <button type="button" class="btn btn--gold" id="tut-go">Bora treinar
+      <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+    <button type="button" class="btn btn--outline" id="tut-skip">Pular, já sei jogar</button>
+  </div>
 </dialog>
 
 <dialog class="dlg dlg--reward" id="dlg-reward" aria-labelledby="rw-title">
@@ -1540,7 +1592,39 @@ function flightSvg(d, k) {
   return svgWrap(220, 120, `Faltam ${fmtBig(d.K)} km até a próxima parada, a ${d.v} km por minuto`, line(`${fmtBig(d.K)} km`, '? min') + plane(30, 52));
 }
 
+/** Treino: painel retangular com base e altura. */
+function rectSvg(d, k) {
+  const W = 170, H = 110, x = 25, y = 18, w = W - 50, h = H - 40;
+  const tiles = k === 1 ? Array.from({ length: d.b * d.a }, (_, i) => {
+    const cw = w / d.b, ch = h / d.a, c = i % d.b, l = Math.floor(i / d.b);
+    return `<rect x="${x + c * cw + 1}" y="${y + l * ch + 1}" width="${cw - 2}" height="${ch - 2}" fill="${(c + l) % 2 ? '#7B3FE4' : '#FF2E93'}" opacity=".55"/>`;
+  }).join('') : '';
+  return svgWrap(W + 30, H + 20, `Painel retangular de ${d.b} m de base e ${d.a} m de altura`,
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#2B0B4F" stroke="#22E3FF" stroke-width="3"/>${tiles}`
+    + T(x + w / 2, y + h + 20, `base ${d.b} m`, '#FFB02E', 14) + T(x + w + 26, y + h / 2 + 5, `${d.a} m`, '#FFB02E', 14));
+}
+
 const MISSION = {
+  0: {
+    title: 'Treino com a Isa', area: 'Como jogar', topic: 'Área do retângulo',
+    brief: '{nick}, aqui é só treino: não vale ponto. Vou te mostrar cada parte da missão.',
+    hint: 'A área de um retângulo é base × altura. Aqui: 3 × 4.',
+    alt: 'Orla do Guaíba ao pôr do sol, com a chaminé da Usina do Gasômetro.',
+    gen() { return { b: 3, a: 4, A: 12 }; },
+    stages: d => [
+      { type: 'build', data: [['Base do painel', `${d.b} m`], ['Altura do painel', `${d.a} m`]],
+        title: 'Relembre a fórmula para calcular a área do retângulo', question: 'Monte a conta da área do painel.',
+        template: ['A = ', slot(d.b), ' · ', slot(d.a)], swap: [[0, 1]],
+        chips: makeChips([d.b, d.a], [7, 12]),
+        result: `A área do painel é ${d.A} m².` },
+      { type: 'choice', data: [['Área do painel', `${d.A} m²`], ['Cada azulejo cobre', '1 m²']],
+        question: 'Quantos azulejos de 1 m² cobrem o painel inteiro?', unit: 'azulejos', correct: d.A,
+        distractors: [d.b + d.a, 2 * (d.b + d.a), 24] }
+    ],
+    figure: (d, k) => rectSvg(d, k),
+    learn: ['A área mede o tamanho de uma superfície. No retângulo, multiplica a base pela altura: 3 m × 4 m = 12 m².', 'Se cada azulejo cobre 1 m², o número de azulejos é igual à área: 12 m² pedem 12 azulejos.'],
+    solution: d => [`Área: ${d.b} · ${d.a} = ${d.A} m².`, `Azulejos: ${d.A} m² ÷ 1 m² = ${d.A} azulejos.`]
+  },
   1: {
     title: 'Mercado Público', area: 'Geometria', topic: 'Áreas e volumes (cilindro)',
     brief: '{nick}, partiu Mercado Público! Uma banca vai encher um tonel cilíndrico de suco e precisa saber quanto cabe nele. Bora medir?',
@@ -1798,7 +1882,7 @@ const allFinished = () => MISSIONS.every(finished);
 let lastTick = performance.now();
 setInterval(() => {
   const now = performance.now();
-  if (S && S.started && !S.completed && document.visibilityState === 'visible' && (screen === 'mapa' || screen === 'missao')) {
+  if (S && S.started && !S.completed && document.visibilityState === 'visible' && (screen === 'mapa' || (screen === 'missao' && S.current !== 0))) {
     S.activeMs += Math.min(now - lastTick, 5000);
   }
   lastTick = now;
@@ -1844,6 +1928,7 @@ function show(name) {
   $('nav-map').hidden = name !== 'missao';
   $('test-fab').hidden = !(TEST && name === 'missao');
   music.play(name === 'missao' ? ({ 3: 'beirario', 5: 'arena' })[S.current] || 'mapa' : name === 'mapa' || name === 'fim' ? 'mapa' : 'abertura');
+  if (name !== 'mapa' && name !== 'missao') coach.stop();
   ({ inicio: renderInicio, identificacao: renderIdentificacao, mapa: renderMapa, missao: renderMissao, fim: renderFim })[name]();
   renderScore();
   window.scrollTo(0, 0);
@@ -2063,8 +2148,10 @@ $('id-form').addEventListener('submit', async event => {
   try { localStorage.setItem(PLAYER_KEY, JSON.stringify(player)); } catch (e) { /* segue sem lembrar */ }
   S = freshState();
   S.player = player;
+  if (!tutorialSeen()) S.tutorial = 'convite';
   save();
   show('mapa');
+  if (S.tutorial === 'convite') inviteTraining();
 });
 AVATAR.setup();
 $('id-name').addEventListener('input', () => setFieldMessage($('id-name'), $('id-name-msg'), ''));
@@ -2094,7 +2181,8 @@ function renderMapa() {
       : 'Todas as missões feitas! Bora ver o resultado da live.';
   // A fala abre sozinha quando muda (início, depois de cada missão); senão, o avatar fica pulsando
   if (tip !== S.mapTip && next === LAST && !first) music.sfx('aeroporto');
-  if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else { mapTip.text = tip; if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse'); }
+  if (S.tutorial === 'convite') { mapTip.text = tip; S.mapTip = tip; save(); }
+  else if (tip !== S.mapTip) { S.mapTip = tip; save(); openMapTip(); } else { mapTip.text = tip; if ($('map-tip').hidden) $('map-avatar-btn').classList.add('is-pulse'); }
   $('missions').innerHTML = MISSIONS.map(n => {
     const M = MISSION[n];
     const open = unlocked(n);
@@ -2271,7 +2359,7 @@ function prepareStage() {
 function renderMissao() {
   const n = S.current, M = MISSION[n], d = S.data[n];
   const closed = finished(n);
-  $('m-scene').src = IMG.scene[n];
+  $('m-scene').src = IMG.scene[n] || IMG.scene[4];
   $('m-scene').alt = M.alt;
   $('m-avatar').src = IMG.avatar;
   $('m-eyebrow').textContent = M.area;
@@ -2287,7 +2375,7 @@ function renderMissao() {
     return `<li class="${cls}"${i === k && !closed ? ' aria-current="step"' : ''}>${name}</li>`;
   }).join('');
   setMsg('');
-  $('m-hint-text').textContent = S.hint[n] ? 'Ver a dica da Isa de novo' : 'Pedir dica à Isa (−20 pts)';
+  $('m-hint-text').textContent = S.hint[n] ? 'Ver a dica da Isa de novo' : n === 0 ? 'Pedir dica à Isa (no treino é de graça)' : 'Pedir dica à Isa (−20 pts)';
   $('m-hint-btn').hidden = closed && !S.hint[n];
   $('m-skip').hidden = closed || S.stageErrors[n] < SCORE.skipAfter;
   $('m-confirm').hidden = closed;
@@ -2449,6 +2537,7 @@ function checkBuild() {
     return;
   }
   ok.forEach((good, i) => { if (!good) ui.fills[i] = null; });
+  if (n === 0) coach.note('build-wrong');
   registerError();
   renderBuild(stage);
   const wrong = ok.filter(g => !g).length;
@@ -2505,6 +2594,7 @@ function registerError() {
 function renderMissionScore() {
   const n = S.current;
   if (finished(n)) { $('m-score').textContent = ''; return; }
+  if (n === 0) { $('m-score').textContent = 'Treino: aqui nada vale ponto.'; return; }
   const now = Math.max(SCORE.floor, SCORE.base - SCORE.error * S.errors[n] - (S.hint[n] ? SCORE.hint : 0));
   $('m-score').textContent = `Valendo agora: ${now} pts · tentativas incorretas: ${S.errors[n]}${S.hint[n] ? ' · dica usada' : ''}`;
 }
@@ -2529,6 +2619,7 @@ function openBrief() { missionTip.open(missionBrief()); }
 
 /* Dica: −20 pontos, cobrada uma vez por missão */
 $('m-hint-btn').addEventListener('click', () => {
+  if (S.current === 0) { S.hint[0] = true; save(); renderMissao(); openHint(); return; }   // no treino, sem cobrança
   if (S.hint[S.current]) openHint(); else openDialog($('dlg-hint-ask'));
 });
 $('hint-confirm').addEventListener('click', () => closeDialog($('dlg-hint-ask'), () => {
@@ -2552,6 +2643,7 @@ function openLearn(n, stage) {
   $('learn-ok').focus();
 }
 $('learn-ok').addEventListener('click', () => closeDialog($('dlg-learn'), () => {
+  coach.signal('learn-closed');
   $('live').textContent = 'Fórmula certa. Agora resolva o problema.';
   const first = document.querySelector('#m-options input:not(:disabled)');
   if (first) first.focus();
@@ -2570,11 +2662,12 @@ function openWasted({ sub, action, after, learn }) {
   openDialog($('dlg-wasted'));
   $('wasted-ok').focus();
 }
-$('dlg-wasted').addEventListener('close', () => document.body.classList.remove('is-wasted'));
+$('dlg-wasted').addEventListener('close', () => { document.body.classList.remove('is-wasted'); coach.signal('wasted-closed'); });
+$('dlg-hint').addEventListener('close', () => coach.signal('hint-closed'));
 function wastedForError() {
   const n = S.current;
   openWasted({
-    sub: S.stageErrors[n] >= SCORE.skipAfter ? '−10 pts · se travar, já dá pra pular' : `−10 pts · tentativa incorreta ${S.stageErrors[n]}`,
+    sub: n === 0 ? 'Treino: aqui o erro não tira ponto' : S.stageErrors[n] >= SCORE.skipAfter ? '−10 pts · se travar, já dá pra pular' : `−10 pts · tentativa incorreta ${S.stageErrors[n]}`,
     action: 'Tentar de novo',
     learn: MISSION[n].learn[S.stage[n]]
   });
@@ -2588,6 +2681,7 @@ $('skip-confirm').addEventListener('click', () => closeDialog($('dlg-skip'), () 
 }));
 
 function completeMission(n, skipped) {
+  if (n === 0) { finishTraining(); return; }
   if (skipped) S.skipped[n] = true; else S.done[n] = true;
   if (!skipped) music.sfx('concluida');
   const last = allFinished();
@@ -2609,8 +2703,173 @@ function completeMission(n, skipped) {
   $('rw-next').textContent = last ? 'Ver meus resultados' : 'Voltar ao mapa';
   openDialog($('dlg-reward'));
 }
-$('rw-next').addEventListener('click', () => closeDialog($('dlg-reward'), () => show(S.completed ? 'fim' : 'mapa')));
+$('rw-next').addEventListener('click', () => closeDialog($('dlg-reward'), () => { if (S.current === 0) { S.current = MISSIONS.find(m => !finished(m)) || 1; save(); } show(S.completed ? 'fim' : 'mapa'); }));
 
+
+/* ---------------------------------------------------------------
+   8b. TUTORIAL: tour guiado pela Isa e missão de treino
+   O coach escurece a tela e destaca um elemento por vez. Passos "info"
+   têm botão Próximo; passos "do" esperam o aluno agir (sinal do jogo).
+   --------------------------------------------------------------- */
+const TUTORIAL_KEY = 'gta-glicerio-tutorial';
+const tutorialSeen = () => { try { return localStorage.getItem(TUTORIAL_KEY) === '1'; } catch (e) { return false; } };
+const markTutorialSeen = () => { try { localStorage.setItem(TUTORIAL_KEY, '1'); } catch (e) { /* segue */ } };
+
+const coach = (() => {
+  let steps = [], i = -1, done = null, waitFor = null, typer = null, raf = 0;
+  const notes = new Set();
+  const root = $('coach'), spot = $('coach-spot'), card = $('coach-card');
+  const targets = step => [].concat(typeof step.target === 'function' ? step.target() : step.target || [])
+    .map(t => (typeof t === 'string' ? document.querySelector(t) : t)).filter(el => el && el.getClientRects().length);
+  function place() {
+    raf = 0;
+    if (i < 0) return;
+    const dialogOpen = Boolean(document.querySelector('dialog[open]'));
+    root.classList.toggle('is-under-dialog', dialogOpen);
+    const els = targets(steps[i]);
+    if (!els.length) { spot.hidden = true; card.dataset.side = 'bottom'; return; }
+    const rs = els.map(el => el.getBoundingClientRect());
+    const pad = 8, L = Math.min(...rs.map(r => r.left)) - pad, T0 = Math.min(...rs.map(r => r.top)) - pad;
+    const R = Math.max(...rs.map(r => r.right)) + pad, B = Math.max(...rs.map(r => r.bottom)) + pad;
+    spot.hidden = false;
+    Object.assign(spot.style, { left: `${L}px`, top: `${T0}px`, width: `${R - L}px`, height: `${B - T0}px` });
+    card.dataset.side = (T0 + B) / 2 > innerHeight / 2 ? 'top' : 'bottom';   // o balão fica do lado oposto ao destaque
+  }
+  const schedule = () => { if (!raf && i >= 0) raf = requestAnimationFrame(place); };
+  addEventListener('resize', schedule);
+  addEventListener('scroll', schedule, { passive: true });
+  new MutationObserver(schedule).observe(document.body, { attributes: true, subtree: true, attributeFilter: ['open', 'hidden'] });
+
+  function say(text) {
+    clearInterval(typer);
+    const el = $('coach-text'), av = $('coach-avatar');
+    $('coach-full').textContent = text;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
+    let k = 0; el.textContent = '';
+    typer = setInterval(() => {   // texto digitado, com a boca da Isa mexendo
+      k += 1; el.textContent = text.slice(0, k);
+      if (k % 6 === 0) av.src = av.src === IMG.avatar ? IMG.avatarFala : IMG.avatar;
+      if (k >= text.length) { clearInterval(typer); el.textContent = text; av.src = IMG.avatar; }
+    }, 22);
+  }
+  function go(k) {
+    i = k;
+    while (i < steps.length && steps[i].skipIf && steps[i].skipIf()) i += 1;
+    if (i >= steps.length) { const cb = done; stop(); if (cb) cb(); return; }
+    const step = steps[i];
+    if (step.before) step.before();
+    waitFor = step.until ? [].concat(step.until) : null;
+    root.hidden = false;
+    root.classList.toggle('is-block', !waitFor);
+    $('coach-next').hidden = Boolean(waitFor);
+    $('coach-next-text').textContent = step.next || 'Próximo';
+    $('coach-step').textContent = step.count || '';
+    $('coach-avatar').src = IMG.avatar;
+    say(typeof step.text === 'function' ? step.text() : step.text);
+    const first = targets(step)[0];
+    if (first) first.scrollIntoView({ block: 'center', behavior: 'auto' });
+    schedule();
+    if (!waitFor) setTimeout(() => $('coach-next').focus({ preventScroll: true }), 0);
+  }
+  function stop() {
+    clearInterval(typer);
+    i = -1; steps = []; waitFor = null; done = null;
+    root.hidden = true; spot.hidden = true;
+  }
+  $('coach-next').addEventListener('click', () => { if (i >= 0 && !waitFor) go(i + 1); });
+  $('coach-exit').addEventListener('click', () => exitTutorial());
+  document.addEventListener('keydown', event => {
+    if (i < 0 || document.querySelector('dialog[open]')) return;
+    if (event.key === 'Escape') { event.preventDefault(); exitTutorial(); }
+  });
+  return {
+    run(list, onDone) { steps = list; done = onDone; notes.clear(); go(0); },
+    signal(name) { if (i >= 0 && waitFor && waitFor.includes(name)) go(i + 1); },
+    note: name => notes.add(name),
+    noted: name => notes.has(name),
+    stop,
+    get active() { return i >= 0; },
+  };
+})();
+
+const isPhone = () => matchMedia('(max-width: 640px)').matches;
+const MAP_TOUR = [
+  { target: '#missions', count: '1 de 4', before: () => carousel.center(0, false),
+    text: () => `Estas são as 6 missões, uma em cada ponto de Porto Alegre. Elas abrem uma de cada vez: terminou uma, a próxima libera.${isPhone() ? ' Arraste para o lado para ver todas.' : ''}` },
+  { target: '#nav-score', count: '2 de 4', text: 'Aqui ficam seus pontos e estrelas. Cada missão vale até 100 pontos; cada erro tira 10 e a dica tira 20.' },
+  { target: () => document.querySelector(`#missions [data-mission="${LAST}"]`), count: '3 de 4', before: () => carousel.center(MISSIONS.indexOf(LAST), false),
+    text: 'O Aeroporto é a saída da cidade. Ele só libera com pelo menos 3 estrelas. Quem não chegar lá termina o jogo e recebe a nota do mesmo jeito.' },
+  { target: '#map-tutorial-btn', count: '4 de 4', next: 'Começar o treino', before: () => carousel.center(0, false),
+    text: 'Agora bora treinar uma missão rapidinho? Não vale ponto. Se quiser rever tudo depois, é só tocar aqui, em "Como jogar".' }
+];
+const TRAINING = [
+  { target: '#m-steps', count: 'Treino 1 de 6', text: 'Toda missão tem duas etapas: primeiro você relembra a fórmula, depois resolve o problema.' },
+  { target: '#m-problem', count: 'Treino 2 de 6', text: 'Aqui ficam o desenho e os dados. Este painel tem 3 m de base e 4 m de altura.' },
+  { target: ['#m-expr', '#m-build'], count: 'Treino 3 de 6', until: ['wasted-closed', 'learn-closed'],
+    text: 'Monte a conta da área: arraste cada peça até uma lacuna, ou toque na peça e depois na lacuna. Pra ver o que acontece num erro, tente primeiro com o 7. Depois toque em "Conferir conta".' },
+  { target: ['#m-expr', '#m-build'], count: 'Treino 4 de 6', until: 'learn-closed', skipIf: () => S.stage[0] === 1,
+    text: 'Essa foi a tela "Wasted": aparece a cada erro e explica a matéria. Nas missões de verdade, cada erro tira 10 pontos. Agora monte certinho: 3 · 4.' },
+  { target: '#m-hint-btn', count: 'Treino 5 de 6', until: 'hint-closed',
+    text: () => `${coach.noted('build-wrong') ? 'Isso!' : 'De primeira, hein! Se errar, aparece a tela "Wasted" com uma explicação.'} Travou numa missão? Eu dou uma dica. Nas missões ela custa 20 pontos, uma vez por missão; aqui é de graça. Toque para ver.` },
+  { target: ['#m-choice', '#m-confirm'], count: 'Treino 6 de 6', until: 'done',
+    text: 'Etapa 2: escolha a alternativa certa e toque em "Confirmar". Ao terminar uma missão, eu explico a resposta.' }
+];
+
+/** Convite depois de criar o personagem: treinar ou pular */
+function inviteTraining() {
+  $('tut-avatar').src = IMG.avatar;
+  $('tut-text').textContent = `Prazer, ${nick()}! Eu sou a Isa. Primeira vez por aqui? Bora fazer um treino rapidinho pra você ver como tudo funciona? Não vale ponto.`;
+  openDialog($('dlg-tutorial'));
+}
+$('tut-go').addEventListener('click', () => closeDialog($('dlg-tutorial'), () => startTutorial()));
+$('tut-skip').addEventListener('click', () => closeDialog($('dlg-tutorial'), () => exitTutorial()));
+$('map-tutorial-btn').addEventListener('click', () => { mapTip.close(); startTutorial(); });
+
+function startTutorial() {
+  S.tutorial = 'andamento'; save();
+  mapTip.reset();
+  if (screen !== 'mapa') show('mapa');
+  coach.run(MAP_TOUR, startTraining);
+}
+function startTraining() {
+  const d = MISSION[0].gen();
+  Object.assign(S.data, { 0: d });
+  [['stage', 0], ['stageErrors', 0], ['done', false], ['skipped', false], ['errors', 0], ['hint', false], ['options', null], ['briefSeen', true]].forEach(([k, v]) => { S[k][0] = v; });
+  S.tried[0] = [];
+  S.current = 0;
+  ui.key = '';
+  save();
+  show('missao');
+  missionTip.reset();
+  missionTip.text = missionBrief();
+  setTimeout(() => coach.run(TRAINING, null), 900);   // depois da varredura de entrada
+}
+function finishTraining() {
+  coach.signal('done');
+  coach.stop();
+  S.done[0] = true;
+  music.sfx('concluida');
+  S.tutorial = 'feito'; save();
+  markTutorialSeen();
+  $('rw-eyebrow').textContent = MISSION[0].title;
+  $('rw-title').textContent = 'Treino concluído!';
+  $('rw-pts').innerHTML = '';
+  $('rw-text').textContent = `Agora é pra valer, ${nick()}! Comece pelo ${MISSION[MISSIONS[0]].title}. Boa sorte!`;
+  $('rw-solution').hidden = false;
+  $('rw-solution').innerHTML = `<p class="eyebrow">Entenda a matéria</p><p>${escapeHtml(MISSION[0].learn[1])}</p>`;
+  $('rw-next').textContent = 'Ir para o mapa';
+  openDialog($('dlg-reward'));
+}
+/** Sair do tour ou do treino a qualquer momento: volta ao mapa e mostra a fala da Isa */
+function exitTutorial() {
+  coach.stop();
+  if (!S) return;
+  S.tutorial = 'feito';
+  if (S.current === 0) S.current = MISSIONS.find(m => !finished(m)) || 1;
+  save();
+  markTutorialSeen();
+  if (screen !== 'mapa') show('mapa'); else { renderMapa(); openMapTip(); }
+}
 
 /* ---------------------------------------------------------------
    9. CONCLUSÃO
