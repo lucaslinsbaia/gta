@@ -398,6 +398,27 @@
   .map-me { display: flex; align-items: center; gap: var(--s3); }
   .me-avatar { width: 52px; height: 52px; flex: none; border: 2px solid var(--cream); border-radius: 50%; image-rendering: pixelated; background: var(--purple); }
 
+  /* ---------- Tutorial: tour guiado ---------- */
+  .coach { position: fixed; inset: 0; z-index: 55; pointer-events: none; }
+  .coach.is-block { pointer-events: auto; }
+  .coach.is-under-dialog { visibility: hidden; }
+  .coach__spot { position: fixed; border-radius: 10px; box-shadow: 0 0 0 200vmax rgba(10, 3, 22, 0.72); outline: 3px solid var(--yellow); outline-offset: 2px; transition: left 260ms var(--ease), top 260ms var(--ease), width 260ms var(--ease), height 260ms var(--ease); pointer-events: none; }
+  .coach__card { position: fixed; left: 50%; transform: translateX(-50%); width: min(460px, calc(100vw - 24px)); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s3); padding: var(--s4); color: var(--night); background: var(--cream); border: 3px solid var(--night); border-radius: 14px; box-shadow: 6px 6px 0 var(--pink); pointer-events: auto; animation: tip-in 260ms var(--ease) both; }
+  .coach__card[data-side="bottom"] { bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .coach__card[data-side="top"] { top: 16px; }
+  .coach__avatar { width: 56px; height: 56px; }
+  .coach__top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s2); margin: 0; }
+  .coach__step { font-size: var(--text-xs); font-weight: 600; color: #6b5a80; }
+  .coach__text { margin: var(--s1) 0 var(--s3); font-size: 1rem; line-height: 1.45; min-height: 2.9em; }
+  .coach__actions { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); flex-wrap: wrap; }
+  .coach__actions .link-btn { color: #5a3a7a; }
+  .map-howto { margin: var(--s6) 0 0; text-align: center; }
+  .map-howto .link-btn { display: inline-flex; align-items: center; gap: var(--s2); min-height: 44px; }
+  .dlg--tutorial .tut-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s3); }
+  .dlg--tutorial .avatar { width: 64px; height: 64px; flex: none; }
+  .dlg--tutorial .dlg__actions { flex-wrap: wrap; }
+  @media (prefers-reduced-motion: reduce) { .coach__spot { transition: none; } }
+
   /* ---------- Responsivo ---------- */
   @media (max-width: 1000px) {
     .cover-wrap, .mission, .end__grid { grid-template-columns: minmax(0, 1fr); }

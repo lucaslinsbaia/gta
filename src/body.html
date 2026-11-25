@@ -24,6 +24,24 @@
 </header>
 
 <!-- Transição entre telas: faixas diagonais que varrem a tela; ao entrar numa missão, mostram o nome do lugar -->
+<!-- Tour guiado: destaque com recorte e balão da Isa -->
+<div class="coach" id="coach" hidden>
+  <div class="coach__spot" id="coach-spot" hidden></div>
+  <section class="coach__card" id="coach-card" aria-label="Tutorial com a Isa">
+    <img class="avatar coach__avatar" id="coach-avatar" alt="">
+    <div class="coach__body">
+      <p class="coach__top"><span class="dani-say__name">Isa</span> <span class="coach__step" id="coach-step"></span></p>
+      <p class="coach__text" id="coach-text" aria-hidden="true"></p>
+      <p class="sr-only" id="coach-full" role="status"></p>
+      <div class="coach__actions">
+        <button type="button" class="link-btn" id="coach-exit">Sair do tutorial</button>
+        <button type="button" class="btn btn--gold btn--sm" id="coach-next"><span id="coach-next-text">Próximo</span>
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+      </div>
+    </div>
+  </section>
+</div>
+
 <div class="wipe" id="wipe" aria-hidden="true">
   <div class="wipe__layer wipe__layer--cyan"></div>
   <div class="wipe__layer wipe__layer--pink"></div>
@@ -171,6 +189,8 @@
       </div>
       <ol class="missions" id="missions" aria-label="Missões"></ol>
       <div class="carousel-dots" id="missions-dots"></div>
+      <p class="map-howto"><button type="button" class="link-btn" id="map-tutorial-btn">
+        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-play"/></svg> Como jogar? Refazer o tutorial</button></p>
     </div>
   </section>
 
@@ -348,6 +368,17 @@
   <p class="solution solution__calc" id="learn-calc"></p>
   <div class="dlg__actions"><button type="button" class="btn btn--gold" id="learn-ok">Resolver o problema
     <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button></div>
+</dialog>
+
+<!-- Convite para o treino, logo depois de criar o personagem -->
+<dialog class="dlg dlg--tutorial" id="dlg-tutorial" aria-labelledby="tut-title" aria-describedby="tut-text">
+  <div class="tut-head"><img class="avatar" id="tut-avatar" alt=""><h2 class="title-lg" id="tut-title">Primeira vez por aqui?</h2></div>
+  <p id="tut-text"></p>
+  <div class="dlg__actions">
+    <button type="button" class="btn btn--gold" id="tut-go">Bora treinar
+      <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+    <button type="button" class="btn btn--outline" id="tut-skip">Pular, já sei jogar</button>
+  </div>
 </dialog>
 
 <dialog class="dlg dlg--reward" id="dlg-reward" aria-labelledby="rw-title">

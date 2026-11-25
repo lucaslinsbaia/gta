@@ -5,6 +5,8 @@ const GAME = 'file://' + require('path').resolve(__dirname, '../index.html');
 const { chromium } = require('playwright');
 /* Fecha o recado da Isa no mapa, se estiver aberto (ele flutua sobre os cards) */
 const closeTip = async p => { if (await p.isVisible('#map-tip')) await p.click('#map-tip-close'); };
+// Pula o convite do treino (o tutorial tem teste próprio)
+const skipTutorial = async p => { await p.waitForSelector('#dlg-tutorial[open]', { timeout: 3000 }).catch(() => {}); if (await p.isVisible('#tut-skip')) { await p.click('#tut-skip'); await p.waitForTimeout(300); } };
 // No celular o mapa é um carrossel: centraliza o card antes de tocar nele
 const openCard = async (p, n) => { await p.evaluate(n => carousel.center(MISSIONS.indexOf(n), false), n); await p.waitForTimeout(80); await p.click(`[data-mission="${n}"]`); };
 const closeMTip = async p => { if (await p.isVisible('#m-tip')) await p.click('#m-tip-close'); };
@@ -43,7 +45,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     const p = await ctx.newPage();
     const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.goto(GAME + '#teste'); await p.evaluate(() => localStorage.clear()); await p.reload(); await p.waitForTimeout(400);
-    await p.click('#btn-start'); await p.fill('#id-name', 'Ana'); await p.click('#id-next'); await p.click('#id-next'); await p.click('#id-next'); await p.waitForTimeout(300);
+    await p.click('#btn-start'); await p.fill('#id-name', 'Ana'); await p.click('#id-next'); await p.click('#id-next'); await p.click('#id-next'); await skipTutorial(p); await p.waitForTimeout(300);
     assert(await p.evaluate(() => !!(S.player.avatar && S.player.avatar.char && S.player.avatar.bg === 4)), 'o personagem vai junto com o jogador, com a Usina de fundo por padrão');
     assert(!(await p.isDisabled('[data-mission="1"]')) && await p.isDisabled('[data-mission="2"]') && await p.isDisabled('[data-mission="5"]'), 'só a primeira missão começa aberta');
     assert(await p.isDisabled('[data-mission="6"]'), 'o Aeroporto começa bloqueado');
@@ -140,7 +142,7 @@ const assert = (ok, msg) => { if (!ok) { console.error('FALHOU:', msg); process.
     // Sem 3 estrelas: o Aeroporto não libera e dá para finalizar a live com a nota normal
     await p.evaluate(() => { localStorage.clear(); });
     await p.reload(); await p.waitForTimeout(400);
-    await p.click('#btn-start'); await p.fill('#id-name', 'Bia'); await p.click('#id-next'); await p.click('#id-next'); await p.click('#id-next'); await p.waitForTimeout(200);
+    await p.click('#btn-start'); await p.fill('#id-name', 'Bia'); await p.click('#id-next'); await p.click('#id-next'); await p.click('#id-next'); await skipTutorial(p); await p.waitForTimeout(200);
     await p.evaluate(() => { [1, 2, 3].forEach(n => { S.skipped[n] = true; }); [4, 5].forEach(n => { S.done[n] = true; }); save(); show('mapa'); });
     assert(await p.isDisabled('[data-mission="6"]'), 'com 2 estrelas o Aeroporto continua bloqueado');
     assert(await p.isVisible('#map-finish'), 'aparece a opção de finalizar a live');
