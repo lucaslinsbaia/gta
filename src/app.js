@@ -1249,6 +1249,9 @@ const coach = (() => {
   const schedule = () => { if (!raf && i >= 0) raf = requestAnimationFrame(place); };
   addEventListener('resize', schedule);
   addEventListener('scroll', schedule, { passive: true });
+  // iPhone: a barra do Safari aparece e some sem disparar resize na janela; o botão fixo do rodapé muda de lugar
+  if (window.visualViewport) { visualViewport.addEventListener('resize', schedule); visualViewport.addEventListener('scroll', schedule); }
+  setInterval(() => { if (i >= 0) schedule(); }, 250);
   new MutationObserver(schedule).observe(document.body, { attributes: true, subtree: true, attributeFilter: ['open', 'hidden'] });
 
   function say(text) {
