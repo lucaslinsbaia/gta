@@ -411,6 +411,9 @@
   .coach__top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s2); margin: 0; }
   .coach__step { font-size: var(--text-xs); font-weight: 600; color: #6b5a80; }
   .coach__text { margin: var(--s1) 0 var(--s3); font-size: 1rem; line-height: 1.45; min-height: 2.9em; }
+  .coach__text { position: relative; }
+  .coach__size { visibility: hidden; }
+  .coach__typed { position: absolute; inset: 0; }
   .coach__actions { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); flex-wrap: wrap; }
   .coach__actions .link-btn { color: #5a3a7a; }
   .map-howto { margin: var(--s6) 0 0; text-align: center; }
@@ -418,6 +421,12 @@
   .dlg--tutorial .tut-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s3); }
   .dlg--tutorial .avatar { width: 64px; height: 64px; flex: none; }
   .dlg--tutorial .dlg__actions { flex-wrap: wrap; }
+  @media (max-width: 640px) {
+    .coach__card { grid-template-columns: 40px minmax(0, 1fr); gap: var(--s2); padding: var(--s3); }
+    .coach__avatar { width: 40px; height: 40px; }
+    .coach__text { font-size: 0.95rem; line-height: 1.4; margin: 2px 0 var(--s2); min-height: 0; }
+    .coach__actions .btn { min-height: 40px; }
+  }
   @media (prefers-reduced-motion: reduce) { .coach__spot { transition: none; } }
 
   /* ---------- Responsivo ---------- */

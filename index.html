@@ -423,6 +423,9 @@
   .coach__top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s2); margin: 0; }
   .coach__step { font-size: var(--text-xs); font-weight: 600; color: #6b5a80; }
   .coach__text { margin: var(--s1) 0 var(--s3); font-size: 1rem; line-height: 1.45; min-height: 2.9em; }
+  .coach__text { position: relative; }
+  .coach__size { visibility: hidden; }
+  .coach__typed { position: absolute; inset: 0; }
   .coach__actions { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); flex-wrap: wrap; }
   .coach__actions .link-btn { color: #5a3a7a; }
   .map-howto { margin: var(--s6) 0 0; text-align: center; }
@@ -430,6 +433,12 @@
   .dlg--tutorial .tut-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s3); }
   .dlg--tutorial .avatar { width: 64px; height: 64px; flex: none; }
   .dlg--tutorial .dlg__actions { flex-wrap: wrap; }
+  @media (max-width: 640px) {
+    .coach__card { grid-template-columns: 40px minmax(0, 1fr); gap: var(--s2); padding: var(--s3); }
+    .coach__avatar { width: 40px; height: 40px; }
+    .coach__text { font-size: 0.95rem; line-height: 1.4; margin: 2px 0 var(--s2); min-height: 0; }
+    .coach__actions .btn { min-height: 40px; }
+  }
   @media (prefers-reduced-motion: reduce) { .coach__spot { transition: none; } }
 
   /* ---------- Responsivo ---------- */
@@ -564,7 +573,7 @@
     <img class="avatar coach__avatar" id="coach-avatar" alt="">
     <div class="coach__body">
       <p class="coach__top"><span class="dani-say__name">Isa</span> <span class="coach__step" id="coach-step"></span></p>
-      <p class="coach__text" id="coach-text" aria-hidden="true"></p>
+      <p class="coach__text" id="coach-text" aria-hidden="true"><span class="coach__size" id="coach-size"></span><span class="coach__typed" id="coach-typed"></span></p>
       <p class="sr-only" id="coach-full" role="status"></p>
       <div class="coach__actions">
         <button type="button" class="link-btn" id="coach-exit">Sair do tutorial</button>
@@ -2717,7 +2726,7 @@ const tutorialSeen = () => { try { return localStorage.getItem(TUTORIAL_KEY) ===
 const markTutorialSeen = () => { try { localStorage.setItem(TUTORIAL_KEY, '1'); } catch (e) { /* segue */ } };
 
 const coach = (() => {
-  let steps = [], i = -1, done = null, waitFor = null, typer = null, raf = 0;
+  let steps = [], i = -1, done = null, waitFor = null, typer = null, raf = 0, fitPending = false;
   const notes = new Set();
   const root = $('coach'), spot = $('coach-spot'), card = $('coach-card');
   const targets = step => [].concat(typeof step.target === 'function' ? step.target() : step.target || [])
@@ -2742,8 +2751,21 @@ const coach = (() => {
       card.style.left = `${left && (L > innerWidth - R || !right) ? L - gap - cw : R + gap}px`;
       card.style.top = `${Math.max(16, Math.min(innerHeight - ch - 16, (T0 + B) / 2 - ch / 2))}px`;
     } else {
-      card.dataset.side = (T0 + B) / 2 > innerHeight / 2 ? 'top' : 'bottom';   // lado oposto ao destaque
+      // Celular: o balão fica em cima e a página rola para o destaque inteiro aparecer logo abaixo.
+      // Se o destaque não pode descer (topo da página ou elemento fixo), o balão vai para baixo.
       card.style.left = card.style.top = '';
+      const room = ch + 16 + 12;
+      let top = T0, bottom = B;
+      if (fitPending) {
+        fitPending = false;
+        const before = scrollY;
+        scrollBy({ top: T0 - room, behavior: 'instant' });
+        const moved = before - scrollY;   // quanto o destaque desceu na tela (só os elementos que rolam)
+        if (moved) { const m = els.map(el => el.getBoundingClientRect()); top = Math.min(...m.map(r => r.top)) - pad; bottom = Math.max(...m.map(r => r.bottom)) + pad;
+          Object.assign(spot.style, { left: `${Math.min(...m.map(r => r.left)) - pad}px`, top: `${top}px`, width: `${Math.max(...m.map(r => r.right)) - Math.min(...m.map(r => r.left)) + 2 * pad}px`, height: `${bottom - top}px` }); }
+      }
+      const overTop = Math.max(0, room - top), overBottom = Math.max(0, bottom - (innerHeight - room));
+      card.dataset.side = overTop <= overBottom + 12 ? 'top' : 'bottom';   // o lado que cobre menos o destaque
     }
   }
   const schedule = () => { if (!raf && i >= 0) raf = requestAnimationFrame(place); };
@@ -2753,7 +2775,9 @@ const coach = (() => {
 
   function say(text) {
     clearInterval(typer);
-    const el = $('coach-text'), av = $('coach-avatar');
+    // O texto inteiro fica invisível por baixo: o balão já nasce no tamanho final (a rolagem do celular depende disso)
+    $('coach-size').textContent = text;
+    const el = $('coach-typed'), av = $('coach-avatar');
     $('coach-full').textContent = text;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
     let k = 0; el.textContent = '';
@@ -2777,13 +2801,17 @@ const coach = (() => {
     $('coach-step').textContent = step.count || '';
     $('coach-avatar').src = IMG.avatar;
     say(typeof step.text === 'function' ? step.text() : step.text);
+    // Celular: espaço extra no topo da página durante o tour, para até o primeiro bloco poder descer até abaixo do balão
+    document.body.style.paddingTop = innerWidth > 900 ? '' : `${card.offsetHeight + 28}px`;
     const first = targets(step)[0];
-    if (first) first.scrollIntoView({ block: 'center', behavior: 'auto' });
+    if (first) first.scrollIntoView({ block: 'center', behavior: 'instant' });
+    fitPending = true;   // no celular, o place() ajusta a rolagem depois de medir o balão
     schedule();
     if (!waitFor) setTimeout(() => $('coach-next').focus({ preventScroll: true }), 0);
   }
   function stop() {
     clearInterval(typer);
+    document.body.style.paddingTop = '';
     i = -1; steps = []; waitFor = null; done = null;
     root.hidden = true; spot.hidden = true;
   }
@@ -2815,10 +2843,11 @@ const MAP_TOUR = [
 ];
 const TRAINING = [
   { target: '#m-steps', count: 'Treino 1 de 6', text: 'Toda missão tem duas etapas: primeiro você relembra a fórmula, depois resolve o problema.' },
-  { target: ['#m-problem', '#m-build'], count: 'Treino 2 de 6', text: 'Aqui ficam o desenho, os dados e as peças para montar a conta. Este painel tem 3 m de base e 4 m de altura.' },
-  { target: ['#m-expr', '#m-build'], count: 'Treino 3 de 6', until: ['wasted-closed', 'learn-closed'],
+  { target: () => (isPhone() ? '#m-problem' : ['#m-problem', '#m-build']), count: 'Treino 2 de 6',   // no celular, tudo junto não cabe na tela
+    text: () => (isPhone() ? 'Aqui ficam o desenho, os dados e a conta. Este painel tem 3 m de base e 4 m de altura.' : 'Aqui ficam o desenho, os dados e as peças para montar a conta. Este painel tem 3 m de base e 4 m de altura.') },
+  { target: ['#m-expr', '#m-build', '#m-confirm'], count: 'Treino 3 de 6', until: ['wasted-closed', 'learn-closed'],
     text: 'Monte a conta da área: arraste cada peça até uma lacuna, ou toque na peça e depois na lacuna. Pra ver o que acontece num erro, tente primeiro com o 7. Depois toque em "Conferir conta".' },
-  { target: ['#m-expr', '#m-build'], count: 'Treino 4 de 6', until: 'learn-closed', skipIf: () => S.stage[0] === 1,
+  { target: ['#m-expr', '#m-build', '#m-confirm'], count: 'Treino 4 de 6', until: 'learn-closed', skipIf: () => S.stage[0] === 1,
     text: 'Essa foi a tela "Wasted": aparece a cada erro e explica a matéria. Nas missões de verdade, cada erro tira 10 pontos. Agora monte certinho: 3 · 4.' },
   { target: '#m-hint-btn', count: 'Treino 5 de 6', until: 'hint-closed',
     text: () => `${coach.noted('build-wrong') ? 'Isso!' : 'De primeira, hein! Se errar, aparece a tela "Wasted" com uma explicação.'} Travou numa missão? Eu dou uma dica. Nas missões ela custa 20 pontos, uma vez por missão; aqui é de graça. Toque para ver.` },
