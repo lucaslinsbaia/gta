@@ -1221,7 +1221,17 @@ const coach = (() => {
     const R = Math.max(...rs.map(r => r.right)) + pad, B = Math.max(...rs.map(r => r.bottom)) + pad;
     spot.hidden = false;
     Object.assign(spot.style, { left: `${L}px`, top: `${T0}px`, width: `${R - L}px`, height: `${B - T0}px` });
-    card.dataset.side = (T0 + B) / 2 > innerHeight / 2 ? 'top' : 'bottom';   // o balão fica do lado oposto ao destaque
+    // Com espaço ao lado (computador), o balão fica ao lado do destaque; senão, em cima ou embaixo
+    const cw = card.offsetWidth, ch = card.offsetHeight, gap = 24;
+    const left = L - gap - cw >= 16, right = R + gap + cw <= innerWidth - 16;
+    if (innerWidth > 900 && (left || right)) {
+      card.dataset.side = 'beside';
+      card.style.left = `${left && (L > innerWidth - R || !right) ? L - gap - cw : R + gap}px`;
+      card.style.top = `${Math.max(16, Math.min(innerHeight - ch - 16, (T0 + B) / 2 - ch / 2))}px`;
+    } else {
+      card.dataset.side = (T0 + B) / 2 > innerHeight / 2 ? 'top' : 'bottom';   // lado oposto ao destaque
+      card.style.left = card.style.top = '';
+    }
   }
   const schedule = () => { if (!raf && i >= 0) raf = requestAnimationFrame(place); };
   addEventListener('resize', schedule);
@@ -1292,7 +1302,7 @@ const MAP_TOUR = [
 ];
 const TRAINING = [
   { target: '#m-steps', count: 'Treino 1 de 6', text: 'Toda missão tem duas etapas: primeiro você relembra a fórmula, depois resolve o problema.' },
-  { target: '#m-problem', count: 'Treino 2 de 6', text: 'Aqui ficam o desenho e os dados. Este painel tem 3 m de base e 4 m de altura.' },
+  { target: ['#m-problem', '#m-build'], count: 'Treino 2 de 6', text: 'Aqui ficam o desenho, os dados e as peças para montar a conta. Este painel tem 3 m de base e 4 m de altura.' },
   { target: ['#m-expr', '#m-build'], count: 'Treino 3 de 6', until: ['wasted-closed', 'learn-closed'],
     text: 'Monte a conta da área: arraste cada peça até uma lacuna, ou toque na peça e depois na lacuna. Pra ver o que acontece num erro, tente primeiro com o 7. Depois toque em "Conferir conta".' },
   { target: ['#m-expr', '#m-build'], count: 'Treino 4 de 6', until: 'learn-closed', skipIf: () => S.stage[0] === 1,
