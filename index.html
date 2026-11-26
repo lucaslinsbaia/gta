@@ -2652,8 +2652,8 @@ function openLearn(n, stage) {
   openDialog($('dlg-learn'));
   $('learn-ok').focus();
 }
+$('dlg-learn').addEventListener('close', () => coach.signal('learn-closed'));
 $('learn-ok').addEventListener('click', () => closeDialog($('dlg-learn'), () => {
-  coach.signal('learn-closed');
   $('live').textContent = 'Fórmula certa. Agora resolva o problema.';
   const first = document.querySelector('#m-options input:not(:disabled)');
   if (first) first.focus();
@@ -2734,6 +2734,7 @@ const coach = (() => {
   function place() {
     raf = 0;
     if (i < 0) return;
+    if (steps[i].skipIf && steps[i].skipIf() && !document.querySelector('dialog[open]')) { go(i + 1); return; }
     const dialogOpen = Boolean(document.querySelector('dialog[open]'));
     root.classList.toggle('is-under-dialog', dialogOpen);
     const els = targets(steps[i]);
@@ -2848,7 +2849,7 @@ const TRAINING = [
   { target: '#m-steps', count: 'Treino 1 de 6', text: 'Toda missão tem duas etapas: primeiro você relembra a fórmula, depois resolve o problema.' },
   { target: () => (isPhone() ? '#m-problem' : ['#m-problem', '#m-build']), count: 'Treino 2 de 6',   // no celular, tudo junto não cabe na tela
     text: () => (isPhone() ? 'Aqui ficam o desenho, os dados e a conta. Este painel tem 3 m de base e 4 m de altura.' : 'Aqui ficam o desenho, os dados e as peças para montar a conta. Este painel tem 3 m de base e 4 m de altura.') },
-  { target: ['#m-expr', '#m-build', '#m-confirm'], count: 'Treino 3 de 6', until: ['wasted-closed', 'learn-closed'],
+  { target: ['#m-expr', '#m-build', '#m-confirm'], count: 'Treino 3 de 6', until: ['wasted-closed', 'learn-closed'], skipIf: () => S.stage[0] === 1,
     text: 'Monte a conta da área: arraste cada peça até uma lacuna, ou toque na peça e depois na lacuna. Pra ver o que acontece num erro, tente primeiro com o 7. Depois toque em "Conferir conta".' },
   { target: ['#m-expr', '#m-build', '#m-confirm'], count: 'Treino 4 de 6', until: 'learn-closed', skipIf: () => S.stage[0] === 1,
     text: 'Essa foi a tela "Wasted": aparece a cada erro e explica a matéria. Nas missões de verdade, cada erro tira 10 pontos. Agora monte certinho: 3 · 4.' },
